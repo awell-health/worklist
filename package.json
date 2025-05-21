@@ -1,25 +1,51 @@
 {
   "name": "worklist",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "description": "",
+  "main": "",
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "preinstall": "npx only-allow pnpm",
+    "build": "turbo build",
+    "bootstrap": "pnpm install",
+    "check": "biome check .",
+    "clean": "run-s clean:outputs clean:artifacts",
+    "clean:artifacts": "rimraf --glob '**/coverage' && rimraf --glob '**/dist' && rimraf --glob '**/node_modules'",
+    "clean:outputs": "turbo run clean",
+    "clean:datastore": "rimraf ./dev/.datastore",
+    "clean:all": "run-p clean clean:datastore",
+    "commit": "git-cz",
+    "dev": "turbo dev --parallel",
+    "format": "turbo format --continue --",
+    "format:fix": "turbo format --continue -- --write",
+    "lint": "turbo lint --continue --",
+    "lint:fix": "turbo lint --continue -- --apply",
+    "typecheck": "turbo typecheck",
+    "prepare": "husky"
+  },
+  "engines": {
+    "npm": "please-use-pnpm",
+    "yarn": "please-use-pnpm",
+    "node": ">=22"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.11.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@commitlint/cli": "^19.8.0",
+    "@commitlint/config-conventional": "^19.8.0",
+    "@commitlint/config-pnpm-scopes": "^19.8.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
+    "fastify-tsconfig": "^3.0.0",
+    "git-cz": "^4.9.0",
+    "husky": "^9.1.7",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^6.0.1"
   },
   "dependencies": {
-    "daisyui": "^5.0.35",
-    "next": "15.3.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.7",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4.1.7",
-    "typescript": "^5"
+    "turbo": "^2.5.1",
+    "typescript": "^5.8.3"
   }
 }
