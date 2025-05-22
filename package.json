@@ -20,7 +20,9 @@
     "lint": "turbo lint --continue --",
     "lint:fix": "turbo lint --continue -- --apply",
     "typecheck": "turbo typecheck",
-    "prepare": "husky"
+    "prepare": "husky",
+    "run:infra": "docker compose up --build --remove-orphans -d wl-wait-for-dependencies",
+    "run:infra:stop": "docker compose stop"
   },
   "engines": {
     "npm": "please-use-pnpm",
