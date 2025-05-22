@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Worklist Project
+
+This project is built using Next.js and Medplum, providing a healthcare-focused application with a modern tech stack.
+
+## Tech Stack
+
+- **Frontend**: Next.js
+- **Backend**: Medplum Server
+- **Database**: PostgreSQL 16
+- **Cache**: Redis 7
+- **Package Manager**: pnpm
+- **Node Version**: 22.14.0
+- **Code Quality**: Biome (formatter and linter)
+
+## Prerequisites
+
+- Node.js >= 22
+- pnpm >= 10.11.0
+- Docker and Docker Compose
+- PostgreSQL 16 (if running locally)
+- Redis 7 (if running locally)
+
+## Project Structure
+
+```
+.
+├── apps/              # Application packages
+├── packages/          # Shared packages
+├── dev/              # Development configuration
+│   ├── config/       # Configuration files
+│   └── datastore/    # Local database storage
+└── compose.yaml      # Docker Compose configuration
+```
 
 ## Getting Started
 
-First, run the development server:
+1. **Install Dependencies**
+   ```bash
+   pnpm bootstrap
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. **Start Development Environment**
+   ```bash
+   # Start the infrastructure (PostgreSQL, Redis, Medplum)
+   pnpm run:infra
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   # Start the development server
+   pnpm dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Access the Applications**
+   - Frontend: http://localhost:3003
+   - Medplum Server: http://localhost:8103
+   - Database UI (pgweb): http://localhost:8081
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+### Medplum Configuration
 
-To learn more about Next.js, take a look at the following resources:
+The project uses Medplum for healthcare data management. Configuration can be done through:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Environment variables (prefixed with `MEDPLUM_`)
+2. Configuration file at `dev/config/medplum.config.json`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Key configuration parameters include:
+- Server settings (port, base URLs)
+- Database connection
+- Redis connection
+- Security settings
+- Bot configuration
+- Initial admin setup
 
-## Deploy on Vercel
+### Development Tools
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Biome**: Used for code formatting and linting
+  ```bash
+  pnpm format     # Check formatting
+  pnpm format:fix # Fix formatting issues
+  pnpm lint       # Run linter
+  pnpm lint:fix   # Fix linting issues
+  ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **TypeScript**: Type checking
+  ```bash
+  pnpm typecheck
+  ```
+
+## Available Scripts
+
+- `pnpm dev`: Start development server
+- `pnpm build`: Build the project
+- `pnpm clean`: Clean build artifacts
+- `pnpm clean:all`: Clean all artifacts including datastore
+- `pnpm run:infra`: Start infrastructure services
+- `pnpm run:infra:stop`: Stop infrastructure services
+- `pnpm format`: Check code formatting
+- `pnpm format:fix`: Fix code formatting
+- `pnpm lint`: Run linter
+- `pnpm lint:fix`: Fix linting issues
+- `pnpm typecheck`: Run TypeScript type checking
+
+## Infrastructure
+
+The project uses Docker Compose to manage the following services:
+
+- **PostgreSQL**: Database server
+  - Port: 5432
+  - Default credentials: medplum/medplum
+
+- **Redis**: Cache server
+  - Port: 6379
+  - Password: medplum
+
+- **Medplum Server**: Healthcare data server
+  - Port: 8103
+  - Configuration: See Medplum Configuration section
+
+- **pgweb**: Database management UI
+  - Port: 8081
+
+## Contributing
+
+1. Install pre-commit hooks:
+   ```bash
+   pnpm prepare
+   ```
+
+2. Use conventional commits:
+   ```bash
+   pnpm commit
+   ```
+
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

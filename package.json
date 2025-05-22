@@ -1,8 +1,9 @@
 {
-  "name": "worklist",
+  "name": "@worklist/root",
+  "private": true,
+  "type": "module",
   "version": "0.1.0",
   "description": "",
-  "main": "",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "build": "turbo build",
@@ -17,6 +18,7 @@
     "dev": "turbo dev --parallel",
     "format": "turbo format --continue --",
     "format:fix": "turbo format --continue -- --write",
+    "info": "node --version && pnpm --version && turbo --version",
     "lint": "turbo lint --continue --",
     "lint:fix": "turbo lint --continue -- --apply",
     "typecheck": "turbo typecheck",
@@ -27,12 +29,12 @@
   "engines": {
     "npm": "please-use-pnpm",
     "yarn": "please-use-pnpm",
-    "node": ">=22"
+    "node": "^22.16.0",
+    "pnpm": "^10.11.0"
   },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
-  "packageManager": "pnpm@10.11.0",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@commitlint/cli": "^19.8.0",
@@ -49,5 +51,6 @@
   "dependencies": {
     "turbo": "^2.5.1",
     "typescript": "^5.8.3"
-  }
+  },
+  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }
