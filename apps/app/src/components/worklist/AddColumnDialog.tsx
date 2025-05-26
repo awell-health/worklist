@@ -2,25 +2,25 @@
 'use client';
 
 import { useState } from 'react';
-import type { Column } from '@/types/worklist';
+import type { ColumnDefinition } from '@/types/worklist';
 
 interface AddColumnDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (column: Column) => void;
+  onAdd: (column: ColumnDefinition) => void;
 }
 
 export default function AddColumnDialog({ isOpen, onClose, onAdd }: AddColumnDialogProps) {
-  const [columnData, setColumnData] = useState<Partial<Column>>({
-    type: 'text'
+  const [columnData, setColumnData] = useState<Partial<ColumnDefinition>>({
+    type: 'string'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (columnData.key && columnData.label) {
-      onAdd(columnData as Column);
+    if (columnData.key && columnData.name) {
+      onAdd(columnData as ColumnDefinition);
       onClose();
-      setColumnData({ type: 'text' });
+        setColumnData({ type: 'string' });
     }
   };
 
@@ -54,8 +54,8 @@ export default function AddColumnDialog({ isOpen, onClose, onAdd }: AddColumnDia
               <input
                 type="text"
                 className="input input-bordered w-full"
-                value={columnData.label || ''}
-                onChange={(e) => setColumnData({ ...columnData, label: e.target.value })}
+                value={columnData.name || ''}
+                onChange={(e) => setColumnData({ ...columnData, name: e.target.value })}
                 placeholder="e.g., Patient ID"
               />
             </div>
@@ -70,7 +70,7 @@ export default function AddColumnDialog({ isOpen, onClose, onAdd }: AddColumnDia
                 value={columnData.type}
                 onChange={(e) => setColumnData({ 
                   ...columnData, 
-                  type: e.target.value as Column['type']
+                  type: e.target.value as ColumnDefinition['type']
                 })}
               >
                 <option value="text">Text</option>
@@ -80,7 +80,7 @@ export default function AddColumnDialog({ isOpen, onClose, onAdd }: AddColumnDia
               </select>
             </div>
 
-            {columnData.type === 'select' && (
+            {columnData.type === 'tasks' && (
               <div>
                 {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
                 <label className="label">
@@ -92,7 +92,7 @@ export default function AddColumnDialog({ isOpen, onClose, onAdd }: AddColumnDia
                   value={columnData.options?.join(',') || ''}
                   onChange={(e) => setColumnData({ 
                     ...columnData, 
-                    options: e.target.value.split(',').map(o => o.trim())
+                    options: e.target.value.split(',').map(o => ({ value: o.trim(), color: '#000000' }))
                   })}
                   placeholder="Option1, Option2, Option3"
                 />

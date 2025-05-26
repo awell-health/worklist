@@ -43,6 +43,7 @@ export default function WorklistToolbar({
                 </div>
 
                 <div className="flex items-center space-x-2">
+                    {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                     <button
                         //   variant="outline"
                         //  size="sm"
@@ -53,6 +54,7 @@ export default function WorklistToolbar({
                     >
                         Actions
                     </button>
+                    {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                     <button
                         //  size="sm"
                         className="text-xs font-normal h-8 px-2 bg-blue-500 hover:bg-blue-600 text-white flex items-center"

@@ -1,11 +1,11 @@
 // src/utils/constants.ts
-import type { Column, Patient } from '@/types/worklist';
+import type { ColumnDefinition, Patient } from '@/types/worklist';
 
-export const initialColumns: Column[] = [
-  { key: 'name', label: 'Patient Name', type: 'text' },
-  { key: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
-  { key: 'gender', label: 'Gender', type: 'select', options: ['Male', 'Female', 'Other'] },
-  { key: 'tasks', label: 'Tasks', type: 'tasks' }
+export const initialColumns: ColumnDefinition[] = [
+  { key: 'name', name: 'Patient Name', type: 'string', id: 'name' },
+  { key: 'dateOfBirth', name: 'Date of Birth', type: 'date', id: 'dateOfBirth' },
+  { key: 'gender', name: 'Gender', type: 'select', options: [{ value: 'Male', color: '#000000' }, { value: 'Female', color: '#000000' }, { value: 'Other', color: '#000000' }], id: 'gender' },
+  { key: 'tasks', name: 'Tasks', type: 'tasks', id: 'tasks' }
 ];
 
 export const initialData: Patient[] = [

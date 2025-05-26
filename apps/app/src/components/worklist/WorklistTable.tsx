@@ -4,13 +4,13 @@ import React from "react";
 import WorklistTableHeader from "./WorklistTableHeader";
 import WorklistTableRow from "./WorklistTableRow";
 import AddDataRow from "./AddDataRow";
-import type { Column, Patient } from "@/types/worklist";
+import type { ColumnDefinition, Patient } from "@/types/worklist";
 
 interface WorklistTableProps {
-  columns: Column[];
+  columns: ColumnDefinition[];
   data: Patient[];
   onAddRow: (row: Patient) => void;
-  onAddColumn: (column: Column) => void;
+  onAddColumn: (column: ColumnDefinition) => void;
   onRowClick?: (row: Patient) => void;
 }
 

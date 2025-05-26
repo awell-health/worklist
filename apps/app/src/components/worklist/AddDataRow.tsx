@@ -1,10 +1,10 @@
 "use client";
 // src/components/worklist/AddDataRow.tsx
 import React from 'react'
-import type { Column, Patient } from '@/types/worklist'
+import type { ColumnDefinition, Patient } from '@/types/worklist'
 
 interface AddDataRowProps {
-  columns: Column[]
+  columns: ColumnDefinition[]
   onAddRow: (row: Patient) => void
 }
 

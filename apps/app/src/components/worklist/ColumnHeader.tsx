@@ -1,8 +1,8 @@
 // src/components/worklist/ColumnHeader.tsx
-import type { Column } from '@/types/worklist'
+import type { ColumnDefinition } from '@/types/worklist'
 
 interface ColumnHeaderProps {
-  column: Column
+  column: ColumnDefinition
   onSort?: () => void
   sortDirection?: 'asc' | 'desc' | null
 }
@@ -14,7 +14,7 @@ export default function ColumnHeader({
 }: ColumnHeaderProps) {
   return (
     <div className="flex items-center gap-2">
-      <span>{column.label}</span>
+      <span>{column.name}</span>
       {onSort && (
         // biome-ignore lint/a11y/useButtonType: <explanation>
         <button onClick={onSort} className="btn btn-ghost btn-xs">

@@ -2,11 +2,11 @@
 import React from "react";
 import { useDrawer } from '@/contexts/DrawerContext'
 import PatientDetails from '@/components/worklist/PatientDetails'
-import type { Column, Patient } from '@/types/worklist'
+import type { ColumnDefinition, Patient } from '@/types/worklist'
 
 interface WorklistTableRowProps {
   row: Patient
-  columns: Column[]
+  columns: ColumnDefinition[]
   onClick?: () => void
 }
 

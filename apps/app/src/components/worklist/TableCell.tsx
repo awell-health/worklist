@@ -1,10 +1,10 @@
 // src/components/worklist/TableCell.tsx
-import type { Column } from '@/types/worklist'
+import type { ColumnDefinition } from '@/types/worklist'
 
 interface TableCellProps {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   value: any
-  column: Column
+  column: ColumnDefinition
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   onEdit?: (value: any) => void
 }
@@ -15,21 +15,21 @@ export default function TableCell({ value, column, onEdit }: TableCellProps) {
       case 'date':
         return new Date(value).toLocaleDateString()
 
-      case 'select':
-        return (
-          <select
-            className="select select-bordered select-sm"
-            value={value}
-            onChange={(e) => onEdit?.(e.target.value)}
-          >
-            <option value="">Select...</option>
-            {column.options?.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        )
+      // case 'select':
+      //   return (
+      //     <select
+      //       className="select select-bordered select-sm"
+      //       value={value}
+      //       onChange={(e) => onEdit?.(e.target.value)}
+      //     >
+      //       <option value="">Select...</option>
+      //         {column.options?.map((option) => (
+      //         <option key={option.value} value={option.value}>
+      //           {option.value}
+      //         </option>
+      //       ))}
+      //     </select>
+      //   )
 
       case 'tasks':
         return Array.isArray(value) ? (

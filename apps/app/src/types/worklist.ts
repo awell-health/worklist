@@ -11,9 +11,17 @@ export interface Patient {
   [key: string]: any;
 }
 
-export interface Column {
+export type ColumnDefinition = {
+  id: string;
   key: string;
-  label: string;
-  type: "text" | "date" | "select" | "tasks";
-  options?: string[]; // Only for 'select' type
+  name: string
+  type: "string" | "number" | "date" | "boolean" | "tasks" | "select"
+  description?: string
+  source?: string
+  options?: Array<{ value: string; color: string }>
+}
+
+export type WorklistDefinition = {
+  title: string
+  columns: ColumnDefinition[]
 }
