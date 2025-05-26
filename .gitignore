@@ -139,5 +139,6 @@ dist
 .DS_Store
 .turbo/cookies
 .turbo/daemon
+.turbo/cache
 
 dev/datastore/

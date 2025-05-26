@@ -40,12 +40,12 @@ This project is built using Next.js and Medplum, providing a healthcare-focused 
    ```
 
 2. **Start Development Environment**
-   ```bash
+```bash
    # Start the infrastructure (PostgreSQL, Redis, Medplum)
    pnpm run:infra
 
    # Start the development server
-   pnpm dev
+pnpm dev
    ```
 
 3. **Access the Applications**
