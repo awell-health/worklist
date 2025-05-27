@@ -28,7 +28,6 @@ export default function WorklistNavigation({ worklistDefinition, openSidebarWith
 
           {/* New worklist button */}
           <button
-            onClick={() => openSidebarWithMode("new-worklist")}
             className="flex items-center h-9 px-3 text-gray-600 hover:bg-gray-100 text-xs font-normal ml-2 mb-[-1px]"
           >
             <Plus className="h-3 w-3 mr-1" />

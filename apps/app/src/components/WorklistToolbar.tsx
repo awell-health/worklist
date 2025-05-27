@@ -8,9 +8,9 @@ interface WorklistToolbarProps {
     onSearch: (term: string) => void;
     onNewWorklist?: () => void;
     onEnrichData?: () => void;
-    currentView: string;
-    setCurrentView?: (view: string) => void;
-}
+    currentView: 'patient' | 'task';
+    setCurrentView?: (view: 'patient' | 'task') => void;
+    }
 
 export default function WorklistToolbar({
     searchTerm,
