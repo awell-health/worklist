@@ -15,7 +15,6 @@ interface WorklistTableProps {
   tableContainerRef?: React.RefObject<HTMLDivElement>;
   selectedRows: number[];
   toggleSelectAll: () => void;
-  columnsWithIds: ColumnDefinition[];
   worklistDefinition: WorklistDefinition;
   openSidebarWithMode: (mode: string) => void;
   isBlank: boolean;
@@ -28,7 +27,7 @@ interface WorklistTableProps {
   handleDragEnd?: (event: DragEndEvent) => void;
   handleRowHover: () => void;
   toggleSelectRow: (row: number) => void;
-  setIsAddSourceModalOpen: (open: boolean) => void;
+  setIsAddingIngestionSource: (open: boolean) => void;
   currentView: string;
 }
 
@@ -42,7 +41,6 @@ export default function WorklistTable({
   tableContainerRef,
   selectedRows, 
   toggleSelectAll, 
-  columnsWithIds, 
   worklistDefinition, 
   openSidebarWithMode, 
   isBlank, 
@@ -52,7 +50,7 @@ export default function WorklistTable({
   handleTaskClick, 
   handleRowHover, 
   toggleSelectRow, 
-  setIsAddSourceModalOpen, 
+  setIsAddingIngestionSource, 
   currentView, 
   handleDragEnd }: WorklistTableProps) {
   const sensors = useSensors(
@@ -95,7 +93,7 @@ export default function WorklistTable({
                       />
                     </div>
                   </TableHead>
-                  {columnsWithIds.map((column, index) => (
+                  {worklistDefinition.columns.map((column, index) => (
                     <SortableColumnHeader key={column.id} column={column} index={index} />
                   ))}
                   <TableHead className="text-xs font-normal text-gray-700 p-2">
@@ -160,55 +158,42 @@ export default function WorklistTable({
                         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                         key={index}
                         className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
-                      >
-                        {index === 0 ? (
-                          // biome-ignore lint/a11y/useButtonType: <explanation>
-                          <button
-                            className="btn text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                            onClick={() => setIsAddSourceModalOpen(true)}
-                          >
-                            + Add data
-                          </button>
-                        ) : null}
-                      </TableCell>
+                      />
                     ))}
                     <TableCell className="p-2" colSpan={2} />
                   </TableRow>
                 )}
-                {/* Always add an "Add data" row at the bottom if there's data */}
-                {tableData.length > 0 && (
-                  <TableRow className="border-b border-gray-200 hover:bg-gray-50">
-                    <TableCell className="w-10 p-0 pl-3">
-                      <div className="h-10 flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300"
-                          checked={false}
-                          onChange={() => { }}
-                          disabled
-                        />
-                      </div>
+                {/* Always add the "Add data" row at the bottom */}
+                <TableRow className="border-b border-gray-200 hover:bg-gray-50">
+                  <TableCell className="w-10 p-0 pl-3">
+                    <div className="h-10 flex items-center justify-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 rounded border-gray-300"
+                        checked={false}
+                        onChange={() => { }}
+                        disabled
+                      />
+                    </div>
+                  </TableCell>
+                  {worklistDefinition.columns.map((column, index) => (
+                    <TableCell
+                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                      key={index}
+                      className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
+                    >
+                      {index === 0 ? (
+                        <button
+                          className="btn btn-ghost btn-sm text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                          onClick={() => setIsAddingIngestionSource(true)}
+                        >
+                          + Add data
+                        </button>
+                      ) : null}
                     </TableCell>
-                    {worklistDefinition.columns.map((column, index) => (
-                      <TableCell
-                        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                        key={index}
-                        className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
-                      >
-                        {index === 0 ? (
-                          // biome-ignore lint/a11y/useButtonType: <explanation>
-                          <button
-                            className="btn text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                            onClick={() => setIsAddSourceModalOpen(true)}
-                          >
-                            + Add data
-                          </button>
-                        ) : null}
-                      </TableCell>
-                    ))}
-                    <TableCell className="p-2" colSpan={2} />
-                  </TableRow>
-                )}
+                  ))}
+                  <TableCell className="p-2" colSpan={2} />
+                </TableRow>
               </TableBody>
             </Table>
           </div>
