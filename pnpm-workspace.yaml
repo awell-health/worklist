@@ -1,9 +1,10 @@
 packages:
   - apps/*
   - packages/*
+engineStrict: true
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@tailwindcss/oxide'
+  - esbuild
   - sharp
 useNodeVersion: 22.16.0
-engineStrict: true
