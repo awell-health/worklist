@@ -3,11 +3,13 @@
 import { useState, useRef } from "react"
 import { Search, X } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Bot } from "@medplum/fhirtypes"
 
 type AddIngestionModalProps = {
   isOpen: boolean
   onClose: () => void
   onSelectSource: (category: string, service: string) => void
+  ingestionBots: Bot[]
 }
 
 // Function to get color based on service name
