@@ -134,6 +134,31 @@ services:
     networks:
       - wl-network
 
+  wl-logto:
+    image: svhd/logto:latest
+    entrypoint: ["sh", "-c", "npm run cli db seed -- --swe && npm start"]
+    ports:
+      - '3001:3001'
+      - '3002:3002'
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - ADMIN_PORT=3002
+      - ADMIN_DISABLE_LOCALHOST=false
+      - TRUST_PROXY_HEADER=true
+      - CASE_SENSITIVE_USERNAME=false
+      - PROJECT=logto
+      - DOMAIN=stack.localhost
+      - POSTGRES_USER=medplum
+      - POSTGRES_PASSWORD=medplum
+      - DB_URL=postgres://medplum:medplum@wl-postgres:5432/logto?sslmode=disable
+      
+    depends_on:
+      wl-postgres:
+        condition: service_healthy
+    networks:
+      - wl-network
+
   wl-pgweb:
     image: sosedoff/pgweb
     container_name: wl-pgweb
@@ -153,13 +178,14 @@ services:
   wl-wait-for-dependencies:
     image: ducktors/docker-wait-for-dependencies
     depends_on:
+      - wl-logto
       - wl-medplum-server
       - wl-medplum-app
       - wl-postgres
       - wl-redis
       - wl-pgweb
     container_name: wl-wait-for-dependencies
-    command: wl-medplum-server:8103 wl-postgres:5432 wl-redis:6379 wl-medplum-app:3000 wl-pgweb:8081
+    command: wl-medplum-server:8103 wl-postgres:5432 wl-redis:6379 wl-medplum-app:3000 wl-pgweb:8081 wl-logto:3001
     networks:
       - wl-network
 
