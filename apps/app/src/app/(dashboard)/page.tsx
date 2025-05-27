@@ -9,23 +9,21 @@ export default function WorklistPage() {
     <>
       <WorklistNavigation worklistDefinition={{ title: "Worklist 1" }} openSidebarWithMode={() => { }} />
       <WorklistToolbar searchTerm="" onSearch={() => { }} currentView="list" setCurrentView={() => { }} />
-      <div className="flex-1 overflow-auto">
-        <WorklistTable isLoading={false}
-          selectedRows={[]}
-          toggleSelectAll={() => { }}
-          columnsWithIds={[]}
-          worklistDefinition={{ title: "Worklist 1", columns: [] }}
-          openSidebarWithMode={() => { }}
-          isBlank={false} tableData={[]}
-          getCurrentViewData={() => {return []}} 
-          handlePDFClick={() => { }}
-          handleTaskClick={() => { }}
-          handleRowHover={() => { }}
-          toggleSelectRow={() => { }}
-          setIsAddSourceModalOpen={() => { }}
-          currentView="list"
-          handleDragEnd={() => { }} />
-      </div>
+      <WorklistTable isLoading={false}
+        selectedRows={[]}
+        toggleSelectAll={() => { }}
+        columnsWithIds={[]}
+        worklistDefinition={{ title: "Worklist 1", columns: [] }}
+        openSidebarWithMode={() => { }}
+        isBlank={false} tableData={[]}
+        getCurrentViewData={() => {return []}} 
+        handlePDFClick={() => { }}
+        handleTaskClick={() => { }}
+        handleRowHover={() => { }}
+        toggleSelectRow={() => { }}
+        setIsAddSourceModalOpen={() => { }}
+        currentView="list"
+        handleDragEnd={() => { }} />
       <WorklistFooter worklistDefinition={{ title: "Worklist 1", columns: [] }} getViewCounts={() => ({ rows: 0, label: "rows" })} isAISidebarOpen={false} toggleAISidebar={() => { }} navigateToHome={() => { }} />
     </>
   )
