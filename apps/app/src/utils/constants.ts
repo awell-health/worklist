@@ -1,12 +1,87 @@
 // src/utils/constants.ts
-import type { ColumnDefinition, Patient } from '@/types/worklist';
+import type { ColumnDefinition, Patient, WorklistDefinition } from '@/types/worklist';
 
-export const initialColumns: ColumnDefinition[] = [
-  { key: 'name', name: 'Patient Name', type: 'string', id: 'name' },
-  { key: 'dateOfBirth', name: 'Date of Birth', type: 'date', id: 'dateOfBirth' },
-  { key: 'gender', name: 'Gender', type: 'select', options: [{ value: 'Male', color: '#000000' }, { value: 'Female', color: '#000000' }, { value: 'Other', color: '#000000' }], id: 'gender' },
-  { key: 'tasks', name: 'Tasks', type: 'tasks', id: 'tasks' }
-];
+export const DEFAULT_WORKLIST_PATIENT_VIEW: WorklistDefinition = {
+  title: "New Patient Worklist",
+  columns: [
+    {
+      name: "Patient Name",
+      type: "string",
+      key: "name",
+      description: "Patient's full name",
+      id: "name",
+    },
+    {
+      name: "Date of Birth",
+      type: "date",
+      key: "birthDate",
+      description: "Patient's date of birth",
+      id: "birthDate",
+    },
+    {
+      name: "Gender",
+      type: "string",
+      key: "gender",
+      description: "Patient's gender",  
+      id: "gender",
+    },
+    {
+      name: "Tasks",
+      type: "string",
+      key: "taskDescriptionsSummary",
+      description: "Tasks for this patient",
+      id: "taskDescriptionsSummary",
+    },
+  ],
+}
+
+export const DEFAULT_WORKLIST_TASK_VIEW: WorklistDefinition = {
+  title: "New Task Worklist",
+  columns: [
+    {
+      name: "Task ID",
+      type: "string",
+      key: "id",
+      description: "Task ID",
+      id: "taskId",
+    },
+    {
+      name: "Patient Name",
+      type: "string",
+      key: "patientName",
+      description: "Patient's full name",
+      id: "patientName",
+    },  
+    {
+      name: "Description",
+      type: "string",
+      key: "description",
+      description: "Task description",
+      id: "description",
+    },
+    {
+      name: "Status",
+      type: "string",
+      key: "status",
+      description: "Task status",
+      id: "status",
+    },
+    {
+      name: "Priority",
+      type: "string",
+      key: "priority",
+      description: "Task priority",
+      id: "priority"
+    },
+    {
+      name: "Due Date",
+      type: "date",
+      key: "executionPeriod.end",
+      description: "Task due date",
+      id: "executionPeriod.end"
+    }
+  ],
+}
 
 export const initialData: Patient[] = [
   {

@@ -63,6 +63,12 @@ importers:
       '@dnd-kit/utilities':
         specifier: ^3.2.2
         version: 3.2.2(react@19.1.0)
+      '@medplum/core':
+        specifier: ^4.1.5
+        version: 4.1.5
+      '@medplum/fhirtypes':
+        specifier: ^4.1.5
+        version: 4.1.5
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.3)
@@ -716,6 +722,19 @@ packages:
   '@lukeed/ms@2.0.2':
     resolution: {integrity: sha512-9I2Zn6+NJLfaGoz9jN3lpwDgAYvfGeNYdbAIjJOqzs4Tpc+VU3Jqq4IofSUBKajiDS8k9fZIg18/z13mpk1bsA==}
     engines: {node: '>=8'}
+
+  '@medplum/core@4.1.5':
+    resolution: {integrity: sha512-DeYJ931rJ2/Ioqe1FsKSdiJy2j22f64e0LAuDGrCiAncP6aQD5neBnFmLSo82AFTXn+e8OeUv+uvgp54S7WF5g==}
+    engines: {node: '>=20.0.0'}
+    peerDependencies:
+      pdfmake: ^0.2.5
+    peerDependenciesMeta:
+      pdfmake:
+        optional: true
+
+  '@medplum/fhirtypes@4.1.5':
+    resolution: {integrity: sha512-VKijec1CAPhxQjdEQV/MjDNpsLo/vYtZE3HzHAW9wfh+CTVMk9qxYVuigG7vXn4n+jU+EcxpjgF7ScgeKBqczQ==}
+    engines: {node: '>=20.0.0'}
 
   '@next/env@15.3.2':
     resolution: {integrity: sha512-xURk++7P7qR9JG1jJtLzPzf0qEvqCN0A/T3DXf8IPMKo9/6FfjxtEffRJIIew/bIL4T3C2jLLqBor8B/zVlx6g==}
@@ -3518,6 +3537,10 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@lukeed/ms@2.0.2': {}
+
+  '@medplum/core@4.1.5': {}
+
+  '@medplum/fhirtypes@4.1.5': {}
 
   '@next/env@15.3.2': {}
 

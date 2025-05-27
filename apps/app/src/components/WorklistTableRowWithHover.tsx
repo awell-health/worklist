@@ -31,6 +31,7 @@ export default function WorklistTableRowWithHover({
     currentView,
     row
 }: WorklistTableRowWithHoverProps) {
+
     const rowRef = useRef<HTMLTableRowElement>(null)
 
     // Handle hover events
@@ -47,7 +48,7 @@ export default function WorklistTableRowWithHover({
     return (
         <TableRow
             ref={rowRef}
-            className="border-b hover:bg-gray-50"
+            className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             data-row-id={rowIndex}
@@ -66,7 +67,7 @@ export default function WorklistTableRowWithHover({
                 <TableCell
                     key={`${rowIndex}-${// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                         colIndex}`}
-                    className={cn("py-1 px-2 border-r text-xs max-w-[200px]", "truncate")}
+                    className={cn("py-1 px-2 border-r border-gray-200 text-xs max-w-[200px]", "truncate")}
                     title={typeof row[column.name] === "string" ? row[column.name] : ""}
                 >
                     {column.name === "Discharge Summary" && row[column.name] ? (
@@ -91,10 +92,10 @@ export default function WorklistTableRowWithHover({
                             }
                         >
                             <CheckSquare className="h-3 w-3 mr-1" />
-                            <span className="truncate">{row[column.name] || ""}</span>
+                            <span className="truncate">{row[column.key] || ""}</span>
                         </button>
                     ) : (
-                        <div className="truncate">{row[column.name] || ""}</div>
+                        <div className="truncate">{row[column.key] || ""}</div>
                     )}
                 </TableCell>
             ))}

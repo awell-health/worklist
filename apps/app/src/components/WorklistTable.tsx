@@ -124,8 +124,8 @@ export default function WorklistTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {getCurrentViewData().length > 0 ? (
-                  getCurrentViewData().map((row, rowIndex) => (
+                {tableData.length > 0 ? (
+                  tableData.map((row, rowIndex) => (
                     <WorklistTableRowWithHover
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={rowIndex}

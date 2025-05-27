@@ -13,9 +13,8 @@ interface WorklistNavigationProps {
 
 export default function WorklistNavigation({ worklistDefinition, openSidebarWithMode }: WorklistNavigationProps) {
     return (
-        <div className="bg-gray-50 relative pt-4">
-        <div className="h-9 flex items-end px-2">
-          {/* Border line that creates the tab effect */}
+      <div className="bg-gray-50 relative pt-4">
+        <div className="h-9 flex items-end px-2">          {/* Border line that creates the tab effect */}
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-200"></div>
 
           {/* Active tab */}
