@@ -1,5 +1,6 @@
-import autoload from "@fastify/autoload";
-import cors from "@fastify/cors";
+import autoload from "@fastify/autoload"
+import cors from "@fastify/cors"
+import arecibo from "arecibo"
 import Fastify, {
   type FastifyInstance,
   type FastifyServerOptions,
@@ -19,6 +20,13 @@ export async function createApp(
   const app = Fastify(opts);
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
+
+  await app.register(arecibo, {
+    message: 'Worklist services health check',
+    logLevel: 'info',
+    readinessURL: '/healthz',
+    livenessURL: '/liveness',
+  });
 
   await app.register(cors, { origin: true });
   await app.register(autoload, { dir: resolve(__dirname, "plugins") });
