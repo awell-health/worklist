@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Send } from "lucide-react"
 import { ChatMessage } from "@/app/actions/ai-chat"
 import ReactMarkdown from "react-markdown"
@@ -20,10 +20,14 @@ export default function AIConversationDrawer({
   const [isLoading, setIsLoading] = useState(false)
   const [isInitialLoading, setIsInitialLoading] = useState(true)
   const [conversation, setConversation] = useState<ChatMessage[]>([])
+  const initialMessageLoaded = useRef(false)
 
   // Load initial message
   useEffect(() => {
     const loadInitialMessage = async () => {
+      if (initialMessageLoaded.current) return;
+      initialMessageLoaded.current = true;
+      
       try {
         const initialMessage = await getInitialMessage()
         setConversation([{ role: "assistant", content: initialMessage }])
