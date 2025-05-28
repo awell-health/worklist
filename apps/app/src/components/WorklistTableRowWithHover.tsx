@@ -5,6 +5,7 @@ import { TableRow, TableCell } from "./ui/table"
 import { File, CheckSquare } from "lucide-react"
 import { cn } from "../lib/utils"
 import { formatTasksForPatientView, renderTaskStatus } from "@/lib/task-utils"
+import { getNestedValue } from "@/lib/fhir-path"
 import type { ColumnDefinition } from "@/types/worklist"
 
 interface WorklistTableRowWithHoverProps {
@@ -31,6 +32,8 @@ export default function WorklistTableRowWithHover({
     currentView,
     row
 }: WorklistTableRowWithHoverProps) {
+
+    console.log("row", row)
 
     const rowRef = useRef<HTMLTableRowElement>(null)
 
@@ -79,11 +82,11 @@ export default function WorklistTableRowWithHover({
                             <File className="h-3 w-3 mr-1" />
                             {row[column.name]}
                         </button>
-                    ) : column.name === "Task" && currentView === "Patient view" && row._raw?.tasks ? (
+                    ) : column.type === "tasks" && currentView === "Patient view" && row._raw?.tasks ? (
                         formatTasksForPatientView(row._raw.tasks, row["Patient Name"], handleTaskClick)
                     ) : column.name === "Task Status" && row["Task Status"] ? (
                         renderTaskStatus(row["Task Status"], row.Task, row["Patient Name"], handleTaskClick)
-                    ) : column.name === "Task" ? (
+                    ) : column.type === "tasks" ? (
                         // biome-ignore lint/a11y/useButtonType: <explanation>
                         <button
                             className="text-xs h-6 px-2 text-blue-500 hover:bg-blue-50 flex items-center justify-start w-full"
@@ -94,8 +97,23 @@ export default function WorklistTableRowWithHover({
                             <CheckSquare className="h-3 w-3 mr-1" />
                             <span className="truncate">{row[column.key] || ""}</span>
                         </button>
+                    ) : column.type === "array" ? (
+                        <div className="flex flex-wrap gap-1">
+                            {Array.isArray(getNestedValue(row, column.key)) ? (
+                                getNestedValue(row, column.key).map((item: any, index: number) => (
+                                    <span 
+                                        key={index}
+                                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
+                                    >
+                                        {typeof item === 'object' ? Object.values(item).join(', ') : String(item)}
+                                    </span>
+                                ))
+                            ) : (
+                                <span className="text-gray-500">-</span>
+                            )}
+                        </div>
                     ) : (
-                        <div className="truncate">{row[column.key] || ""}</div>
+                        <div className="truncate">{getNestedValue(row, column.key) || ""}</div>
                     )}
                 </TableCell>
             ))}

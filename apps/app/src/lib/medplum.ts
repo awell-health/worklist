@@ -31,7 +31,6 @@ export class MedplumStore {
           throw new Error('Medplum credentials are missing. Please check your .env.local file.');
         }
 
-        console.log('Initializing Medplum client with base URL:', baseUrl);
         await this.client.startClientLogin(clientId, clientSecret);
         this.initialized = true;
 

@@ -101,7 +101,7 @@ export default function WorklistTable({
                       {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                       <button
                         className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
-                        onClick={() => openSidebarWithMode("add-enrichment")}
+                        onClick={() => openSidebarWithMode("ai-conversation")}
                       >
                         <Plus className="mr-1 h-3 w-3" /> Add column
                       </button>
