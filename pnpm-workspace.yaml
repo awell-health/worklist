@@ -6,5 +6,6 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@tailwindcss/oxide'
   - esbuild
+  - fhirpath
   - sharp
 useNodeVersion: 22.16.0

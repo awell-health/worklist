@@ -142,3 +142,5 @@ dist
 .turbo/cache
 
 dev/datastore/
+
+temp/
