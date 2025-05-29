@@ -9,7 +9,7 @@ import { AddIngestionModal } from "./components/AddIngestionModal";
 import AIConversationDrawer from "@/components/AIConversationDrawer";
 import { DEFAULT_WORKLIST_PATIENT_VIEW, DEFAULT_WORKLIST_TASK_VIEW } from "@/utils/constants";
 import { useMedplumStore } from "@/hooks/use-medplum-store";
-import { chatWithAI, ChatMessage, columnAiAssistantMessageHandler } from "../actions/ai-chat";
+import { ChatMessage, columnAiAssistantMessageHandler } from "../actions/ai-chat";
 import { WorklistDefinition } from "@/types/worklist";
 
 export default function WorklistPage() {
@@ -18,7 +18,7 @@ export default function WorklistPage() {
   const [isAddingIngestionSource, setIsAddingIngestionSource] = useState(false);
   const [isAISidebarOpen, setIsAISidebarOpen] = useState(false);
   const { openDrawer, closeDrawer } = useDrawer();
-  const { patients, tasks } = useMedplumStore();
+  const { patients, tasks, addTaskOwner } = useMedplumStore();
   const [patientViewWorklistDefinition, setPatientViewWorklistDefinition] = useState<WorklistDefinition>();
   const [taskViewWorklistDefinition, setTaskViewWorklistDefinition] = useState<WorklistDefinition>();
   const [selectedWorklistDefinition, setSelectedWorklistDefinition] = useState<WorklistDefinition>();
@@ -32,17 +32,16 @@ export default function WorklistPage() {
     setSelectedWorklistDefinition(currentView === 'patient' ? patientViewWorklistDefinition : taskViewWorklistDefinition);
   }, [currentView, patientViewWorklistDefinition, taskViewWorklistDefinition])
 
-  const getInitialMessage = useCallback(async () => {
-    const result = await columnAiAssistantMessageHandler(
-      [{ role: "user", content: "Can you share an extensive list of all columns that are available in the data? Including the inputs" }], 
-      currentView === 'patient' ? patients : tasks, 
-      selectedWorklistDefinition
-    );
-    return result.response;
-  }, [currentView, patients, tasks, selectedWorklistDefinition]);
+  const onAddColumn = () => {
+      const getInitialMessage = useCallback(async () => {
+        const result = await columnAiAssistantMessageHandler(
+          [{ role: "user", content: "Can you share an extensive list of all columns that are available in the data? Including the inputs" }], 
+          currentView === 'patient' ? patients : tasks, 
+          selectedWorklistDefinition
+        );
+        return result.response;
+      }, [currentView, patients, tasks, selectedWorklistDefinition]);
 
-  const handleOpenSidebar = (mode: string) => {
-    if (mode === "ai-conversation") {
       const handleSendMessage = async (conversation: ChatMessage[]) => {
         const result = await columnAiAssistantMessageHandler(conversation, currentView === 'patient' ? patients : tasks, selectedWorklistDefinition);
         if (result.needsDefinitionUpdate) {
@@ -57,25 +56,29 @@ export default function WorklistPage() {
         return result.response;
       };
       openDrawer(<AIConversationDrawer getInitialMessage={getInitialMessage} onClose={closeDrawer} onSendMessage={handleSendMessage} />, "Column Creator Assistant");
-    }
   };
+
+  const onNewWorklist = () => {
+    alert("TODO: Implement new worklist");
+  }
 
   return (
     <>
-      <WorklistNavigation worklistDefinition={{ title: "New worklist" }} openSidebarWithMode={handleOpenSidebar} />
+      <WorklistNavigation worklistDefinition={{ title: "New worklist" }} onNewWorklist={onNewWorklist} />
       <WorklistToolbar searchTerm="" onSearch={() => {}} currentView={currentView} setCurrentView={setCurrentView} />
       <WorklistTable isLoading={isLoading && !selectedWorklistDefinition}
         selectedRows={[]}
         toggleSelectAll={() => {}}
         worklistDefinition={selectedWorklistDefinition ?? DEFAULT_WORKLIST_PATIENT_VIEW}
-        openSidebarWithMode={handleOpenSidebar}
+        onAddColumn={onAddColumn}
         isBlank={false} 
         tableData={currentView === 'patient' ? patients : tasks}
-        getCurrentViewData={() => currentView === 'patient' ? patients : tasks} 
         handlePDFClick={() => {}}
         handleTaskClick={() => {}}
         handleRowHover={() => {}}
         toggleSelectRow={() => {}}
+        // TODO: Hardcoded for now
+        handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
         setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
         currentView={currentView}
         handleDragEnd={() => {}} />
@@ -87,7 +90,12 @@ export default function WorklistPage() {
           ingestionBots={[]}
         />
       )}
-      <WorklistFooter worklistDefinition={{ title: "Worklist 1", columns: [] }} getViewCounts={() => ({ rows: 0, label: "rows" })} isAISidebarOpen={isAISidebarOpen} toggleAISidebar={() => setIsAISidebarOpen(!isAISidebarOpen)} navigateToHome={() => {}} />
+      <WorklistFooter 
+        columnsCounter={selectedWorklistDefinition?.columns.length ?? 0} 
+        rowsCounter={currentView === 'patient' ? patients.length : tasks.length} 
+        navigateToHome={() => {}} 
+        isAISidebarOpen={isAISidebarOpen}
+      />
     </>
   );
 }

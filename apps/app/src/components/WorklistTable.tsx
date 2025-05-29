@@ -16,18 +16,17 @@ interface WorklistTableProps {
   selectedRows: number[];
   toggleSelectAll: () => void;
   worklistDefinition: WorklistDefinition;
-  openSidebarWithMode: (mode: string) => void;
+  onAddColumn: () => void;
   isBlank: boolean;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   tableData: Record<string, any>[];
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  getCurrentViewData: () => Record<string, any>[];
   handlePDFClick: () => void;
   handleTaskClick: () => void;
   handleDragEnd?: (event: DragEndEvent) => void;
   handleRowHover: () => void;
   toggleSelectRow: (row: number) => void;
   setIsAddingIngestionSource: (open: boolean) => void;
+  handleAssigneeClick: (taskId: string) => void;
   currentView: string;
 }
 
@@ -42,15 +41,15 @@ export default function WorklistTable({
   selectedRows, 
   toggleSelectAll, 
   worklistDefinition, 
-  openSidebarWithMode, 
+  onAddColumn,
   isBlank, 
   tableData, 
-  getCurrentViewData, 
   handlePDFClick, 
   handleTaskClick, 
   handleRowHover, 
   toggleSelectRow, 
   setIsAddingIngestionSource, 
+  handleAssigneeClick,
   currentView, 
   handleDragEnd }: WorklistTableProps) {
   const sensors = useSensors(
@@ -101,7 +100,7 @@ export default function WorklistTable({
                       {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                       <button
                         className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
-                        onClick={() => openSidebarWithMode("ai-conversation")}
+                        onClick={() => onAddColumn()}
                       >
                         <Plus className="mr-1 h-3 w-3" /> Add column
                       </button>
@@ -112,7 +111,6 @@ export default function WorklistTable({
                           {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                           <button
                             className="btn text-xs font-normal h-8 px-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-center"
-                            onClick={() => openSidebarWithMode("generate-worklist")}
                           >
                             Generate worklist
                           </button>
@@ -131,6 +129,7 @@ export default function WorklistTable({
                       key={rowIndex}
                       row={row}
                       rowIndex={rowIndex}
+                      handleAssigneeClick={() => handleAssigneeClick(row["id"])}
                       columns={worklistDefinition.columns}
                       selectedRows={selectedRows}
                       toggleSelectRow={toggleSelectRow}
