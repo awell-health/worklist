@@ -33,6 +33,8 @@ export const list = async (app: FastifyInstance) => {
     url: "/worklists",
     handler: async (request, reply) => {
       const worklists = await request.store.em.find(Worklist, {}, { populate: ["columns"] });
+
+      reply.statusCode = 200;
       return worklists.map((worklist) => ({
         id: worklist.id,
         name: worklist.name,

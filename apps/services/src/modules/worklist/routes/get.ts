@@ -51,6 +51,7 @@ export const get = async (app: FastifyInstance) => {
         throw new NotFoundError("Worklist not found");
       }
 
+      reply.statusCode = 200;
       return {
         id: worklist.id,
         name: worklist.name,

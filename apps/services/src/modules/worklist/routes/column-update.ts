@@ -5,7 +5,7 @@ import { ColumnType } from "../entities/worklist-column.entity.js";
 import { NotFoundError } from "@/errors/not-found-error.js";
 
 const operationResponse = z.object({
-  success: z.literal(true),
+  success: z.boolean(),
   error: z.undefined(),
 })
 
@@ -47,7 +47,7 @@ export const columnUpdate = async (app: FastifyInstance) => {
         const { id, columnId } = request.params as { id: string; columnId: string };
         const column = await request.store.worklistColumn.findOne({
           id: Number(columnId),
-          worklist: { id: Number(id) },
+          worklist: { id: Number(id), tenantId: '' },
         });
   
         if (!column) {
@@ -58,6 +58,7 @@ export const columnUpdate = async (app: FastifyInstance) => {
         request.store.em.assign(column, updateData);
         await request.store.em.flush();
   
+        reply.statusCode = 200;
         return { success: true };  
     },
   });

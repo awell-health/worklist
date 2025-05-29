@@ -39,7 +39,10 @@ export const columnList = async (app: FastifyInstance) => {
     handler: async (request, reply) => {
       const { id } = request.params as { id: string };
       const worklist = await request.store.worklist.findOne(
-        { id: Number(id) },
+        { 
+            id: Number(id),
+            tenantId: '',
+        },
         { populate: ["columns"] }
       );
 
@@ -47,6 +50,7 @@ export const columnList = async (app: FastifyInstance) => {
         throw new NotFoundError("Worklist not found");
       }
 
+      reply.statusCode = 200;
       return worklist.columns.map((column) => ({
         id: column.id,
         name: column.name,

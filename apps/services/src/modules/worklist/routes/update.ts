@@ -53,6 +53,7 @@ export const update = async (app: FastifyInstance) => {
       if (description !== undefined) worklist.description = description;
       await request.store.em.flush();
 
+      reply.statusCode = 200;
       return {
         id: worklist.id,
         name: worklist.name,

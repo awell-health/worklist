@@ -1,10 +1,17 @@
-import { Entity, PrimaryKey, Property, OneToMany, Collection } from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, OneToMany, Collection, Index } from '@mikro-orm/core';
 import { WorklistColumn } from './worklist-column.entity.js';
 
 @Entity()
+@Index({ properties: ['tenantId', 'userId'] })
 export class Worklist {
   @PrimaryKey()
   id!: number;
+
+  @Property()
+  tenantId!: string;
+
+  @Property()
+  userId?: string;
 
   @Property()
   name!: string;
