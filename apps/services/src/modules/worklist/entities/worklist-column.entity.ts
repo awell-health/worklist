@@ -2,14 +2,13 @@ import { Entity, PrimaryKey, Property, ManyToOne, Enum } from '@mikro-orm/core';
 import { Worklist } from './worklist.entity.js';
 
 export const ColumnType = {
-  TEXT: 'text',
+  STRING: 'string',
   NUMBER: 'number',
   DATE: 'date',
   BOOLEAN: 'boolean',
+  TASKS: 'tasks',
   SELECT: 'select',
-  MULTI_SELECT: 'multi_select',
-  USER: 'user',
-  FILE: 'file',
+  ARRAY: 'array',
   CUSTOM: 'custom'
 } as const;
 
@@ -18,6 +17,9 @@ export type ColumnType = typeof ColumnType[keyof typeof ColumnType];
 export interface ColumnProperties {
   required?: boolean;
   unique?: boolean;
+  description?: string;
+  source?: string;
+  options?: { value: string; color: string }[];
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   defaultValue?: any;
   validation?: {
@@ -39,6 +41,9 @@ export class WorklistColumn {
   id!: number;
 
   @Property()
+  key!: string;
+
+  @Property()
   name!: string;
 
   @Enum({ items: () => ColumnType })
@@ -54,6 +59,6 @@ export class WorklistColumn {
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   metadata?: Record<string, any>;
 
-  @ManyToOne(() => Worklist)
+  @ManyToOne(() => Worklist, { deleteRule: 'CASCADE' })
   worklist!: Worklist;
 } 

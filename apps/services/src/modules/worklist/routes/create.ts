@@ -39,8 +39,11 @@ export const create = async (app: FastifyInstance) => {
         description,
         createdAt: new Date(),
         updatedAt: new Date(),
+        tenantId: '',
       });
       await request.store.em.persistAndFlush(worklist);
+      
+      reply.statusCode = 201;
       return {
         id: worklist.id,
         name: worklist.name,

@@ -41,6 +41,8 @@ export const deleteWorklist = async (app: FastifyInstance) => {
         throw new NotFoundError("Worklist not found");
       }
       await request.store.em.removeAndFlush(worklist);
+
+      reply.statusCode = 200;
       return { success: true };
     },
   });
