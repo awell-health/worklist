@@ -9,7 +9,8 @@ export const ColumnType = {
   TASKS: 'tasks',
   SELECT: 'select',
   ARRAY: 'array',
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
+  ASSIGNEE: 'assignee'
 } as const;
 
 export type ColumnType = typeof ColumnType[keyof typeof ColumnType];

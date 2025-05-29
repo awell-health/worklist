@@ -129,8 +129,8 @@ describe('getNestedValue', () => {
 
     describe('Edge Cases', () => {
         it('should handle null/undefined values', () => {
-            expect(getNestedValue(testData, 'nonexistent.path')).toBe('');
-            expect(getNestedValue(testData, 'telecom[999].value')).toBe('');
+            expect(getNestedValue(testData, 'nonexistent.path')).toBeUndefined();
+            expect(getNestedValue(testData, 'telecom[999].value')).toBeUndefined();
         });
 
         it('should handle array values', () => {
@@ -138,7 +138,10 @@ describe('getNestedValue', () => {
         });
 
         it('should handle object values', () => {
-            expect(getNestedValue(testData, 'author')).toBe('Flavio Ferreira, Practitioner/123');
+            expect(getNestedValue(testData, 'author')).toEqual({
+                display: "Flavio Ferreira",
+                reference: "Practitioner/123"
+            });
         });
     });
 

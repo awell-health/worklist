@@ -3,23 +3,14 @@
 import { Home, MessageSquare, RotateCcw, History } from 'lucide-react'
 import type React from 'react'
 
-interface WorklistDefinition {
-    title: string;
-    columns: {
-        name: string;
-        label: string;
-    }[];
-}
-
 interface WorklistFooterProps {
-    worklistDefinition: WorklistDefinition;
-    getViewCounts: () => { rows: number, label: string };
+    columnsCounter: number;
+    rowsCounter: number;
     isAISidebarOpen: boolean;
-    toggleAISidebar: () => void;
     navigateToHome: () => void;
 }
 
-export default function WorklistFooter({ worklistDefinition, getViewCounts, isAISidebarOpen, toggleAISidebar, navigateToHome }: WorklistFooterProps) {
+export default function WorklistFooter({ columnsCounter, rowsCounter, isAISidebarOpen, navigateToHome }: WorklistFooterProps) {
     return (
         <div className="border-t border-gray-200 p-2 flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -39,16 +30,14 @@ export default function WorklistFooter({ worklistDefinition, getViewCounts, isAI
                     // size="sm"
                     className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
                 >
-                    {`${worklistDefinition.columns.length} columns`}
+                    {`${columnsCounter} columns`}
                 </button>
                 <button
                     // variant="ghost"
                     // size="sm"
                     className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
                 >
-                    {getViewCounts().rows > 0
-                        ? `${getViewCounts().rows} ${getViewCounts().label}`
-                        : `0 ${getViewCounts().label}`}
+                    {`${rowsCounter} rows`}
                 </button>
             </div>
             <div className="flex items-center space-x-2">
@@ -74,7 +63,6 @@ export default function WorklistFooter({ worklistDefinition, getViewCounts, isAI
                     // size="sm"
                     className={`btn text-xs font-normal h-8 px-2 flex items-center justify-center ${isAISidebarOpen ? "bg-blue-500 text-white" : "text-gray-700"
                         }`}
-                    onClick={toggleAISidebar}
                     title="AI Assistant"
                 >
                     <MessageSquare className="h-3 w-3" />

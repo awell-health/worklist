@@ -79,6 +79,13 @@ export const DEFAULT_WORKLIST_TASK_VIEW: WorklistDefinition = {
       key: "executionPeriod.end",
       description: "Task due date",
       id: "executionPeriod.end"
+    },
+    {
+      name: "Assignee",
+      type: "assignee",
+      key: "owner.display",
+      description: "Task assignee",
+      id: "assignee"
     }
   ],
 }

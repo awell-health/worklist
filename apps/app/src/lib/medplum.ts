@@ -1,5 +1,5 @@
 import { MedplumClient } from '@medplum/core';
-import { Patient, Task, Bundle, Subscription, Parameters, Bot } from '@medplum/fhirtypes';
+import { Patient, Task, Bundle, Subscription, Parameters, Bot, Practitioner } from '@medplum/fhirtypes';
 
 const medplum = new MedplumClient({
   baseUrl: process.env.NEXT_PUBLIC_MEDPLUM_BASE_URL || 'http://localhost:8103',
@@ -224,6 +224,31 @@ export class MedplumStore {
       return await this.client.updateResource(updatedTask);
     } catch (error) {
       console.error('Error adding note to task:', error);
+      throw error;
+    }
+  }
+
+  async addTaskOwner(taskId: string, userId: string): Promise<Task> {
+    await this.initialize();
+    try {
+      const task = await this.client.readResource('Task', taskId) as Task;
+      const practitioner = await this.client.readResource('Practitioner', userId) as Practitioner;
+
+      
+      // Update the task owner
+      const updatedTask = {
+        ...task,
+        resourceType: 'Task',
+        owner: {
+          display: practitioner.name?.[0]?.given?.[0] + ' ' + practitioner.name?.[0]?.family,
+          reference: `Practitioner/${userId}`,
+          type: 'Practitioner' as const
+        }
+      } as Task;
+
+      return await this.client.updateResource(updatedTask) as Task;
+    } catch (error) {
+      console.error('Error updating task owner:', error);
       throw error;
     }
   }

@@ -15,8 +15,11 @@ import fhirpath from 'fhirpath';
  */
 export const getNestedValue = (obj: Record<string, any>, path: string): any | any[] => {
     try {
-        return fhirpath.evaluate(obj, path);
-
+        const result = fhirpath.evaluate(obj, path);
+        if(result?.length == 1) {
+            return result[0];
+        }
+        return result.length == 0 ? undefined : result;
     } catch (error) {
         console.error('Error evaluating FHIRPath:', error);
         return '';

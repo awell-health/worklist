@@ -15,7 +15,7 @@ export type ColumnDefinition = {
   id: string;
   key: string;
   name: string
-  type: "string" | "number" | "date" | "boolean" | "tasks" | "select" | "array"
+  type: "string" | "number" | "date" | "boolean" | "tasks" | "select" | "array" | "assignee"
   description?: string
   source?: string
   options?: Array<{ value: string; color: string }>

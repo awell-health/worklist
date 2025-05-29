@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bot, Patient, Task } from '@medplum/fhirtypes';
+import { Bot, Patient, Practitioner, Task } from '@medplum/fhirtypes';
 import { medplumStore } from '@/lib/medplum';
 
 // Types for our worklist data
@@ -79,6 +79,7 @@ export function useMedplumStore(): {
   error: Error | null;
   accessToken: string | null;
   addNotesToTask: (taskId: string, notes: string) => Promise<Task>;
+  addTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>;
 } {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -100,6 +101,19 @@ export function useMedplumStore(): {
     [patients, tasks]
   );
 
+  const updateResource = <T extends { id?: string }>(
+    currentResources: T[],
+    updatedResource: T
+  ): T[] => {
+    const resourceIndex = currentResources.findIndex(r => r.id === updatedResource.id);
+    if (resourceIndex === -1) {
+      return [...currentResources, updatedResource];
+    }
+    const newResources = [...currentResources];
+    newResources[resourceIndex] = updatedResource;
+    return newResources;
+  };
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -118,18 +132,7 @@ export function useMedplumStore(): {
         setEnrichmentBots(loadedEnrichmentBots);
         setConnectorBots(loadedConnectorBots);
         setAccessToken(loadedAccessToken || null);
-        const updateResource = <T extends { id?: string }>(
-          currentResources: T[],
-          updatedResource: T
-        ): T[] => {
-          const resourceIndex = currentResources.findIndex(r => r.id === updatedResource.id);
-          if (resourceIndex === -1) {
-            return [...currentResources, updatedResource];
-          }
-          const newResources = [...currentResources];
-          newResources[resourceIndex] = updatedResource;
-          return newResources;
-        };
+    
 
         medplumStore.subscribeToTasks((updatedTask) => {
           setTasks(currentTasks => updateResource(currentTasks, updatedTask));
@@ -147,8 +150,16 @@ export function useMedplumStore(): {
     loadData();
   }, []);
 
-  function addNotesToTask(taskId: string, note: string) {
-    return medplumStore.addNoteToTask(taskId, note);
+  async function addNotesToTask(taskId: string, note: string) {
+    const task = await medplumStore.addNoteToTask(taskId, note);
+    setTasks(currentTasks => updateResource(currentTasks, task));
+    return task;
+  }
+
+  async function addTaskOwner(taskId: string, authenticatedUserId: string) {
+    const task = await medplumStore.addTaskOwner(taskId, authenticatedUserId);
+    setTasks(currentTasks => updateResource(currentTasks, task));
+    return task;
   }
 
   return {
@@ -160,6 +171,7 @@ export function useMedplumStore(): {
     isLoading,
     accessToken,
     error,
-    addNotesToTask
+    addNotesToTask,
+    addTaskOwner
   };
 } 
