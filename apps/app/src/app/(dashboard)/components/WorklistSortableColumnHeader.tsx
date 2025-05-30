@@ -212,7 +212,6 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
         sortConfig={sortConfig}
         filterValue={filterValue}
         onFilter={onFilter}
-        showColumnKey={true}
       />
     </TableHead>
   )

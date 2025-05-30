@@ -2,10 +2,22 @@ import { useState, useEffect, useMemo } from 'react';
 import { Bot, Patient, Practitioner, Task } from '@medplum/fhirtypes';
 import { medplumStore } from '@/lib/medplum';
 
+
+// REFACTOR NEEDED:
+// This was a quick hack to get something working, it needs a lot of work to create a proper data store for frontend
+// 1. this is mega messy for now, we should move this to a small database for frontend and use medplum just to populate that database
+// This will give us a lot more speed on frontend
+// 2. Also the medplum store currently is storing everything, we should likely have different stores for different types of data
+// This will make it easier to manage and extend
+// 3. We should not be using any as WorklistPatient, WorklistTask etc. We should be using proper types
+// 4. Likely we only need a data set that can be flattened by a single table, and then on view time we do grouping and filtering
+// meaning that the patients view is tasks grouped by patient, this might be able to happens UI layer, or not, needs more thought
+
 // Types for our worklist data
 export type WorklistPatient = {
   id: string;
   name: string;
+  tasks: WorklistTask[];
   [key: string]: any; // For dynamic columns
 };
 
@@ -28,7 +40,7 @@ function getPatientName(patient: Patient): string {
   return `${name.given?.join(' ') || ''} ${name.family || ''}`.trim();
 }
 
-const mapMedplumDataToWorklistFormat = (
+const mapPatientsToWorklistPatients = (
   patients: Patient[],
   tasks: Task[]
 ): WorklistPatient[] => {
@@ -38,34 +50,32 @@ const mapMedplumDataToWorklistFormat = (
     const rawPatient = patient as Patient;
 
     return {
-      id: patient.id || '',
-
       ...rawPatient,
+      id: patient.id || '',
       name: getPatientName(patient),
       taskDescriptionsSummary: taskDescriptions,
-      tasks: patientTasks.map(task => ({
-        description: task.description,
-        status: task.status,
-        priority: task.priority,
-        dueDate: task.executionPeriod?.end
-      }))
+      tasks: patientTasks.map(task => taskToWorklistData(patient, task))
     };
   });
 };
 
-const mapTaskToWorklistData = (  patients: Patient[], tasks: Task[]): WorklistTask[] => {
+const taskToWorklistData = (patient: Patient | undefined, task: Task): WorklistTask => {
+  return {
+    ...task,
+    id: task.id || '',
+    status: task.status || 'unknown',
+    priority: task.priority,
+    description: task.description || '',
+    patientId: patient?.id || '',
+    patientName: patient ? getPatientName(patient) : '',
+    
+  };
+}
+
+const mapTasksToWorklistTasks = (  patients: Patient[], tasks: Task[]): WorklistTask[] => {
   return tasks.map(task => {
     const patient = patients.find(p => `${p.resourceType}/${p.id}` === task.for?.reference);
-    return {
-      ...task,
-      id: task.id || '',
-      status: task.status || 'unknown',
-      priority: task.priority,
-      description: task.description || '',
-      patientId: patient?.id || '',
-      patientName: patient ? getPatientName(patient) : '',
-      
-    };
+    return taskToWorklistData(patient, task);
   });
 };
 
@@ -92,12 +102,12 @@ export function useMedplumStore(): {
 
   // TODO: Mapping should disappear, we should use FHIR resources directly
   const mappedPatients = useMemo(() => 
-    mapMedplumDataToWorklistFormat(patients, tasks),
+    mapPatientsToWorklistPatients(patients, tasks),
     [patients, tasks]
   );
   
   const mappedTasks = useMemo(() => 
-    mapTaskToWorklistData(patients, tasks),
+    mapTasksToWorklistTasks(patients, tasks),
     [patients, tasks]
   );
 

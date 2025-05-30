@@ -11,6 +11,10 @@ export type ChatMessage = {
   }
 
 // TODO: Move this to the backend service
+/**
+ * TODO start using proper FHIR to extract the data structure
+ * https://awellhealth.slack.com/archives/C06JLPNJZMG/p1748532575499539?thread_ts=1748525675.878809&cid=C06JLPNJZMG
+ */
  export const columnAiAssistantMessageHandler = async (messages: ChatMessage[], data: any[], currentDefinition?: WorklistDefinition): Promise<{ response: string, needsDefinitionUpdate: boolean, definition?: WorklistDefinition }> => {
     const prompt = `You are a helpful assistant that helps users add columns to their view.
             
@@ -27,15 +31,24 @@ export type ChatMessage = {
             4. When suggesting changes, include a complete updated worklist definition in JSON with the following structure:
             {
             "title": "A clear title for this worklist",
-            "columns": [
-                {
-                "id": "column_id", // a unique identifier for the column
-                "name": "column_name", // the name of the column
-                "type": "data_type", // Must be one of: "string" | "number" | "date" | "boolean" | "tasks" | "select" | "array"
-                "key": "field_name", // Must exist in the data structure and must use the fhirpath syntax to access the data
-                "description": "Brief description of what this column represents"
-                }
-            ]
+            "taskViewColumns": [
+                    {
+                        "id": "column_id", // a unique identifier for the column
+                        "name": "column_name", // the name of the column
+                        "type": "data_type", // Must be one of: "string" | "number" | "date" | "boolean" | "tasks" | "select" | "array"
+                        "key": "field_name", // Must exist in the data structure and must use the fhirpath syntax to access the data
+                        "description": "Brief description of what this column represents"
+                    }
+                ],
+                "patientViewColumns": [
+                    {
+                        "id": "column_id", // a unique identifier for the column
+                        "name": "column_name", // the name of the column
+                        "type": "data_type", // Must be one of: "string" | "number" | "date" | "boolean" | "tasks" | "select" | "array"
+                        "key": "field_name", // Must exist in the data structure and must use the fhirpath syntax to access the data
+                        "description": "Brief description of what this column represents"
+                    }
+                ]
             }            
 
             Be concise and clear in your explanations.

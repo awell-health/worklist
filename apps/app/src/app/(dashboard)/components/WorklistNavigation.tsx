@@ -8,10 +8,10 @@ interface WorklistDefinition {
 
 interface WorklistNavigationProps {
     worklistDefinition: WorklistDefinition;
-    onNewWorklist: () => void;
+    onNewView: () => void;
 }
 
-export default function WorklistNavigation({ worklistDefinition, onNewWorklist }: WorklistNavigationProps) {
+export default function WorklistNavigation({ worklistDefinition, onNewView }: WorklistNavigationProps) {
     return (
       <div className="bg-gray-50 relative pt-4">
         <div className="h-9 flex items-end px-2">          {/* Border line that creates the tab effect */}
@@ -28,9 +28,9 @@ export default function WorklistNavigation({ worklistDefinition, onNewWorklist }
           {/* New worklist button */}
           <button
             className="flex items-center h-9 px-3 text-gray-600 hover:bg-gray-100 text-xs font-normal ml-2 mb-[-1px]"
-            onClick={() => onNewWorklist()} >
+            onClick={() => onNewView()} >
             <Plus className="h-3 w-3 mr-1" />
-            New worklist
+            New view
           </button>
         </div>
       </div>

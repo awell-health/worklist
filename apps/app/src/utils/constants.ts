@@ -1,9 +1,9 @@
 // src/utils/constants.ts
-import type { ColumnDefinition, Patient, WorklistDefinition } from '@/types/worklist';
+import type { WorklistDefinition } from '@/types/worklist';
 
-export const DEFAULT_WORKLIST_PATIENT_VIEW: WorklistDefinition = {
-  title: "New Patient Worklist",
-  columns: [
+export const DEFAULT_WORKLIST: WorklistDefinition = {
+  title: "New Panel",
+  patientViewColumns: [
     {
       name: "Patient Name",
       type: "string",
@@ -33,11 +33,7 @@ export const DEFAULT_WORKLIST_PATIENT_VIEW: WorklistDefinition = {
       id: "taskDescriptionsSummary",
     },
   ],
-}
-
-export const DEFAULT_WORKLIST_TASK_VIEW: WorklistDefinition = {
-  title: "New Task Worklist",
-  columns: [
+  taskViewColumns: [
     {
       name: "Task ID",
       type: "string",
@@ -87,22 +83,5 @@ export const DEFAULT_WORKLIST_TASK_VIEW: WorklistDefinition = {
       description: "Task assignee",
       id: "assignee"
     }
-  ],
+  ]
 }
-
-export const initialData: Patient[] = [
-  {
-    id: '1',
-    name: 'John Doe',
-    dateOfBirth: '1990-01-01',
-    gender: 'Male',
-    tasks: ['Lab Review', 'Follow-up']
-  },
-  {
-    id: '2',
-    name: 'Jane Smith',
-    dateOfBirth: '1985-05-15',
-    gender: 'Female',
-    tasks: ['Initial Consultation']
-  }
-];
