@@ -7,6 +7,11 @@ import { cn } from "../../../lib/utils"
 import { formatTasksForPatientView, renderTaskStatus } from "@/lib/task-utils"
 import { getNestedValue } from "@/lib/fhir-path"
 import type { ColumnDefinition } from "@/types/worklist"
+import { useDrawer } from "@/contexts/DrawerContext"
+import { TaskDetails } from "@/app/(dashboard)/components/TaskDetails"
+import { PatientDetails } from "./PatientDetails"
+import { WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store"
+import { getPatientName } from "@/lib/patient-utils"
 
 interface WorklistTableRowWithHoverProps {
     rowIndex: number;
@@ -34,8 +39,29 @@ export default function WorklistTableRow({
     currentView,
     row
 }: WorklistTableRowWithHoverProps) {
-
     const rowRef = useRef<HTMLTableRowElement>(null)
+    const { openDrawer } = useDrawer()
+
+    const handleRowClick = () => {
+        console.log(row)
+        if (row.resourceType === "Task") {
+            console.log('patientRow', row)
+            openDrawer(
+                <TaskDetails 
+                    taskData={row as WorklistTask} 
+                />,
+                row.description || "Task Details"
+            )
+        } else if (row.resourceType === "Patient") {
+            console.log('patientRow', row)
+            openDrawer(
+                <PatientDetails 
+                    patient={row as WorklistPatient} 
+                />,
+                `${row.name} - Patient Details`
+            )
+        }
+    }
 
     // Handle hover events
     const handleMouseEnter = () => {
@@ -131,6 +157,7 @@ export default function WorklistTableRow({
             className="border-b border-gray-200 hover:bg-gray-50 cursor-pointer"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
+            onClick={handleRowClick}
             data-row-id={rowIndex}
         >
             <TableCell className="w-10 p-0 pl-3">

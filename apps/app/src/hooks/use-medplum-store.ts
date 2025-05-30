@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Bot, Patient, Practitioner, Task } from '@medplum/fhirtypes';
+import { Bot, Patient, Task } from '@medplum/fhirtypes';
 import { medplumStore } from '@/lib/medplum';
 
 
