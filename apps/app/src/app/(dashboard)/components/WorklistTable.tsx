@@ -1,14 +1,20 @@
 "use client";
 import { Loader2, Plus } from "lucide-react";
-import { TableHeader, TableBody, TableRow, TableCell, TableHead } from "./ui/table";
+import { TableHeader, TableBody, TableRow, TableCell, TableHead } from "../../../components/ui/table";
 import type React from "react";
-import { Table } from "./ui/table";
+import { Table } from "../../../components/ui/table";
 import WorklistTableRowWithHover from "./WorklistTableRowWithHover";
 import { SortableColumnHeader } from "./WorklistSortableColumnHeader";
 import type { ColumnDefinition } from "@/types/worklist";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import { closestCenter, type DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
+import { useState, useMemo } from "react";
+
+interface FilterConfig {
+  key: string;
+  value: string;
+}
 
 interface WorklistTableProps {
   isLoading: boolean;
@@ -35,6 +41,11 @@ interface WorklistDefinition {
   columns: ColumnDefinition[];
 }
 
+interface SortConfig {
+  key: string;
+  direction: 'asc' | 'desc';
+}
+
 export default function WorklistTable({ 
   isLoading, 
   tableContainerRef,
@@ -52,6 +63,78 @@ export default function WorklistTable({
   handleAssigneeClick,
   currentView, 
   handleDragEnd }: WorklistTableProps) {
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [filters, setFilters] = useState<FilterConfig[]>([]);
+  
+  const filteredAndSortedData = useMemo(() => {
+    // First apply filters
+    let filteredData = tableData;
+    if (filters.length > 0) {
+      filteredData = tableData.filter(row => {
+        return filters.every(filter => {
+          const value = row[filter.key];
+          if (value === null || value === undefined) return false;
+          return String(value).toLowerCase().includes(filter.value.toLowerCase());
+        });
+      });
+    }
+    
+    // Then apply sorting
+    if (!sortConfig) return filteredData;
+    
+    return [...filteredData].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+      
+      if (aValue === null || aValue === undefined) return 1;
+      if (bValue === null || bValue === undefined) return -1;
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortConfig.direction === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortConfig.direction === 'asc' 
+          ? aValue - bValue
+          : bValue - aValue;
+      }
+      
+      if (aValue instanceof Date && bValue instanceof Date) {
+        return sortConfig.direction === 'asc'
+          ? aValue.getTime() - bValue.getTime()
+          : bValue.getTime() - aValue.getTime();
+      }
+      
+      return sortConfig.direction === 'asc'
+        ? String(aValue).localeCompare(String(bValue))
+        : String(bValue).localeCompare(String(aValue));
+    });
+  }, [tableData, sortConfig, filters]);
+
+  const handleSort = (columnKey: string) => {
+    setSortConfig(current => {
+      if (!current || current.key !== columnKey) {
+        return { key: columnKey, direction: 'asc' };
+      }
+      if (current.direction === 'asc') {
+        return { key: columnKey, direction: 'desc' };
+      }
+      return null;
+    });
+  };
+
+  const handleFilter = (columnKey: string, value: string) => {
+    setFilters(current => {
+      const newFilters = current.filter(f => f.key !== columnKey);
+      if (value) {
+        newFilters.push({ key: columnKey, value });
+      }
+      return newFilters;
+    });
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -93,7 +176,15 @@ export default function WorklistTable({
                     </div>
                   </TableHead>
                   {worklistDefinition.columns.map((column, index) => (
-                    <SortableColumnHeader key={column.id} column={column} index={index} />
+                    <SortableColumnHeader 
+                      key={column.id} 
+                      column={column} 
+                      index={index}
+                      sortConfig={sortConfig}
+                      onSort={() => handleSort(column.key)}
+                      filterValue={filters.find(f => f.key === column.key)?.value || ''}
+                      onFilter={(value) => handleFilter(column.key, value)}
+                    />
                   ))}
                   <TableHead className="text-xs font-normal text-gray-700 p-2">
                     <div className="flex items-center">
@@ -122,8 +213,8 @@ export default function WorklistTable({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {tableData.length > 0 ? (
-                  tableData.map((row, rowIndex) => (
+                {filteredAndSortedData.length > 0 ? (
+                  filteredAndSortedData.map((row, rowIndex) => (
                     <WorklistTableRowWithHover
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={rowIndex}

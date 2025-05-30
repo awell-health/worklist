@@ -1,9 +1,9 @@
 "use client"
 
 import { useRef } from "react"
-import { TableRow, TableCell } from "./ui/table"
+import { TableRow, TableCell } from "../../../components/ui/table"
 import { File, CheckSquare } from "lucide-react"
-import { cn } from "../lib/utils"
+import { cn } from "../../../lib/utils"
 import { formatTasksForPatientView, renderTaskStatus } from "@/lib/task-utils"
 import { getNestedValue } from "@/lib/fhir-path"
 import type { ColumnDefinition } from "@/types/worklist"
@@ -34,8 +34,6 @@ export default function WorklistTableRowWithHover({
     currentView,
     row
 }: WorklistTableRowWithHoverProps) {
-
-    console.log("row", row)
 
     const rowRef = useRef<HTMLTableRowElement>(null)
 
