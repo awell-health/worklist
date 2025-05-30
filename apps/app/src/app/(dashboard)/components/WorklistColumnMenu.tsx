@@ -10,17 +10,27 @@ type ColumnMenuProps = {
   isOpen: boolean
   onClose: () => void
   position: { top: number; left: number }
+  onSort: () => void
+  sortConfig: { key: string; direction: 'asc' | 'desc' } | null
+  filterValue: string
+  onFilter: (value: string) => void
 }
 
-export function ColumnMenu({ column, isOpen, onClose, position }: ColumnMenuProps) {
+export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConfig, filterValue, onFilter }: ColumnMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
+  const [localFilterValue, setLocalFilterValue] = useState(filterValue)
 
   // Set mounted state after component mounts (for SSR compatibility)
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
+
+  // Update local filter value when prop changes
+  useEffect(() => {
+    setLocalFilterValue(filterValue)
+  }, [filterValue])
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -39,17 +49,28 @@ export function ColumnMenu({ column, isOpen, onClose, position }: ColumnMenuProp
     }
   }, [isOpen, onClose])
 
-  // Get sort label based on column type
+  // Get sort label based on column type and current sort state
   const getSortLabel = () => {
+    const isSorted = sortConfig?.key === column.key
+    const isAscending = sortConfig?.direction === 'asc'
+
     switch (column.type) {
       case "number":
-        return "Sort small → large"
+        return isSorted 
+          ? (isAscending ? "Sort large → small" : "Sort small → large")
+          : "Sort small → large"
       case "date":
-        return "Sort old → new"
+        return isSorted
+          ? (isAscending ? "Sort new → old" : "Sort old → new")
+          : "Sort old → new"
       case "boolean":
-        return "Sort false → true"
+        return isSorted
+          ? (isAscending ? "Sort true → false" : "Sort false → true")
+          : "Sort false → true"
       default:
-        return "Sort A → Z"
+        return isSorted
+          ? (isAscending ? "Sort Z → A" : "Sort A → Z")
+          : "Sort A → Z"
     }
   }
 
@@ -65,6 +86,23 @@ export function ColumnMenu({ column, isOpen, onClose, position }: ColumnMenuProp
       default:
         return <Text className="h-3.5 w-3.5 mr-2 text-gray-500" />
     }
+  }
+
+  // Handle filter input changes
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLocalFilterValue(e.target.value)
+  }
+
+  // Apply filter and close menu
+  const handleFilterApply = () => {
+    onFilter(localFilterValue)
+    onClose()
+  }
+
+  // Clear filter
+  const handleFilterClear = () => {
+    onFilter('')
+    onClose()
   }
 
   if (!isOpen || !mounted) return null
@@ -83,16 +121,52 @@ export function ColumnMenu({ column, isOpen, onClose, position }: ColumnMenuProp
         {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
         <button
           className="flex items-center w-full px-3 py-2 text-xs font-normal text-left hover:bg-gray-50 border-b border-gray-100"
-          onClick={() => console.log(`Sort ${column.name}`)}
+          onClick={() => {
+            onSort()
+            onClose()
+          }}
         >
           <ArrowUpDown className="h-3.5 w-3.5 mr-2 text-gray-500" />
           {getSortLabel()}
         </button>
 
+        {/* Filter section */}
+        <div className="px-3 py-2 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs text-gray-500">Filter:</label>
+            {filterValue && (
+              <button
+                className="text-xs text-blue-500 hover:text-blue-600"
+                onClick={handleFilterClear}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={localFilterValue}
+              onChange={handleFilterChange}
+              className="flex-1 px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Filter..."
+            />
+            <button
+              className="px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
+              onClick={handleFilterApply}
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+
         {/* Type */}
         <div className="flex items-center w-full px-3 py-2 text-xs font-normal text-left border-b border-gray-100">
           {getTypeIcon()}
-          <span>Type: {column.type.charAt(0).toUpperCase() + column.type.slice(1)}</span>
+          <div className="flex flex-col">
+            <span>Type: {column.type.charAt(0).toUpperCase() + column.type.slice(1)}</span>
+            <span>Key: <span className="text-[10px] text-gray-400"> {column.key}</span></span>
+          </div>
         </div>
 
         {/* Source */}
