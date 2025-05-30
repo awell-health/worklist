@@ -23,5 +23,6 @@ export type ColumnDefinition = {
 
 export type WorklistDefinition = {
   title: string
-  columns: ColumnDefinition[]
+  taskViewColumns: ColumnDefinition[]
+  patientViewColumns: ColumnDefinition[]
 }

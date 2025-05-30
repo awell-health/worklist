@@ -22,7 +22,7 @@ interface WorklistTableRowWithHoverProps {
     currentView: string;
 }
 
-export default function WorklistTableRowWithHover({
+export default function WorklistTableRow({
     rowIndex,
     onRowHover,
     selectedRows,

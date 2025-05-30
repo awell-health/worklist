@@ -16,7 +16,6 @@ import fhirpath from 'fhirpath';
 export const getNestedValue = (obj: Record<string, any>, path: string): any | any[] => {
     try {
         const result = fhirpath.evaluate(obj, path);
-        console.log("fhirpath result", result);
         if(result?.length == 1) {
             return result[0];
         }
@@ -29,7 +28,6 @@ export const getNestedValue = (obj: Record<string, any>, path: string): any | an
 
 export const isMatchingFhirPathCondition = (obj: Record<string, any>, path: string): boolean => {
     const result = fhirpath.evaluate(obj, path);
-    console.log("fhirpath result", result);
     if (result.length === 0) return false;
     return !result.every(value => value === false);
 };

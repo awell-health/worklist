@@ -3,7 +3,7 @@ import { getNestedValue, isMatchingFhirPathCondition } from '@/lib/fhir-path';
 
 type SearchMode = 'text' | 'fhirpath';
 
-// Custom debounce hook
+
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -19,7 +19,10 @@ function useDebounce<T>(value: T, delay: number): T {
 
   return debouncedValue;
 }
-
+// TODO: Needs to be revisited soon
+// We are allowing two types of search text and fhirpath
+// Likely fhirpath would just be useful for AI to be able to apply filters or for column filters
+// We are allowing both for demo purposes only
 export function useSearch<T extends Record<string, any>>(data: T[]) {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchMode, setSearchMode] = useState<SearchMode>('text');

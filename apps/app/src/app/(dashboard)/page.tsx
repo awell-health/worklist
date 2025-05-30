@@ -1,60 +1,56 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
-import { useDrawer } from "@/contexts/DrawerContext";
+import { useEffect, useState } from "react";
 import WorklistNavigation from "@/app/(dashboard)/components/WorklistNavigation";
 import WorklistToolbar from "@/app/(dashboard)/components/WorklistToolbar";
 import WorklistFooter from "@/app/(dashboard)/components/WorklistFooter";
 import WorklistTable from "@/app/(dashboard)/components/WorklistTable";
 import { AddIngestionModal } from "./components/AddIngestionModal";
-import AIConversationDrawer from "@/components/AIConversationDrawer";
-import { DEFAULT_WORKLIST_PATIENT_VIEW, DEFAULT_WORKLIST_TASK_VIEW } from "@/utils/constants";
+import { DEFAULT_WORKLIST } from "@/utils/constants";
 import { useMedplumStore } from "@/hooks/use-medplum-store";
 import { useSearch } from "@/hooks/use-search";
-import { ChatMessage, columnAiAssistantMessageHandler } from "../actions/ai-chat";
-import { WorklistDefinition } from "@/types/worklist";
+import { ColumnDefinition, WorklistDefinition } from "@/types/worklist";
 import { WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
 import { useColumnCreator } from "@/hooks/use-column-creator";
+import { Loader2 } from "lucide-react";
 
 export default function WorklistPage() {
   const [currentView, setCurrentView] = useState<'patient' | 'task'>('patient');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddingIngestionSource, setIsAddingIngestionSource] = useState(false);
-  const [isAISidebarOpen, setIsAISidebarOpen] = useState(false);
-  const { openDrawer, closeDrawer } = useDrawer();
-  const { patients, tasks, addTaskOwner } = useMedplumStore();
-  const [patientViewWorklistDefinition, setPatientViewWorklistDefinition] = useState<WorklistDefinition>();
-  const [taskViewWorklistDefinition, setTaskViewWorklistDefinition] = useState<WorklistDefinition>();
-  const [selectedWorklistDefinition, setSelectedWorklistDefinition] = useState<WorklistDefinition>();
-
-  const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(
-    (currentView === 'patient' ? patients : tasks) as (WorklistPatient | WorklistTask)[]
-  );
+  const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
+  const [selectedWorklistDefinition, setSelectedWorklistDefinition] = useState<WorklistDefinition>(DEFAULT_WORKLIST);
+  const [columns, setColumns] = useState<ColumnDefinition[]>(DEFAULT_WORKLIST.patientViewColumns);
+  const [tableData, setTableData] = useState<(WorklistPatient | WorklistTask)[]>([]);
+  const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
 
   useEffect(() => {
-    setPatientViewWorklistDefinition(DEFAULT_WORKLIST_PATIENT_VIEW);
-    setTaskViewWorklistDefinition(DEFAULT_WORKLIST_TASK_VIEW);
-  }, [])
+    setColumns(currentView === 'patient' ? selectedWorklistDefinition.patientViewColumns : selectedWorklistDefinition.taskViewColumns);
+    setTableData(currentView === 'patient' ? patients : tasks);
+  }, [selectedWorklistDefinition, currentView]);
 
   useEffect(() => {
-    setSelectedWorklistDefinition(currentView === 'patient' ? patientViewWorklistDefinition : taskViewWorklistDefinition);
-  }, [currentView, patientViewWorklistDefinition, taskViewWorklistDefinition])
+    setSelectedWorklistDefinition(DEFAULT_WORKLIST);
+    setIsLoading(isMedplumLoading);
+    if(!isMedplumLoading) {
+      setTableData(currentView === 'patient' ? patients : tasks);
+    }
+  }, [isMedplumLoading]);
 
   const { onAddColumn } = useColumnCreator({
     currentView,
     patients,
     tasks,
     selectedWorklistDefinition,
-    setPatientViewWorklistDefinition,
-    setTaskViewWorklistDefinition,
+    setSelectedWorklistDefinition,
   });
 
-  const onNewWorklist = () => {
-    alert("TODO: Implement new worklist");
+  const onNewView = () => {
+    alert("TODO: Adding a new view is not yet possible");
   }
 
   return (
     <>
-      <WorklistNavigation worklistDefinition={{ title: "New worklist" }} onNewWorklist={onNewWorklist} />
+      <WorklistNavigation worklistDefinition={selectedWorklistDefinition} onNewView={onNewView} />
       <WorklistToolbar 
         searchTerm={searchTerm} 
         onSearch={setSearchTerm} 
@@ -63,12 +59,12 @@ export default function WorklistPage() {
         currentView={currentView} 
         setCurrentView={setCurrentView} 
       />
-      <WorklistTable isLoading={isLoading && !selectedWorklistDefinition}
-        selectedRows={[]}
-        toggleSelectAll={() => {}}
-        worklistDefinition={selectedWorklistDefinition ?? DEFAULT_WORKLIST_PATIENT_VIEW}
-        onAddColumn={onAddColumn}
-        isBlank={false} 
+      <WorklistTable isLoading={isLoading}
+          selectedRows={[]}
+          toggleSelectAll={() => {}}
+          worklistColumns={columns}
+          onAddColumn={onAddColumn}
+          isBlank={false} 
         tableData={filteredData}
         handlePDFClick={() => {}}
         handleTaskClick={() => {}}
@@ -88,10 +84,10 @@ export default function WorklistPage() {
         />
       )}
       <WorklistFooter 
-        columnsCounter={selectedWorklistDefinition?.columns.length ?? 0} 
-        rowsCounter={currentView === 'patient' ? patients.length : tasks.length} 
+        columnsCounter={columns.length} 
+        rowsCounter={tableData.length} 
         navigateToHome={() => {}} 
-        isAISidebarOpen={isAISidebarOpen}
+        isAISidebarOpen={false}
       />
     </>
   );

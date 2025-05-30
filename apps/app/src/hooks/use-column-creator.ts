@@ -11,8 +11,7 @@ interface UseColumnCreatorProps {
   patients: WorklistPatient[];
   tasks: WorklistTask[];
   selectedWorklistDefinition: WorklistDefinition | undefined;
-  setPatientViewWorklistDefinition: (definition: WorklistDefinition) => void;
-  setTaskViewWorklistDefinition: (definition: WorklistDefinition) => void;
+  setSelectedWorklistDefinition: (definition: WorklistDefinition) => void;
 }
 
 export const useColumnCreator = ({
@@ -20,14 +19,13 @@ export const useColumnCreator = ({
   patients,
   tasks,
   selectedWorklistDefinition,
-  setPatientViewWorklistDefinition,
-  setTaskViewWorklistDefinition,
+  setSelectedWorklistDefinition,
 }: UseColumnCreatorProps) => {
   const { openDrawer, closeDrawer } = useDrawer();
 
   const getInitialMessage = useCallback(async () => {
     const result = await columnAiAssistantMessageHandler(
-      [{ role: "user", content: "Can you share an extensive list of all columns that are available in the data? Including the inputs" }], 
+      [{ role: "user", content: `Can you share an extensive list of all columns that are available in the data? Including the inputs. The current view is ${currentView}.` }], 
       currentView === 'patient' ? patients : tasks, 
       selectedWorklistDefinition ?? undefined
     );
@@ -41,13 +39,7 @@ export const useColumnCreator = ({
       selectedWorklistDefinition ?? undefined
     );
     if (result.needsDefinitionUpdate && result.definition) {
-      if(currentView === 'patient') {
-        console.log("Updating patient view worklist definition", result.definition);
-        setPatientViewWorklistDefinition(result.definition);
-      } else {
-        console.log("Updating task view worklist definition", result.definition);
-        setTaskViewWorklistDefinition(result.definition);
-      }
+      setSelectedWorklistDefinition(result.definition);
     }
     return result.response;
   };

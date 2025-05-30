@@ -3,7 +3,7 @@ import { Loader2, Plus } from "lucide-react";
 import { TableHeader, TableBody, TableRow, TableCell, TableHead } from "../../../components/ui/table";
 import type React from "react";
 import { Table } from "../../../components/ui/table";
-import WorklistTableRowWithHover from "./WorklistTableRowWithHover";
+import WorklistTableRow from "./WorklistTableRow";
 import { SortableColumnHeader } from "./WorklistSortableColumnHeader";
 import type { ColumnDefinition } from "@/types/worklist";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
@@ -21,7 +21,7 @@ interface WorklistTableProps {
   tableContainerRef?: React.RefObject<HTMLDivElement>;
   selectedRows: number[];
   toggleSelectAll: () => void;
-  worklistDefinition: WorklistDefinition;
+  worklistColumns: ColumnDefinition[];
   onAddColumn: () => void;
   isBlank: boolean;
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -36,11 +36,6 @@ interface WorklistTableProps {
   currentView: string;
 }
 
-interface WorklistDefinition {
-  title: string;
-  columns: ColumnDefinition[];
-}
-
 interface SortConfig {
   key: string;
   direction: 'asc' | 'desc';
@@ -51,7 +46,7 @@ export default function WorklistTable({
   tableContainerRef,
   selectedRows, 
   toggleSelectAll, 
-  worklistDefinition, 
+  worklistColumns, 
   onAddColumn,
   isBlank, 
   tableData, 
@@ -175,7 +170,7 @@ export default function WorklistTable({
                       />
                     </div>
                   </TableHead>
-                  {worklistDefinition.columns.map((column, index) => (
+                  {worklistColumns.map((column, index) => (
                     <SortableColumnHeader 
                       key={column.id} 
                       column={column} 
@@ -215,13 +210,13 @@ export default function WorklistTable({
               <TableBody>
                 {filteredAndSortedData.length > 0 ? (
                   filteredAndSortedData.map((row, rowIndex) => (
-                    <WorklistTableRowWithHover
+                    <WorklistTableRow
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={rowIndex}
                       row={row}
                       rowIndex={rowIndex}
                       handleAssigneeClick={() => handleAssigneeClick(row["id"])}
-                      columns={worklistDefinition.columns}
+                      columns={worklistColumns}
                       selectedRows={selectedRows}
                       toggleSelectRow={toggleSelectRow}
                       handlePDFClick={handlePDFClick}
@@ -243,7 +238,7 @@ export default function WorklistTable({
                         />
                       </div>
                     </TableCell>
-                    {worklistDefinition.columns.map((column, index) => (
+                    {worklistColumns.map((column, index) => (
                       <TableCell
                         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                         key={index}
@@ -266,7 +261,7 @@ export default function WorklistTable({
                       />
                     </div>
                   </TableCell>
-                  {worklistDefinition.columns.map((column, index) => (
+                  {worklistColumns.map((column, index) => (
                     <TableCell
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={index}
