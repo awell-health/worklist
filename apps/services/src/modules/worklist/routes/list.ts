@@ -1,40 +1,49 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { Worklist } from "../entities/worklist.entity.js";
-import { ColumnType } from "../entities/worklist-column.entity.js";
+import { errorSchema } from '@/types.js'
+import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { z } from 'zod'
+import { ColumnType } from '../entities/worklist-column.entity.js'
+import { Worklist } from '../entities/worklist.entity.js'
 
 const listResponse = z.object({
   id: z.number(),
   name: z.string(),
   description: z.string().optional(),
-  columns: z.array(z.object({
-    id: z.number(),
-    name: z.string(),
-    type: z.nativeEnum(ColumnType),
-    order: z.number(),
-  })),
+  columns: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      type: z.nativeEnum(ColumnType),
+      order: z.number(),
+    }),
+  ),
 })
 
-type ListResponse = z.infer<typeof listResponse>;
+type ListResponse = z.infer<typeof listResponse>
 
 export const list = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Reply: ListResponse[];
+    Reply: ListResponse[]
   }>({
-    method: "GET",
+    method: 'GET',
     schema: {
-      description: "List all worklists",
-      tags: ["worklist"],
+      description: 'List all worklists',
+      tags: ['worklist'],
       response: {
         200: z.array(listResponse),
+        400: errorSchema,
+        404: errorSchema,
       },
     },
-    url: "/worklists",
+    url: '/worklists',
     handler: async (request, reply) => {
-      const worklists = await request.store.em.find(Worklist, {}, { populate: ["columns"] });
+      const worklists = await request.store.em.find(
+        Worklist,
+        {},
+        { populate: ['columns'] },
+      )
 
-      reply.statusCode = 200;
+      reply.statusCode = 200
       return worklists.map((worklist) => ({
         id: worklist.id,
         name: worklist.name,
@@ -45,7 +54,7 @@ export const list = async (app: FastifyInstance) => {
           type: column.type,
           order: column.order,
         })),
-      }));
+      }))
     },
-  });
-};
+  })
+}
