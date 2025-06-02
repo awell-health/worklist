@@ -1,33 +1,38 @@
-import type { FastifyInstance } from "fastify";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import { z } from "zod";
-import { ColumnType } from "../entities/worklist-column.entity.js";
-import { NotFoundError } from "@/errors/not-found-error.js";
+import { NotFoundError } from '@/errors/not-found-error.js'
+import { errorSchema } from '@/types.js'
+import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { z } from 'zod'
+import { ColumnType } from '../entities/worklist-column.entity.js'
 
-const operationResponse = z.object({
-  success: z.boolean(),
-  error: z.undefined(),
-})
-
-const columnUpdateSchema = z.object({
+const columnUpdateResponse = z.object({
+  id: z.number(),
   name: z.string(),
-  type: z.nativeEnum(ColumnType),
-  order: z.number(),
+  type: z.nativeEnum(ColumnType).optional(),
+  order: z.number().optional(),
   properties: z.record(z.string(), z.any()).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
 })
 
-type OperationResponse = z.infer<typeof operationResponse>;
-type ColumnUpdateSchema = z.infer<typeof columnUpdateSchema>;
+const columnUpdateSchema = z.object({
+  name: z.string(),
+  type: z.nativeEnum(ColumnType).optional(),
+  order: z.number().optional(),
+  properties: z.record(z.string(), z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
+})
+
+type ColumnUpdateResponse = z.infer<typeof columnUpdateResponse>
+type ColumnUpdateSchema = z.infer<typeof columnUpdateSchema>
 
 export const columnUpdate = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Params: {
-      id: string;
-      columnId: string;
-    },
-    Body: ColumnUpdateSchema,
-    Reply: OperationResponse
+      id: string
+      columnId: string
+    }
+    Body: ColumnUpdateSchema
+    Reply: ColumnUpdateResponse
   }>({
     method: 'PUT',
     schema: {
@@ -39,27 +44,32 @@ export const columnUpdate = async (app: FastifyInstance) => {
       }),
       body: columnUpdateSchema,
       response: {
-        200: operationResponse,
+        200: columnUpdateResponse,
+        404: errorSchema,
+        400: errorSchema,
       },
     },
     url: '/worklists/:id/columns/:columnId',
     handler: async (request, reply) => {
-        const { id, columnId } = request.params as { id: string; columnId: string };
-        const column = await request.store.worklistColumn.findOne({
-          id: Number(columnId),
-          worklist: { id: Number(id), tenantId: '' },
-        });
-  
-        if (!column) {
-          throw new NotFoundError('Column not found');
-        }
-  
-        const updateData = request.body;
-        request.store.em.assign(column, updateData);
-        await request.store.em.flush();
-  
-        reply.statusCode = 200;
-        return { success: true };  
+      const { id, columnId } = request.params as {
+        id: string
+        columnId: string
+      }
+      const column = await request.store.worklistColumn.findOne({
+        id: Number(columnId),
+        worklist: { id: Number(id), tenantId: '' },
+      })
+
+      if (!column) {
+        throw new NotFoundError('Column not found')
+      }
+
+      const updateData = request.body
+      request.store.em.assign(column, updateData)
+      await request.store.em.flush()
+
+      reply.statusCode = 200
+      return column
     },
-  });
-};
+  })
+}

@@ -7,7 +7,7 @@
       "outputs": []
     },
     "dev": {
-      "dependsOn": ["run:sl:full", "build"],
+      "dependsOn": ["//#run:infra:root", "build"],
       "persistent": true,
       "cache": false
     },
@@ -30,9 +30,7 @@
     "clean": {
       "cache": false
     },
-    "run:sl:full": {
-      "cache": false
-    },
+    "//#run:infra:root": {},
     "migration:apply": {
       "cache": false
     },
@@ -41,6 +39,10 @@
     },
     "migration:reset": {
       "cache": false
+    },
+    "test": {
+      "dependsOn": ["build", "//#run:infra:root"],
+      "cache": true
     }
   }
 }
