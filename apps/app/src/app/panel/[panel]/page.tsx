@@ -1,17 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
-import WorklistNavigation from "@/app/(dashboard)/components/WorklistNavigation";
-import WorklistToolbar from "@/app/(dashboard)/components/WorklistToolbar";
-import WorklistFooter from "@/app/(dashboard)/components/WorklistFooter";
-import WorklistTable from "@/app/(dashboard)/components/WorklistTable";
-import { AddIngestionModal } from "./components/AddIngestionModal";
-import { DEFAULT_WORKLIST } from "@/utils/constants";
-import { useMedplumStore } from "@/hooks/use-medplum-store";
+import WorklistFooter from "@/app/panel/[panel]/components/WorklistFooter";
+import WorklistNavigation from "@/app/panel/[panel]/components/WorklistNavigation";
+import WorklistTable from "@/app/panel/[panel]/components/WorklistTable";
+import WorklistToolbar from "@/app/panel/[panel]/components/WorklistToolbar";
+import { useColumnCreator } from "@/hooks/use-column-creator";
+import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
 import { useSearch } from "@/hooks/use-search";
 import { ColumnDefinition, WorklistDefinition } from "@/types/worklist";
-import { WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
-import { useColumnCreator } from "@/hooks/use-column-creator";
-import { Loader2 } from "lucide-react";
+import { DEFAULT_WORKLIST } from "@/utils/constants";
+import { useEffect, useState } from "react";
+import { AddIngestionModal } from "./components/AddIngestionModal";
 
 export default function WorklistPage() {
   const [currentView, setCurrentView] = useState<'patient' | 'task'>('patient');

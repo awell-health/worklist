@@ -1,17 +1,16 @@
 "use client"
 
-import { useRef } from "react"
-import { TableRow, TableCell } from "../../../components/ui/table"
-import { File, CheckSquare } from "lucide-react"
-import { cn } from "../../../lib/utils"
-import { formatTasksForPatientView, renderTaskStatus } from "@/lib/task-utils"
-import { getNestedValue } from "@/lib/fhir-path"
-import type { ColumnDefinition } from "@/types/worklist"
+import { TaskDetails } from "@/app/panel/[panel]/components/TaskDetails"
 import { useDrawer } from "@/contexts/DrawerContext"
-import { TaskDetails } from "@/app/(dashboard)/components/TaskDetails"
-import { PatientDetails } from "./PatientDetails"
 import { WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store"
-import { getPatientName } from "@/lib/patient-utils"
+import { getNestedValue } from "@/lib/fhir-path"
+import { formatTasksForPatientView, renderTaskStatus } from "@/lib/task-utils"
+import type { ColumnDefinition } from "@/types/worklist"
+import { CheckSquare, File } from "lucide-react"
+import { useRef } from "react"
+import { TableCell, TableRow } from "../../../../components/ui/table"
+import { cn } from "../../../../lib/utils"
+import { PatientDetails } from "./PatientDetails"
 
 interface WorklistTableRowWithHoverProps {
     rowIndex: number;
