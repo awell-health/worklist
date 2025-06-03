@@ -24,12 +24,8 @@ export const useColumnCreator = ({
   const { openDrawer, closeDrawer } = useDrawer();
 
   const getInitialMessage = useCallback(async () => {
-    const result = await columnAiAssistantMessageHandler(
-      [{ role: "user", content: `Can you share an extensive list of all columns that are available in the data? Including the inputs. The current view is ${currentView}.` }], 
-      currentView === 'patient' ? patients : tasks, 
-      selectedWorklistDefinition ?? undefined
-    );
-    return result.response;
+
+    return `How can I assist you? I can list the existing columns and explain their meanings, help you add new columns to the view, and assist with filtering or enriching columns. The current view is: ${currentView}.`;
   }, [currentView, patients, tasks, selectedWorklistDefinition]);
 
   const handleSendMessage = async (conversation: ChatMessage[]) => {

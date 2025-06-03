@@ -130,7 +130,10 @@ export default function WorklistTableRow({
                     <button
                         type="button"
                         className="text-xs h-6 px-2 text-blue-500 hover:bg-blue-50 flex items-center rounded border border-blue-200"
-                        onClick={() => handleAssigneeClick()}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleAssigneeClick();
+                        }}
                     >
                         Assign to me
                     </button>

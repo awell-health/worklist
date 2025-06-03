@@ -1,8 +1,4 @@
 // Type definitions for fhirpath
-declare module 'fhirpath' {
-    export function evaluate(resource: any, path: string): any[];
-}
-
 import fhirpath from 'fhirpath';
 
 /**
@@ -14,8 +10,68 @@ import fhirpath from 'fhirpath';
  * @returns The value at the specified path, or an empty string if not found
  */
 export const getNestedValue = (obj: Record<string, any>, path: string): any | any[] => {
+    const addSeconds = {
+        fn: (_: any[], input: any, seconds: number) => {
+            if (typeof input === 'string' && /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(input)) {
+                const date = new Date(input);
+                date.setSeconds(date.getSeconds() + seconds);
+                return [date];
+            }
+            return [input]; // fallback
+        },
+        arity: {
+            2: ["String" as const, "Number" as const]
+        }
+    };
+
+    const toMilliseconds = {
+        fn: (_: any[], input: any) => {
+            if (typeof input === 'string' && /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(input)) {
+                const date = new Date(input);
+                return [date.getTime()];
+            }
+            return [input]; // fallback
+        },
+        arity: {
+            1: ["String" as const]
+        }
+    };
+
+    const subtractDates = {
+        fn: (_: any[], date1: any, date2: any) => {
+            const strDate1 = String(date1);
+            const strDate2 = String(date2);
+            
+            if (/^\d{4}-\d{2}-\d{2}(T.*)?$/.test(strDate1) && /^\d{4}-\d{2}-\d{2}(T.*)?$/.test(strDate2)) {
+                const d1 = new Date(strDate1);
+                const d2 = new Date(strDate2);
+                return [d1.getTime() - d2.getTime()];
+            }
+            return [0]; // fallback
+        },
+        arity: {
+            2: ["Any" as const, "Any" as const]
+        }
+    };
+
+    const toDateLiteral = {
+        fn: (_: any[], input: any) => {
+            return `@${input}`;
+        },
+        arity: {
+            1: ["Any" as const]
+        }
+    };
+
+    const userInvocationTable = {
+        addSeconds,
+        toMilliseconds,
+        subtractDates,
+        toDateLiteral,
+    };
+
     try {
-        const result = fhirpath.evaluate(obj, path);
+        const result = fhirpath.evaluate(obj, path, undefined, undefined, { userInvocationTable });
         if(result?.length == 1) {
             return result[0];
         }
@@ -27,7 +83,8 @@ export const getNestedValue = (obj: Record<string, any>, path: string): any | an
 };
 
 export const isMatchingFhirPathCondition = (obj: Record<string, any>, path: string): boolean => {
-    const result = fhirpath.evaluate(obj, path);
+    const result = fhirpath.evaluate(obj, path, undefined, undefined, { });
+    console.log(result);
     if (result.length === 0) return false;
-    return !result.every(value => value === false);
+    return !result.every((value: any) => value === false);
 };
