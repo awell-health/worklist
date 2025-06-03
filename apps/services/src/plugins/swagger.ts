@@ -1,26 +1,26 @@
-import fp from "fastify-plugin"
-import fastifySwagger from '@fastify/swagger';
-import fastifySwaggerUI from '@fastify/swagger-ui';
-import { jsonSchemaTransform } from 'fastify-type-provider-zod';
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUI from '@fastify/swagger-ui'
+import fp from 'fastify-plugin'
+import { jsonSchemaTransform } from 'fastify-type-provider-zod'
 
 export default fp(
   async (fastify) => {
     fastify.register(fastifySwagger, {
       openapi: {
         info: {
-          title: 'Awell Worklist Server API',
-          description: 'Create and manage worklists',
-          version: '0.1.0',
+          title: 'Awell Panels Server API',
+          description: 'Create and manage worklist panels',
+          version: '0.2.0',
         },
-        servers: [{
-          url: 'http://localhost'
-        }],
-        tags: [
-          { name: 'Worklists', description: 'Manage worklists' },
+        servers: [
+          {
+            url: 'http://localhost',
+          },
         ],
+        tags: [{ name: 'Panels', description: 'Manage panels' }],
       },
       transform: jsonSchemaTransform,
-    });
+    })
 
     fastify.register(fastifySwaggerUI, {
       routePrefix: '/docs',
@@ -28,7 +28,7 @@ export default fp(
         docExpansion: 'full',
         deepLinking: false,
       },
-    });
+    })
   },
-  { name: "swagger" },
+  { name: 'swagger' },
 )

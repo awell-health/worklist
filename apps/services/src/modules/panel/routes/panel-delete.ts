@@ -3,46 +3,51 @@ import { errorSchema } from '@/types.js'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { Worklist } from '../entities/worklist.entity.js'
 
-const deleteResponse = z.object({
-  success: z.boolean(),
-})
-
-type DeleteResponse = z.infer<typeof deleteResponse>
-
-export const deleteWorklist = async (app: FastifyInstance) => {
+export const panelDelete = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Params: {
       id: string
     }
-    Reply: DeleteResponse
   }>({
     method: 'DELETE',
-    url: '/worklists/:id',
     schema: {
-      description: 'Delete a worklist by id',
-      tags: ['worklist'],
+      description: 'Delete a panel',
+      tags: ['panel'],
       params: z.object({
         id: z.string(),
       }),
+      body: z.object({
+        tenantId: z.string(),
+        userId: z.string(),
+      }),
       response: {
-        200: deleteResponse,
+        204: z.object({
+          success: z.boolean(),
+        }),
         404: errorSchema,
-        400: errorSchema,
       },
     },
+    url: '/panels/:id',
     handler: async (request, reply) => {
       const { id } = request.params as { id: string }
-      const worklist = await request.store.em.findOne(Worklist, {
-        id: Number(id),
-      })
-      if (!worklist) {
-        throw new NotFoundError('Worklist not found')
+      const { tenantId, userId } = request.body as {
+        tenantId: string
+        userId: string
       }
-      await request.store.em.removeAndFlush(worklist)
 
-      reply.statusCode = 200
+      const panel = await request.store.em.findOne('Panel', {
+        id: Number(id),
+        tenantId,
+        userId,
+      })
+
+      if (!panel) {
+        throw new NotFoundError('Panel not found')
+      }
+
+      await request.store.em.removeAndFlush(panel)
+      reply.statusCode = 204
       return { success: true }
     },
   })
