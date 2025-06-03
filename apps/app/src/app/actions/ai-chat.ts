@@ -49,10 +49,29 @@ export type ChatMessage = {
                         "description": "Brief description of what this column represents"
                     }
                 ]
-            }            
+            }
+                
+            For date manipulation, you can use only the following functions as none of the others are supported:
+            - addSeconds(date, seconds) // if you need to add days, use seconds = days * 24 * 60 * 60, same applies for any other unit of time
+            - subtractDates(date1, date2)
+            - toDateLiteral(date)
+            - now()
+            - today()
+
+            Arithmetic operations are supported for numbers.
+            String operations are supported for strings, here is the full list:
+            - str1 + str2
+            - str1 & str2
+            - str.substring(start, end)
+            - str.replace(old, new)
+            - str.matches(regex)
+            - str.startsWith(prefix)
+            - str.endsWith(suffix)
+            - str.contains(substring)
 
             Be concise and clear in your explanations.
-            When suggesting changes, always include the complete updated worklist definition in a JSON code block.`
+            When suggesting changes, always include the complete updated worklist definition in a JSON code block. Never add comments to the worklist JSON definition.
+`
     const response = await chatWithAI(messages, prompt);
 
     const jsonMatch = response.match(/```json\n([\s\S]*?)\n```/)

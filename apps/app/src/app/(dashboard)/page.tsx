@@ -26,7 +26,7 @@ export default function WorklistPage() {
   useEffect(() => {
     setColumns(currentView === 'patient' ? selectedWorklistDefinition.patientViewColumns : selectedWorklistDefinition.taskViewColumns);
     setTableData(currentView === 'patient' ? patients : tasks);
-  }, [selectedWorklistDefinition, currentView]);
+  }, [selectedWorklistDefinition, currentView, tasks, patients]);
 
   useEffect(() => {
     setSelectedWorklistDefinition(DEFAULT_WORKLIST);
