@@ -1,30 +1,9 @@
 "use client"
 
-import { Menu } from "lucide-react";
-import { useRouter } from "next/navigation";
-import PanelsTable from "./PanelsTable";
-import TeamTable from "./TeamTable";
-
-const panels = [
-  {
-    id: '1',
-    title: 'New Worklist',
-    createdAt: '19 days ago',
-    columns: 9,
-    views: [
-      { id: 'v1', title: 'New Worklist', columns: 9, createdAt: '19 days ago' },
-      { id: 'v2', title: 'New View', columns: 8, createdAt: '19 days ago' },
-      { id: 'v3', title: 'New View', columns: 8, createdAt: '19 days ago' },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Another Panel',
-    createdAt: '7 days ago',
-    columns: 3,
-    views: [],
-  },
-];
+import { usePanelStorage } from "@/hooks/use-panel-storage";
+import { Loader2, Menu } from "lucide-react";
+import PanelsTable from "./components/PanelsTable";
+import TeamTable from "./components/TeamTable";
 
 const users = [
   { id: '1', name: 'Thomas Vande Casteele', email: 'thomas@turtle.care', role: 'Builder', panels: 'All available panels' },
@@ -32,7 +11,7 @@ const users = [
 ];
 
 const Home = () => {
-  const router = useRouter();
+  const { panels, isLoading: isPanelLoading, deletePanel, deleteView } = usePanelStorage();
   
   return (
     <div className={`flex min-h-screen ml-0 transition-all duration-300`}>
@@ -53,8 +32,18 @@ const Home = () => {
           </div>
         </div>
 
-        <PanelsTable panels={panels} />
-        <TeamTable users={users} />
+        {isPanelLoading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="flex flex-col items-center">
+              <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
+            </div>
+          </div>
+        ) : (
+          <>
+            <PanelsTable panels={panels} onDeletePanel={deletePanel} onDeleteView={deleteView} />
+            <TeamTable users={users} />
+          </>
+        )}
 
       </div>
     </div>
