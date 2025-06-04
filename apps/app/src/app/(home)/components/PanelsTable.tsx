@@ -1,32 +1,22 @@
 import { TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { PanelDefinition } from '@/types/worklist';
 import { ChevronRight, LayoutGrid, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 
-type View = {
-  id: string;
-  title: string;
-  columns: number;
-  createdAt: string;
-};
-
-type Panel = {
-  id: string;
-  title: string;
-  createdAt: string;
-  columns: number;
-  views: View[];
-};
-
 type PanelsTableProps = {
-  panels: Panel[];
+  panels: PanelDefinition[];
+  onDeletePanel: (panelId: string) => void;
+  onDeleteView: (panelId: string, viewId: string) => void;
 };
 
-const PanelsTable: React.FC<PanelsTableProps> = ({ panels }) => {
+const PanelsTable: React.FC<PanelsTableProps> = ({ panels, onDeletePanel, onDeleteView }) => {
   const router = useRouter();
   // For now, all panels are expanded by default
   return (
     <div className={`mb-8 ml-12`}>
+     
+
       <div className="flex justify-between items-center mb-4 max-w-3xl">
         <h2 className="text-base font-medium">Panels</h2>
         <div className="flex gap-2">
@@ -54,7 +44,7 @@ const PanelsTable: React.FC<PanelsTableProps> = ({ panels }) => {
             <TableBody>
               {/* Panels and their views */}
               {panels.map((panel) => (
-                <PanelRow key={panel.id} panel={panel} />
+                <PanelRow key={panel.id} panel={panel} onDeletePanel={onDeletePanel} onDeleteView={onDeleteView} />
               ))}
 
               {panels.length === 0 && (
@@ -72,8 +62,8 @@ const PanelsTable: React.FC<PanelsTableProps> = ({ panels }) => {
   );
 };
 
-const PanelRow: React.FC<{ panel: Panel }> = ({ panel }) => {
-  const { id, title, columns, createdAt, views } = panel;
+const PanelRow: React.FC<{ panel: PanelDefinition,  onDeletePanel: (panelId: string) => void, onDeleteView: (panelId: string, viewId: string) => void }> = ({ panel, onDeletePanel, onDeleteView }) => {
+  const { id, title, taskViewColumns, patientViewColumns, createdAt, views } = panel;
   const router = useRouter();
   return (
     <React.Fragment key={id}>
@@ -87,14 +77,17 @@ const PanelRow: React.FC<{ panel: Panel }> = ({ panel }) => {
             {title}
           </div>
         </TableCell>
-        <TableCell className="text-xs py-2">{columns}</TableCell>
+        <TableCell className="text-xs py-2">{taskViewColumns.length + patientViewColumns.length}</TableCell>
         <TableCell className="text-xs py-2">
           {createdAt}
         </TableCell>
         <TableCell className="text-xs py-2 text-right">
           <button
             className="h-6 w-6 p-0 rounded-full hover:bg-neutral-100"
-            onClick={() => {} }
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeletePanel(id);
+            }}
             aria-label="Remove from history"
           >
             <X className="h-3 w-3 text-neutral-400 hover:text-neutral-600" />
@@ -102,10 +95,9 @@ const PanelRow: React.FC<{ panel: Panel }> = ({ panel }) => {
         </TableCell>
       </TableRow>
 
-      {views
-        .map((view) => (
-          <TableRow
-            key={view.id}
+      {views && views.map((view) => (
+        <TableRow
+          key={view.id}
             className="hover:bg-neutral-50 cursor-pointer"
             onClick={() => router.push(`/panel/${id}/view/${view.id}`)}
           >
@@ -115,14 +107,17 @@ const PanelRow: React.FC<{ panel: Panel }> = ({ panel }) => {
                 {view.title}
               </div>
             </TableCell>
-            <TableCell className="text-xs py-2">{view.columns}</TableCell>
+            <TableCell className="text-xs py-2">{view.taskViewColumns.length + view.patientViewColumns.length}</TableCell>
             <TableCell className="text-xs py-2">
               {view.createdAt}
             </TableCell>
             <TableCell className="text-xs py-2 text-right">
               <button
                 className="h-6 w-6 p-0 rounded-full hover:bg-neutral-100"
-                onClick={() => {} }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteView(id, view.id);
+                }}
                 aria-label="Remove from history"
               >
                 <X className="h-3 w-3 text-neutral-400 hover:text-neutral-600" />
