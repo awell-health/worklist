@@ -1,6 +1,6 @@
 "use client"
 
-import { usePanelStorage } from "@/hooks/use-panel-storage";
+import { usePanelStore } from "@/hooks/use-panel-store";
 import { Loader2, Menu } from "lucide-react";
 import PanelsTable from "./components/PanelsTable";
 import TeamTable from "./components/TeamTable";
@@ -11,7 +11,7 @@ const users = [
 ];
 
 const Home = () => {
-  const { panels, isLoading: isPanelLoading, deletePanel, deleteView } = usePanelStorage();
+  const { panels, isLoading: isPanelLoading, deletePanel, deleteView } = usePanelStore();
   
   return (
     <div className={`flex min-h-screen ml-0 transition-all duration-300`}>

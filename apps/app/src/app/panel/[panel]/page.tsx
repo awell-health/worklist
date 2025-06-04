@@ -6,9 +6,9 @@ import WorklistTable from "@/app/panel/[panel]/components/WorklistTable";
 import WorklistToolbar from "@/app/panel/[panel]/components/WorklistToolbar";
 import { useColumnCreator } from "@/hooks/use-column-creator";
 import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
-import { usePanelStorage } from "@/hooks/use-panel-storage";
+import { usePanelStore } from "@/hooks/use-panel-store";
 import { useSearch } from "@/hooks/use-search";
-import { ColumnDefinition, PanelDefinition } from "@/types/worklist";
+import { ColumnDefinition, PanelDefinition, WorklistDefinition } from "@/types/worklist";
 import { DEFAULT_WORKLIST } from "@/utils/constants";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -20,13 +20,19 @@ export default function WorklistPage() {
   const [currentView, setCurrentView] = useState<'patient' | 'task'>('patient');
   const [isLoading, setIsLoading] = useState(true);
   const [isAddingIngestionSource, setIsAddingIngestionSource] = useState(false);
-  const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
-  const [selectedWorklistDefinition, setSelectedWorklistDefinition] = useState<PanelDefinition | undefined>(undefined);
+  const [panelDefinition, setPanelDefinition] = useState<PanelDefinition | undefined>(undefined);
   const [columns, setColumns] = useState<ColumnDefinition[]>([]);
   const [tableData, setTableData] = useState<(WorklistPatient | WorklistTask)[]>([]);
   const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
-  const {  getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStorage();
+
+  const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
+  const {  getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
+
   const router = useRouter();
+
+  useEffect(() => {
+    setIsLoading(isPanelLoading || isMedplumLoading || !panelDefinition);
+  }, [isPanelLoading, isMedplumLoading, panelId, panelDefinition]);
 
   useEffect(() => {
     if(isPanelLoading) {
@@ -40,69 +46,75 @@ export default function WorklistPage() {
         router.push(`/panel/${newPanel.id}`);
       }
     } else {
-      setSelectedWorklistDefinition(panel);
+      setPanelDefinition(panel);
     }
   }, [panelId, router, isPanelLoading]);
 
-  useEffect(() => {
-    if (!selectedWorklistDefinition) {
-      return;
-    }
-    setColumns(currentView === 'patient' ? selectedWorklistDefinition.patientViewColumns : selectedWorklistDefinition.taskViewColumns);
-    setTableData(currentView === 'patient' ? patients : tasks);
-    updatePanel(selectedWorklistDefinition.id, selectedWorklistDefinition);
-  }, [selectedWorklistDefinition, currentView, tasks, patients]);
 
   useEffect(() => {
-    setIsLoading(isMedplumLoading || isPanelLoading);
-    if(!isMedplumLoading) {
-      setTableData(currentView === 'patient' ? patients : tasks);
+    if (!panelDefinition) {
+      return;
     }
-  }, [isMedplumLoading, isPanelLoading]);
+    setColumns(currentView === 'patient' ? panelDefinition.patientViewColumns : panelDefinition.taskViewColumns);
+    setTableData(currentView === 'patient' ? patients : tasks);
+    updatePanel(panelDefinition.id, panelDefinition);
+  }, [panelDefinition, currentView, tasks, patients, isLoading]);
+
+  const onColumnChange = (column: WorklistDefinition) => {
+    if(!panelDefinition) {
+      return;
+    }
+    const newPanel = {
+      ...panelDefinition,
+      ...column,
+    }
+    updatePanel(panelDefinition.id, newPanel);
+    setPanelDefinition(newPanel);
+  }
 
   const { onAddColumn } = useColumnCreator({
     currentView,
     patients,
     tasks,
-    selectedWorklistDefinition,
-    setSelectedWorklistDefinition,
+    worklistDefinition: panelDefinition,
+    onDefinitionChange: onColumnChange,
   });
 
   const onNewView = () => {
-    if (!selectedWorklistDefinition) {
+    if (!panelDefinition) {
       return;
     }
-    const newView = addView(selectedWorklistDefinition.id, {
+    const newView = addView(panelDefinition.id, {
       title: "New View",
-      filters: selectedWorklistDefinition.filters,
-      taskViewColumns: selectedWorklistDefinition.taskViewColumns,
-      patientViewColumns: selectedWorklistDefinition.patientViewColumns,
+      filters: panelDefinition.filters,
+      taskViewColumns: panelDefinition.taskViewColumns,
+      patientViewColumns: panelDefinition.patientViewColumns,
       createdAt: new Date().toISOString(),
     });
-    router.push(`/panel/${selectedWorklistDefinition.id}/view/${newView.id}`);
+    router.push(`/panel/${panelDefinition.id}/view/${newView.id}`);
   }
 
   const onPanelTitleChange = (newTitle: string) => {
-    if (!selectedWorklistDefinition) {
+    if (!panelDefinition) {
       return;
     }
     const newPanel = {
-      ...selectedWorklistDefinition,
+      ...panelDefinition,
       title: newTitle,
     }
-    updatePanel(selectedWorklistDefinition.id, newPanel);
-    setSelectedWorklistDefinition(newPanel);
+    updatePanel(panelDefinition.id, newPanel);
+    setPanelDefinition(newPanel);
   }
 
   return (
     <>
-      {!selectedWorklistDefinition ? (
+      {isLoading ? (
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
         </div>
       ) : (
         <>
-          <WorklistNavigation panelDefinition={selectedWorklistDefinition} onNewView={onNewView} onPanelTitleChange={onPanelTitleChange} />
+          <WorklistNavigation panelDefinition={panelDefinition!} onNewView={onNewView} onPanelTitleChange={onPanelTitleChange} />
           <WorklistToolbar 
             searchTerm={searchTerm} 
             onSearch={setSearchTerm} 

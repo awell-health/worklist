@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const STORAGE_KEY = 'panel-definitions';
 
-export const usePanelStorage = () => {
+export const usePanelStore = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [panels, setPanels] = useState<PanelDefinition[]>([]);
 
@@ -20,7 +20,7 @@ export const usePanelStorage = () => {
     if(isLoading) {
       return;
     }
-    // only save panels if they are not loading as otherwise we might be cleaning up the localStorage
+    // only save panels if they are not loading otherwise we might be cleaning up the localStorage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(panels));
   }, [panels, isLoading]);
 

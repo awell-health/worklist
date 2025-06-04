@@ -60,7 +60,14 @@ export default function WorklistNavigation({
 
           <div 
             className="relative ml-2 mb-[-1px] cursor-pointer"
-            onClick={handlePanelClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (!selectedViewId) {
+                  setEditingPanel(true);
+              } else {
+                  handlePanelClick();
+              }
+          }}
           >
             <div className={`
               h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r border-gray-200
@@ -80,14 +87,6 @@ export default function WorklistNavigation({
               ) : (
                 <span 
                     className={`text-xs ${!selectedViewId ? 'font-semibold text-gray-700' : 'font-normal text-gray-600'}`}
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (!selectedViewId) {
-                            setEditingPanel(true);
-                        } else {
-                            handlePanelClick();
-                        }
-                    }}
                 >
                     {panelDefinition.title}
                 </span>
