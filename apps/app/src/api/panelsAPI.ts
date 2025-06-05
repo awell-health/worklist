@@ -1,5 +1,20 @@
 import type { IdParam } from '@panels/types'
 import type {
+  ColumnBaseCreate,
+  ColumnBaseCreateResponse,
+  ColumnCalculatedCreate,
+  ColumnCalculatedCreateResponse,
+  ColumnInfo,
+  ColumnInfoResponse,
+  ColumnsResponse,
+} from '@panels/types/columns'
+import type {
+  DataSourceInfo,
+  DataSourceResponse,
+  DataSourceSyncResponse,
+  DataSourcesResponse,
+} from '@panels/types/datasources'
+import type {
   CreatePanelResponse,
   PanelInfo,
   PanelResponse,
@@ -9,11 +24,21 @@ import type {
 import 'server-only'
 
 export const panelsAPI = {
-  get: async (panel: IdParam, options = undefined) => {
-    const response = await fetch(`/api/panels/${panel.id}`, {
-      method: 'GET',
-      ...(options || {}),
-    })
+  get: async (
+    panel: IdParam,
+    options?: Record<string, unknown>,
+  ): Promise<PanelResponse> => {
+    const { apiConfig } = await import('./config/apiConfig')
+    const response = await fetch(
+      apiConfig.buildUrl(`/api/panels/${panel.id}`),
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        ...(options || {}),
+      },
+    )
     return response.json() as Promise<PanelResponse>
   },
 
@@ -22,19 +47,30 @@ export const panelsAPI = {
     userId: string,
     options = undefined,
   ): Promise<PanelsResponse> => {
+    const { apiConfig } = await import('./config/apiConfig')
     const panels = await fetch(
-      `/api/panels?tenantId=${tenantId}&userId=${userId}`,
+      apiConfig.buildUrl(`/api/panels?tenantId=${tenantId}&userId=${userId}`),
       {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         ...(options || {}),
       },
     )
     return panels.json() as Promise<PanelsResponse>
   },
 
-  create: async (panel: PanelInfo, options = undefined) => {
-    const response = await fetch('/api/panels', {
+  create: async (
+    panel: PanelInfo,
+    options = undefined,
+  ): Promise<CreatePanelResponse> => {
+    const { apiConfig } = await import('./config/apiConfig')
+    const response = await fetch(apiConfig.buildUrl('/api/panels'), {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         name: panel.name,
         description: panel.description,
@@ -46,17 +82,27 @@ export const panelsAPI = {
     return response.json() as Promise<CreatePanelResponse>
   },
 
-  update: async (panel: PanelInfo & IdParam, options = undefined) => {
-    const response = await fetch(`/api/panels/${panel.id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        name: panel.name,
-        description: panel.description,
-        tenantId: panel.tenantId,
-        userId: panel.userId,
-      }),
-      ...(options || {}),
-    })
+  update: async (
+    panel: PanelInfo & IdParam,
+    options = undefined,
+  ): Promise<PanelResponse> => {
+    const { apiConfig } = await import('./config/apiConfig')
+    const response = await fetch(
+      apiConfig.buildUrl(`/api/panels/${panel.id}`),
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: panel.name,
+          description: panel.description,
+          tenantId: panel.tenantId,
+          userId: panel.userId,
+        }),
+        ...(options || {}),
+      },
+    )
     return response.json() as Promise<PanelResponse>
   },
 
@@ -64,13 +110,217 @@ export const panelsAPI = {
     panel: IdParam & { tenantId: string; userId: string },
     options = undefined,
   ): Promise<void> => {
-    await fetch(`/api/panels/${panel.id}`, {
+    const { apiConfig } = await import('./config/apiConfig')
+    await fetch(apiConfig.buildUrl(`/api/panels/${panel.id}`), {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         tenantId: panel.tenantId,
         userId: panel.userId,
       }),
       ...(options || {}),
     })
+  },
+
+  dataSources: {
+    list: async (
+      panel: IdParam,
+      tenantId: string,
+      userId: string,
+      options = undefined,
+    ): Promise<DataSourcesResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(
+          `/api/panels/${panel.id}/datasources?tenantId=${tenantId}&userId=${userId}`,
+        ),
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<DataSourcesResponse>
+    },
+
+    create: async (
+      panel: IdParam,
+      dataSource: DataSourceInfo,
+      options = undefined,
+    ): Promise<DataSourceResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/panels/${panel.id}/datasources`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataSource),
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<DataSourceResponse>
+    },
+
+    update: async (
+      dataSource: DataSourceInfo & IdParam,
+      options = undefined,
+    ): Promise<DataSourceResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/datasources/${dataSource.id}`),
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataSource),
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<DataSourceResponse>
+    },
+
+    delete: async (
+      dataSource: IdParam & { tenantId: string; userId: string },
+      options = undefined,
+    ): Promise<void> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      await fetch(apiConfig.buildUrl(`/api/datasources/${dataSource.id}`), {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tenantId: dataSource.tenantId,
+          userId: dataSource.userId,
+        }),
+        ...(options || {}),
+      })
+    },
+
+    sync: async (
+      dataSource: IdParam,
+      options = undefined,
+    ): Promise<DataSourceSyncResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/datasources/${dataSource.id}/sync`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<DataSourceSyncResponse>
+    },
+  },
+
+  columns: {
+    list: async (
+      panel: IdParam,
+      tenantId: string,
+      userId: string,
+      options = undefined,
+    ): Promise<ColumnsResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(
+          `/api/panels/${panel.id}/columns?tenantId=${tenantId}&userId=${userId}`,
+        ),
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<ColumnsResponse>
+    },
+
+    createBase: async (
+      panel: IdParam,
+      column: ColumnBaseCreate,
+      options = undefined,
+    ): Promise<ColumnBaseCreateResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/panels/${panel.id}/columns/base`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(column),
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<ColumnBaseCreateResponse>
+    },
+
+    createCalculated: async (
+      panel: IdParam,
+      column: ColumnCalculatedCreate,
+      options = undefined,
+    ): Promise<ColumnCalculatedCreateResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/panels/${panel.id}/columns/calculated`),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(column),
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<ColumnCalculatedCreateResponse>
+    },
+
+    update: async (
+      column: ColumnInfo & IdParam,
+      options = undefined,
+    ): Promise<ColumnInfoResponse> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      const response = await fetch(
+        apiConfig.buildUrl(`/api/columns/${column.id}`),
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(column),
+          ...(options || {}),
+        },
+      )
+      return response.json() as Promise<ColumnInfoResponse>
+    },
+
+    delete: async (
+      column: IdParam & { tenantId: string; userId: string },
+      options = undefined,
+    ): Promise<void> => {
+      const { apiConfig } = await import('./config/apiConfig')
+      await fetch(apiConfig.buildUrl(`/api/columns/${column.id}`), {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tenantId: column.tenantId,
+          userId: column.userId,
+        }),
+        ...(options || {}),
+      })
+    },
   },
 }
