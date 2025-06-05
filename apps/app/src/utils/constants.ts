@@ -1,8 +1,11 @@
 // src/utils/constants.ts
-import type { WorklistDefinition } from '@/types/worklist';
+import type { PanelDefinition } from '@/types/worklist';
 
-export const DEFAULT_WORKLIST: WorklistDefinition = {
+export const DEFAULT_WORKLIST: PanelDefinition = {
+  id: "new-panel",
   title: "New Panel",
+  createdAt: new Date().toISOString(),
+  filters: [],
   patientViewColumns: [
     {
       name: "Patient Name",
@@ -83,5 +86,6 @@ export const DEFAULT_WORKLIST: WorklistDefinition = {
       description: "Task assignee",
       id: "assignee"
     }
-  ]
+  ],
+  views: []
 }

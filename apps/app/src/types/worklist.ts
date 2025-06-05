@@ -1,5 +1,9 @@
 // src/types/worklist.ts
 
+export type Filter = {
+  fhirPathFilter: string[]
+}
+
 export interface Patient {
   id: string;
   name: string;
@@ -21,8 +25,16 @@ export type ColumnDefinition = {
   options?: Array<{ value: string; color: string }>
 }
 
+// TODO remove it or make it private or refator it, should contain views as optional
 export type WorklistDefinition = {
+  id: string
   title: string
+  filters: Filter[]
   taskViewColumns: ColumnDefinition[]
   patientViewColumns: ColumnDefinition[]
+  createdAt: string
+  views?: ViewDefinition[]
 }
+
+export type PanelDefinition = WorklistDefinition
+export type ViewDefinition = WorklistDefinition
