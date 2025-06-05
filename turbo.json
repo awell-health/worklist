@@ -1,16 +1,23 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalDependencies": ["**/.env"],
+  "globalDependencies": ["**/.env", "tsconfig.json"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "cache": false
+      "dependsOn": ["^build", "@panels/docs#docs:build"],
+      "outputs": [
+        "dist/**",
+        "node_modules/.cache/tsbuildinfo.json",
+        ".next/**",
+        ".vitepress/dist/**"
+      ],
+      "cache": true
     },
     "dev": {
       "dependsOn": ["//#run:infra:root", "build"],
       "persistent": true,
       "cache": false
     },
+    "docs:build": {},
     "lint": {
       "dependsOn": ["^topo"]
     },
