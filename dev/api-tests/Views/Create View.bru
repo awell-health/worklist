@@ -1,0 +1,44 @@
+meta {
+  name: Create View
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/views
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Active Users View",
+    "description": "View showing only active users",
+    "panelId": 1,
+    "config": {
+      "columns": ["firstName", "lastName", "email", "status"],
+      "groupBy": ["status"],
+      "layout": "table"
+    },
+    "metadata": {
+      "category": "user-management"
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("View has ID", function() {
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody().id).to.be.a('number');
+  });
+  
+  test("View is not published by default", function() {
+    expect(res.getBody().isPublished).to.equal(false);
+  });
+} 

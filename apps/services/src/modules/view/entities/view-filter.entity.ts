@@ -1,25 +1,6 @@
 import { Entity, Enum, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { FilterOperator } from '@panels/types/views'
 import { View } from './view.entity.js'
-
-export const FilterOperator = {
-  EQ: 'eq',
-  GT: 'gt',
-  LT: 'lt',
-  GTE: 'gte',
-  LTE: 'lte',
-  CONTAINS: 'contains',
-  IN: 'in',
-  BETWEEN: 'between',
-  NE: 'ne',
-  STARTS_WITH: 'startsWith',
-  ENDS_WITH: 'endsWith',
-  NOT_IN: 'notIn',
-  IS_NULL: 'isNull',
-  IS_NOT_NULL: 'isNotNull',
-} as const
-
-export type FilterOperator =
-  (typeof FilterOperator)[keyof typeof FilterOperator]
 
 @Entity()
 export class ViewFilter {

@@ -1,5 +1,11 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema } from '@panels/types'
+import {
+  type ColumnInfo,
+  type ColumnInfoResponse,
+  ColumnInfoResponseSchema,
+  ColumnInfoSchema,
+} from '@panels/types/columns'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -12,79 +18,25 @@ const paramsSchema = z.object({
   colId: z.string(),
 })
 
-const columnPropertiesSchema = z.object({
-  required: z.boolean().optional(),
-  unique: z.boolean().optional(),
-  defaultValue: z.any().optional(),
-  validation: z
-    .object({
-      min: z.number().optional(),
-      max: z.number().optional(),
-      pattern: z.string().optional(),
-      options: z.array(z.string()).optional(),
-    })
-    .optional(),
-  display: z
-    .object({
-      width: z.number().optional(),
-      format: z.string().optional(),
-      visible: z.boolean().optional(),
-    })
-    .optional(),
-})
-
-const bodySchema = z.object({
-  name: z.string().optional(),
-  properties: columnPropertiesSchema.optional(),
-  metadata: z.record(z.any()).optional(),
-  // For calculated columns
-  formula: z.string().optional(),
-  dependencies: z.array(z.string()).optional(),
-  // For base columns
-  sourceField: z.string().optional(),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const responseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-})
-
 // Types
 type ParamsType = z.infer<typeof paramsSchema>
-type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const columnUpdate = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Params: ParamsType
-    Body: BodyType
-    Reply: ResponseType
+    Body: ColumnInfo
+    Reply: ColumnInfoResponse
   }>({
     method: 'PUT',
     schema: {
       description: 'Update a column (base or calculated)',
       tags: ['panel', 'column'],
       params: paramsSchema,
-      body: bodySchema,
+      body: ColumnInfoSchema,
       response: {
-        200: responseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        200: ColumnInfoResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels/:id/columns/:colId',

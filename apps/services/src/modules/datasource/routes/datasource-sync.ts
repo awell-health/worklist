@@ -1,5 +1,9 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema } from '@panels/types'
+import {
+  type DataSourceSyncResponse,
+  DataSourceSyncResponseSchema,
+} from '@panels/types/datasources'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -15,25 +19,15 @@ const bodySchema = z.object({
   userId: z.string(),
 })
 
-const syncResponseSchema = z.object({
-  id: z.number(),
-  type: z.enum(['database', 'api', 'file', 'custom']),
-  config: z.record(z.any()),
-  lastSync: z.date(),
-  syncStatus: z.enum(['success', 'error']),
-  message: z.string().optional(),
-})
-
 // Types
 type ParamsType = z.infer<typeof paramsSchema>
 type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof syncResponseSchema>
 
 export const datasourceSync = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Params: ParamsType
     Body: BodyType
-    Reply: ResponseType
+    Reply: DataSourceSyncResponse
   }>({
     method: 'POST',
     schema: {
@@ -42,9 +36,9 @@ export const datasourceSync = async (app: FastifyInstance) => {
       params: paramsSchema,
       body: bodySchema,
       response: {
-        200: syncResponseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        200: DataSourceSyncResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels/:id/datasources/:dsId/sync',

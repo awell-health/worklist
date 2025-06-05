@@ -1,26 +1,20 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { type ViewConfig, errorSchema, viewConfigSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import { type ViewConfig, ViewConfigSchema } from '@panels/types/views'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
 
 const querystringSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
 })
 
-// Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
 
 export const viewGet = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
     Reply: ViewConfig
   }>({
@@ -28,11 +22,11 @@ export const viewGet = async (app: FastifyInstance) => {
     schema: {
       description: 'Get a specific view by ID',
       tags: ['view'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
-        200: viewConfigSchema,
-        404: errorSchema,
+        200: ViewConfigSchema,
+        404: ErrorSchema,
       },
     },
     url: '/views/:id',

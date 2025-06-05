@@ -1,96 +1,30 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type ColumnBaseCreate,
+  type ColumnBaseCreateResponse,
+  ColumnBaseCreateResponseSchema,
+  ColumnBaseCreateSchema,
+} from '@panels/types/columns'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
-
-const columnPropertiesSchema = z.object({
-  required: z.boolean().optional(),
-  unique: z.boolean().optional(),
-  defaultValue: z.any().optional(),
-  validation: z
-    .object({
-      min: z.number().optional(),
-      max: z.number().optional(),
-      pattern: z.string().optional(),
-      options: z.array(z.string()).optional(),
-    })
-    .optional(),
-  display: z
-    .object({
-      width: z.number().optional(),
-      format: z.string().optional(),
-      visible: z.boolean().optional(),
-    })
-    .optional(),
-})
-
-const bodySchema = z.object({
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  sourceField: z.string(),
-  dataSourceId: z.number(),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const responseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  sourceField: z.string(),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-})
-
-// Types
-type ParamsType = z.infer<typeof paramsSchema>
-type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const columnCreateBase = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
-    Body: BodyType
-    Reply: ResponseType
+    Params: IdParam
+    Body: ColumnBaseCreate
+    Reply: ColumnBaseCreateResponse
   }>({
     method: 'POST',
     schema: {
       description: 'Create a new base column for a panel',
       tags: ['panel', 'column'],
-      params: paramsSchema,
-      body: bodySchema,
+      params: IdParamSchema,
+      body: ColumnBaseCreateSchema,
       response: {
-        201: responseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        201: ColumnBaseCreateResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels/:id/columns/base',

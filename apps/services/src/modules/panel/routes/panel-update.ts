@@ -1,43 +1,29 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type PanelInfo,
+  PanelInfoSchema,
+  type PanelResponse,
+  PanelResponseSchema,
+} from '@panels/types/panels'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 export const panelUpdate = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: {
-      id: string
-    }
+    Params: IdParam
+    Body: PanelInfo
+    Reply: PanelResponse
   }>({
     method: 'PUT',
     schema: {
       description: 'Update a panel',
       tags: ['panel'],
-      params: z.object({
-        id: z.string(),
-      }),
-      body: z.object({
-        name: z.string().optional(),
-        description: z.string().optional(),
-        tenantId: z.string(),
-        userId: z.string(),
-      }),
+      params: IdParamSchema,
+      body: PanelInfoSchema,
       response: {
-        200: z.object({
-          id: z.number(),
-          name: z.string(),
-          description: z.string().nullable(),
-          tenantId: z.string(),
-          userId: z.string(),
-          cohortRule: z.object({
-            conditions: z.array(z.any()),
-            logic: z.enum(['AND', 'OR']),
-          }),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-        }),
-        404: errorSchema,
+        200: PanelResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id',
@@ -64,7 +50,16 @@ export const panelUpdate = async (app: FastifyInstance) => {
       if (description !== undefined) panel.description = description
 
       await request.store.em.flush()
-      return panel
+      return {
+        id: panel.id,
+        name: panel.name,
+        description: panel.description ?? null,
+        tenantId: panel.tenantId,
+        userId: panel.userId,
+        cohortRule: panel.cohortRule,
+        createdAt: panel.createdAt,
+        updatedAt: panel.updatedAt,
+      }
     },
   })
 }

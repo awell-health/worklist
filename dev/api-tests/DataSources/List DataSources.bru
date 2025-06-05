@@ -1,0 +1,27 @@
+meta {
+  name: List DataSources
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/panels/{{panelId}}/datasources?tenantId={{tenantId}}&userId={{userId}}
+  body: none
+  auth: none
+}
+
+params:query {
+  tenantId: {{tenantId}}
+  userId: {{userId}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has datasources array", function() {
+    expect(res.getBody()).to.have.property('datasources');
+    expect(res.getBody().datasources).to.be.an('array');
+  });
+} 

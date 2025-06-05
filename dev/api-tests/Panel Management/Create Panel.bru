@@ -1,0 +1,42 @@
+meta {
+  name: Create Panel
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/panels
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Test Panel",
+    "description": "A test panel for API testing",
+    "cohortRule": {
+      "type": "simple",
+      "conditions": []
+    },
+    "metadata": {
+      "category": "test"
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Response has panel ID", function() {
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody().id).to.be.a('number');
+  });
+  
+  test("Panel name matches", function() {
+    expect(res.getBody().name).to.equal('Test Panel');
+  });
+} 

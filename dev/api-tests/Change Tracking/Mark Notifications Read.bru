@@ -1,0 +1,34 @@
+meta {
+  name: Mark Notifications Read
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/notifications/views/mark-read
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "notificationIds": [1, 2, 3],
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has updated count", function() {
+    expect(res.getBody()).to.have.property('updated');
+    expect(res.getBody().updated).to.be.a('number');
+  });
+  
+  test("Updated count matches request", function() {
+    expect(res.getBody().updated).to.be.at.most(3);
+  });
+} 

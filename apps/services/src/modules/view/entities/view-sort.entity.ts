@@ -1,12 +1,6 @@
 import { Entity, Enum, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { SortDirection } from '@panels/types/views'
 import { View } from './view.entity.js'
-
-export const SortDirection = {
-  ASC: 'asc',
-  DESC: 'desc',
-} as const
-
-export type SortDirection = (typeof SortDirection)[keyof typeof SortDirection]
 
 @Entity()
 export class ViewSort {

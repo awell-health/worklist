@@ -1,45 +1,31 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import { type PanelResponse, PanelResponseSchema } from '@panels/types/panels'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 export const panelGet = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: {
-      id: string
-    }
+    Params: IdParam
     Querystring: {
       tenantId: string
       userId: string
     }
+    Reply: PanelResponse
   }>({
     method: 'GET',
     schema: {
       description: 'Get a panel by ID',
       tags: ['panel'],
-      params: z.object({
-        id: z.string(),
-      }),
+      params: IdParamSchema,
       querystring: z.object({
         tenantId: z.string(),
         userId: z.string(),
       }),
       response: {
-        200: z.object({
-          id: z.number(),
-          name: z.string(),
-          description: z.string().nullable(),
-          tenantId: z.string(),
-          userId: z.string(),
-          cohortRule: z.object({
-            conditions: z.array(z.any()),
-            logic: z.enum(['AND', 'OR']),
-          }),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-        }),
-        404: errorSchema,
+        200: PanelResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id',
@@ -71,7 +57,16 @@ export const panelGet = async (app: FastifyInstance) => {
         throw new NotFoundError('Panel not found')
       }
 
-      return panel
+      return {
+        id: panel.id,
+        name: panel.name,
+        description: panel.description ?? null,
+        tenantId: panel.tenantId,
+        userId: panel.userId,
+        cohortRule: panel.cohortRule,
+        createdAt: panel.createdAt,
+        updatedAt: panel.updatedAt,
+      }
     },
   })
 }

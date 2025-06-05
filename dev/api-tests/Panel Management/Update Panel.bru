@@ -1,0 +1,34 @@
+meta {
+  name: Update Panel
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/panels/{{panelId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Updated Test Panel After Test",
+    "description": "Updated description for testing",
+    "metadata": {
+      "category": "updated",
+      "tags": ["test", "updated"]
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Panel name was updated", function() {
+    expect(res.getBody().name).to.equal('Updated Test Panel');
+  });
+}

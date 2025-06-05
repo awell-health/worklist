@@ -1,0 +1,50 @@
+meta {
+  name: Update View Sorts
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{baseUrl}}/views/{{viewId}}/sorts
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sorts": [
+      {
+        "columnName": "lastName",
+        "direction": "asc",
+        "order": 1
+      },
+      {
+        "columnName": "firstName",
+        "direction": "asc",
+        "order": 2
+      },
+      {
+        "columnName": "email",
+        "direction": "desc",
+        "order": 3
+      }
+    ],
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has sorts array", function() {
+    expect(res.getBody()).to.have.property('sorts');
+    expect(res.getBody().sorts).to.be.an('array');
+  });
+  
+  test("Sorts have correct length", function() {
+    expect(res.getBody().sorts).to.have.lengthOf(3);
+  });
+} 

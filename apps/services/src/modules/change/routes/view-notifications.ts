@@ -1,81 +1,36 @@
-import {
-  NotificationImpact,
-  NotificationStatus,
-  type ViewNotification,
-} from '@/modules/change/entities/view-notification.entity.js'
-import { errorSchema } from '@/types.js'
+import type { ViewNotification } from '@/modules/change/entities/view-notification.entity.js'
 import type { FilterQuery } from '@mikro-orm/core'
+import { ErrorSchema } from '@panels/types'
+import {
+  type MarkRead,
+  type MarkReadResponse,
+  MarkReadResponseSchema,
+  MarkReadSchema,
+  NotificationStatus,
+  type ViewNotificationsQuery,
+  ViewNotificationsQuerySchema,
+  type ViewNotificationsResponse,
+  ViewNotificationsResponseSchema,
+} from '@panels/types/view-notifications'
+
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 // Zod Schemas
-const querystringSchema = z.object({
-  tenantId: z.string(),
-  userId: z.string(),
-  isRead: z.boolean().optional(),
-  notificationType: z.nativeEnum(NotificationImpact).optional(),
-  since: z.string().optional(), // ISO date string
-  limit: z.coerce.number().min(1).max(100).default(50),
-  offset: z.coerce.number().min(0).default(0),
-})
-
-const viewNotificationSchema = z.object({
-  id: z.number(),
-  viewId: z.number(),
-  userId: z.string(),
-  tenantId: z.string(),
-  impact: z.nativeEnum(NotificationImpact),
-  message: z.string(),
-  isRead: z.boolean(),
-  createdAt: z.date(),
-  readAt: z.date().optional(),
-  view: z.object({
-    id: z.number(),
-    name: z.string(),
-    panelId: z.number(),
-    publishedBy: z.string().optional(),
-  }),
-})
-
-const getNotificationsResponseSchema = z.object({
-  notifications: z.array(viewNotificationSchema),
-  total: z.number(),
-  unreadCount: z.number(),
-  hasMore: z.boolean(),
-})
-
-const markReadBodySchema = z.object({
-  notificationIds: z.array(z.number()),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const markReadResponseSchema = z.object({
-  updated: z.number(),
-})
-
-// Types
-type QuerystringType = z.infer<typeof querystringSchema>
-type GetNotificationsResponseType = z.infer<
-  typeof getNotificationsResponseSchema
->
-type MarkReadBodyType = z.infer<typeof markReadBodySchema>
-type MarkReadResponseType = z.infer<typeof markReadResponseSchema>
 
 export const viewNotifications = async (app: FastifyInstance) => {
   // GET /notifications/views - List view notifications
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Querystring: QuerystringType
-    Reply: GetNotificationsResponseType
+    Querystring: ViewNotificationsQuery
+    Reply: ViewNotificationsResponse
   }>({
     method: 'GET',
     schema: {
       description: 'List view notifications for user',
       tags: ['change-tracking', 'notifications'],
-      querystring: querystringSchema,
+      querystring: ViewNotificationsQuerySchema,
       response: {
-        200: getNotificationsResponseSchema,
+        200: ViewNotificationsResponseSchema,
       },
     },
     url: '/notifications/views',
@@ -153,17 +108,17 @@ export const viewNotifications = async (app: FastifyInstance) => {
 
   // PUT /notifications/views/mark-read - Mark notifications as read
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Body: MarkReadBodyType
-    Reply: MarkReadResponseType
+    Body: MarkRead
+    Reply: MarkReadResponse
   }>({
     method: 'PUT',
     schema: {
       description: 'Mark view notifications as read',
       tags: ['change-tracking', 'notifications'],
-      body: markReadBodySchema,
+      body: MarkReadSchema,
       response: {
-        200: markReadResponseSchema,
-        400: errorSchema,
+        200: MarkReadResponseSchema,
+        400: ErrorSchema,
       },
     },
     url: '/notifications/views/mark-read',

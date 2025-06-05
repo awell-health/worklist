@@ -1,70 +1,42 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type ViewSortsInfo,
+  type ViewSortsInfoResponse,
+  ViewSortsInfoResponseSchema,
+  ViewSortsInfoSchema,
+  type ViewSortsResponse,
+  ViewSortsResponseSchema,
+} from '@panels/types/views'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { SortDirection } from '../entities/view-sort.entity.js'
 
 // Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
-
 const querystringSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
 })
 
-const sortSchema = z.object({
-  id: z.number(),
-  columnName: z.string(),
-  direction: z.nativeEnum(SortDirection),
-  order: z.number(),
-})
-
-const getSortsResponseSchema = z.object({
-  sorts: z.array(sortSchema),
-})
-
-const updateSortsBodySchema = z.object({
-  sorts: z.array(
-    z.object({
-      columnName: z.string(),
-      direction: z.nativeEnum(SortDirection),
-      order: z.number(),
-    }),
-  ),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const updateSortsResponseSchema = z.object({
-  sorts: z.array(sortSchema),
-})
-
 // Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
-type GetSortsResponseType = z.infer<typeof getSortsResponseSchema>
-type UpdateSortsBodyType = z.infer<typeof updateSortsBodySchema>
-type UpdateSortsResponseType = z.infer<typeof updateSortsResponseSchema>
 
 export const viewSorts = async (app: FastifyInstance) => {
   // GET /views/:id/sorts - List view sorts
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
-    Reply: GetSortsResponseType
+    Reply: ViewSortsResponse
   }>({
     method: 'GET',
     schema: {
       description: 'Get sorts for a view',
       tags: ['view', 'configuration'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
-        200: getSortsResponseSchema,
-        404: errorSchema,
+        200: ViewSortsResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/views/:id/sorts',
@@ -103,20 +75,20 @@ export const viewSorts = async (app: FastifyInstance) => {
 
   // PUT /views/:id/sorts - Update view sorts
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
-    Body: UpdateSortsBodyType
-    Reply: UpdateSortsResponseType
+    Params: IdParam
+    Body: ViewSortsInfo
+    Reply: ViewSortsInfoResponse
   }>({
     method: 'PUT',
     schema: {
       description: 'Update sorts for a view (only owner can update)',
       tags: ['view', 'configuration'],
-      params: paramsSchema,
-      body: updateSortsBodySchema,
+      params: IdParamSchema,
+      body: ViewSortsInfoSchema,
       response: {
-        200: updateSortsResponseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        200: ViewSortsInfoResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views/:id/sorts',

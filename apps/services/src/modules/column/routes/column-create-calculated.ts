@@ -1,97 +1,30 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type ColumnCalculatedCreate,
+  type ColumnCalculatedCreateResponse,
+  ColumnCalculatedCreateResponseSchema,
+  ColumnCalculatedCreateSchema,
+} from '@panels/types/columns'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
-
-const columnPropertiesSchema = z.object({
-  required: z.boolean().optional(),
-  unique: z.boolean().optional(),
-  defaultValue: z.any().optional(),
-  validation: z
-    .object({
-      min: z.number().optional(),
-      max: z.number().optional(),
-      pattern: z.string().optional(),
-      options: z.array(z.string()).optional(),
-    })
-    .optional(),
-  display: z
-    .object({
-      width: z.number().optional(),
-      format: z.string().optional(),
-      visible: z.boolean().optional(),
-    })
-    .optional(),
-})
-
-const bodySchema = z.object({
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  formula: z.string(),
-  dependencies: z.array(z.string()),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const responseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  formula: z.string(),
-  dependencies: z.array(z.string()),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-})
-
-// Types
-type ParamsType = z.infer<typeof paramsSchema>
-type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const columnCreateCalculated = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
-    Body: BodyType
-    Reply: ResponseType
+    Params: IdParam
+    Body: ColumnCalculatedCreate
+    Reply: ColumnCalculatedCreateResponse
   }>({
     method: 'POST',
     schema: {
       description: 'Create a new calculated column for a panel',
       tags: ['panel', 'column'],
-      params: paramsSchema,
-      body: bodySchema,
+      params: IdParamSchema,
+      body: ColumnCalculatedCreateSchema,
       response: {
-        201: responseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        201: ColumnCalculatedCreateResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels/:id/columns/calculated',

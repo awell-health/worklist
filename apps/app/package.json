@@ -1,6 +1,7 @@
 {
-  "name": "@worklist/app",
+  "name": "@panels/app",
   "version": "0.1.0",
+  "description": "Awell Panels App",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -14,33 +15,35 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@medplum/core": "^4.1.5",
-    "@medplum/fhirtypes": "^4.1.5",
+    "@medplum/core": "^4.1.6",
+    "@medplum/fhirtypes": "^4.1.6",
+    "@panels/types": "workspace:^",
     "autoprefixer": "^10.4.21",
     "clsx": "^2.1.1",
-    "daisyui": "^5.0.37",
+    "daisyui": "^5.0.43",
     "fhirpath": "^4.3.0",
     "lucide-react": "^0.511.0",
-    "next": "15.3.2",
+    "next": "15.3.3",
     "next-auth": "5.0.0-beta.25",
     "openai": "^4.103.0",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^10.1.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/node": "^22.15.21",
+    "@types/node": "^22.15.29",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react": "^4.5.0",
+    "@vitejs/plugin-react": "^4.5.1",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4.1.7",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.1"
   }
 }

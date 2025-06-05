@@ -1,106 +1,35 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type ColumnsResponse,
+  ColumnsResponseSchema,
+} from '@panels/types/columns'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
 
 const querystringSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
 })
 
-const columnPropertiesSchema = z.object({
-  required: z.boolean().optional(),
-  unique: z.boolean().optional(),
-  defaultValue: z.any().optional(),
-  validation: z
-    .object({
-      min: z.number().optional(),
-      max: z.number().optional(),
-      pattern: z.string().optional(),
-      options: z.array(z.string()).optional(),
-    })
-    .optional(),
-  display: z
-    .object({
-      width: z.number().optional(),
-      format: z.string().optional(),
-      visible: z.boolean().optional(),
-    })
-    .optional(),
-})
-
-const baseColumnSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  sourceField: z.string(),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-  columnType: z.literal('base'),
-})
-
-const calculatedColumnSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  type: z.enum([
-    'text',
-    'number',
-    'date',
-    'boolean',
-    'select',
-    'multi_select',
-    'user',
-    'file',
-    'custom',
-  ]),
-  formula: z.string(),
-  dependencies: z.array(z.string()),
-  properties: columnPropertiesSchema,
-  metadata: z.record(z.any()).optional(),
-  columnType: z.literal('calculated'),
-})
-
-const responseSchema = z.object({
-  baseColumns: z.array(baseColumnSchema),
-  calculatedColumns: z.array(calculatedColumnSchema),
-})
-
-// Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const columnList = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
-    Reply: ResponseType
+    Reply: ColumnsResponse
   }>({
     method: 'GET',
     schema: {
       description: 'List all columns for a panel',
       tags: ['panel', 'column'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
-        200: responseSchema,
-        404: errorSchema,
+        200: ColumnsResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id/columns',

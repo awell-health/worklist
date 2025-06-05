@@ -1,0 +1,51 @@
+meta {
+  name: Create Base Column
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/panels/{{panelId}}/columns/base
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "User Email",
+    "type": "text",
+    "sourceField": "email",
+    "dataSourceId": 1,
+    "properties": {
+      "required": true,
+      "unique": true,
+      "validation": {
+        "pattern": "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$"
+      },
+      "display": {
+        "width": 200,
+        "visible": true
+      }
+    },
+    "metadata": {
+      "description": "User email address"
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Column has ID", function() {
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody().id).to.be.a('number');
+  });
+  
+  test("Column type is correct", function() {
+    expect(res.getBody().type).to.equal('text');
+  });
+} 

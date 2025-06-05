@@ -1,0 +1,33 @@
+meta {
+  name: Sync DataSource
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/panels/{{panelId}}/datasources/{{dataSourceId}}/sync
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Sync response has status", function() {
+    expect(res.getBody()).to.have.property('status');
+  });
+  
+  test("Records count exists", function() {
+    expect(res.getBody()).to.have.property('recordsProcessed');
+    expect(res.getBody().recordsProcessed).to.be.a('number');
+  });
+} 

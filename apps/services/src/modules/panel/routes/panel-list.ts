@@ -1,41 +1,32 @@
+import { type PanelsResponse, PanelsResponseSchema } from '@panels/types/panels'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
+const querystringSchema = z.object({
+  tenantId: z.string(),
+  userId: z.string(),
+})
+
+type QuerystringType = z.infer<typeof querystringSchema>
+
 export const panelList = async (app: FastifyInstance) => {
-  app.withTypeProvider<ZodTypeProvider>().route({
+  app.withTypeProvider<ZodTypeProvider>().route<{
+    Querystring: QuerystringType
+    Reply: PanelsResponse
+  }>({
     method: 'GET',
     schema: {
       description: 'List all panels for a user',
       tags: ['panel'],
-      querystring: z.object({
-        tenantId: z.string(),
-        userId: z.string(),
-      }),
+      querystring: querystringSchema,
       response: {
-        200: z.array(
-          z.object({
-            id: z.number(),
-            name: z.string(),
-            description: z.string().nullable(),
-            tenantId: z.string(),
-            userId: z.string(),
-            cohortRule: z.object({
-              conditions: z.array(z.any()),
-              logic: z.enum(['AND', 'OR']),
-            }),
-            createdAt: z.date(),
-            updatedAt: z.date(),
-          }),
-        ),
+        200: PanelsResponseSchema,
       },
     },
     url: '/panels',
     handler: async (request, reply) => {
-      const { tenantId, userId } = request.query as {
-        tenantId: string
-        userId: string
-      }
+      const { tenantId, userId } = request.query
 
       const panels = await request.store.panel.find(
         { tenantId, userId },

@@ -1,58 +1,30 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema } from '@panels/types'
+import {
+  type ViewInfo,
+  ViewInfoSchema,
+  type ViewResponse,
+  ViewResponseSchema,
+} from '@panels/types/views'
+
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 // Zod Schemas
-const bodySchema = z.object({
-  name: z.string(),
-  description: z.string().optional(),
-  panelId: z.number(),
-  config: z.object({
-    columns: z.array(z.string()),
-    groupBy: z.array(z.string()).optional(),
-    layout: z.enum(['table', 'card', 'kanban']).optional(),
-  }),
-  metadata: z.record(z.any()).optional(),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const responseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  description: z.string().optional(),
-  panelId: z.number(),
-  userId: z.string(),
-  tenantId: z.string(),
-  isPublished: z.boolean(),
-  config: z.object({
-    columns: z.array(z.string()),
-    groupBy: z.array(z.string()).optional(),
-    layout: z.enum(['table', 'card', 'kanban']).optional(),
-  }),
-  metadata: z.record(z.any()).optional(),
-})
-
-// Types
-type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof responseSchema>
-
 export const viewCreate = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Body: BodyType
-    Reply: ResponseType
+    Body: ViewInfo
+    Reply: ViewResponse
   }>({
     method: 'POST',
     schema: {
       description: 'Create a new view for a panel',
       tags: ['view'],
-      body: bodySchema,
+      body: ViewInfoSchema,
       response: {
-        201: responseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        201: ViewResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views',

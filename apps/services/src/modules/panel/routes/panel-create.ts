@@ -1,35 +1,26 @@
-import { errorSchema } from '@/types.js'
+import { ErrorSchema } from '@panels/types'
+import {
+  type CreatePanelResponse,
+  CreatePanelResponseSchema,
+  type PanelInfo,
+  PanelInfoSchema,
+} from '@panels/types/panels'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
 
 export const panelCreate = async (app: FastifyInstance) => {
-  app.withTypeProvider<ZodTypeProvider>().route({
+  app.withTypeProvider<ZodTypeProvider>().route<{
+    Body: PanelInfo
+    Reply: CreatePanelResponse
+  }>({
     method: 'POST',
     schema: {
       description: 'Create a new panel',
       tags: ['panel'],
-      body: z.object({
-        name: z.string(),
-        description: z.string().optional(),
-        tenantId: z.string(),
-        userId: z.string(),
-      }),
+      body: PanelInfoSchema,
       response: {
-        201: z.object({
-          id: z.number(),
-          name: z.string(),
-          description: z.string().nullable(),
-          tenantId: z.string(),
-          userId: z.string(),
-          cohortRule: z.object({
-            conditions: z.array(z.any()),
-            logic: z.enum(['AND', 'OR']),
-          }),
-          createdAt: z.date(),
-          updatedAt: z.date(),
-        }),
-        400: errorSchema,
+        201: CreatePanelResponseSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels',

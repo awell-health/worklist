@@ -1,53 +1,35 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
-import type { FastifyInstance } from 'fastify'
-import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
 import {
   NotificationImpact,
   NotificationStatus,
-} from '../../change/entities/view-notification.entity.js'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
-
-const bodySchema = z.object({
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const responseSchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  isPublished: z.boolean(),
-  publishedBy: z.string(),
-  publishedAt: z.date(),
-})
-
-// Types
-type ParamsType = z.infer<typeof paramsSchema>
-type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof responseSchema>
+} from '@panels/types/view-notifications'
+import {
+  type ViewPublishInfo,
+  ViewPublishInfoSchema,
+  type ViewPublishResponse,
+  ViewPublishResponseSchema,
+} from '@panels/types/views'
+import type { FastifyInstance } from 'fastify'
+import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 export const viewPublish = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
-    Body: BodyType
-    Reply: ResponseType
+    Params: IdParam
+    Body: ViewPublishInfo
+    Reply: ViewPublishResponse
   }>({
     method: 'POST',
     schema: {
       description:
         'Publish a view to make it tenant-wide (only owner can publish)',
       tags: ['view'],
-      params: paramsSchema,
-      body: bodySchema,
+      params: IdParamSchema,
+      body: ViewPublishInfoSchema,
       response: {
-        200: responseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        200: ViewPublishResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views/:id/publish',
