@@ -5,6 +5,7 @@ export default defineConfig({
   title: 'Awell Panels Documentation',
   description: 'Comprehensive documentation for the Panels Management System',
   ignoreDeadLinks: true,
+  base: '/worklist/',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
