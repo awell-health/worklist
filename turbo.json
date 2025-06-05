@@ -18,6 +18,7 @@
       "cache": false
     },
     "docs:build": {},
+    "docs:dev": {},
     "lint": {
       "dependsOn": ["^topo"]
     },
