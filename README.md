@@ -2,7 +2,47 @@
 
 This project provides a comprehensive Panel Management System for healthcare applications, featuring dynamic data visualization, multi-tenant architecture, and configurable data sources.
 
-## Overview
+<!-- vscode-markdown-toc -->
+* 1. [Overview](#Overview)
+* 2. [Architecture](#Architecture)
+	* 2.1. [Core Entities](#CoreEntities)
+	* 2.2. [Key Features](#KeyFeatures)
+* 3. [Tech Stack](#TechStack)
+	* 3.1. [Backend (Services)](#BackendServices)
+	* 3.2. [Frontend (App)](#FrontendApp)
+	* 3.3. [Documentation](#Documentation)
+	* 3.4. [Infrastructure](#Infrastructure)
+* 4. [Prerequisites](#Prerequisites)
+* 5. [Project Structure](#ProjectStructure)
+* 6. [API Modules](#APIModules)
+	* 6.1. [Panel Management](#PanelManagement)
+	* 6.2. [Data Source Management](#DataSourceManagement)
+	* 6.3. [Column Management](#ColumnManagement)
+	* 6.4. [View Management](#ViewManagement)
+* 7. [Getting Started](#GettingStarted)
+* 8. [Database Setup](#DatabaseSetup)
+* 9. [API Testing](#APITesting)
+* 10. [Unit Testing](#UnitTesting)
+	* 10.1. [Frontend API Testing](#FrontendAPITesting)
+		* 10.1.1. [Key Features](#KeyFeatures-1)
+		* 10.1.2. [Test Files](#TestFiles)
+		* 10.1.3. [Running Tests](#RunningTests)
+	* 10.2. [Backend Testing](#BackendTesting)
+	* 10.3. [API Configuration](#APIConfiguration)
+* 11. [Development Tools](#DevelopmentTools)
+* 12. [Available Scripts](#AvailableScripts)
+* 13. [Infrastructure](#Infrastructure-1)
+* 14. [Contributing](#Contributing)
+* 15. [License](#License)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+
+##  1. <a name='Overview'></a>Overview
 
 The Panels system allows organizations to:
 
@@ -12,9 +52,9 @@ The Panels system allows organizations to:
 - Track changes and notify users of panel modifications
 - Support multi-tenant environments with proper data isolation
 
-## Architecture
+##  2. <a name='Architecture'></a>Architecture
 
-### Core Entities
+###  2.1. <a name='CoreEntities'></a>Core Entities
 
 - **Panels**: Configurable data containers with base and calculated columns
 - **Data Sources**: External data connections (databases, APIs, files)
@@ -22,7 +62,7 @@ The Panels system allows organizations to:
 - **Columns**: Base columns (from data sources) and calculated columns (formulas)
 - **Change Tracking**: Panel modification history and user notifications
 
-### Key Features
+###  2.2. <a name='KeyFeatures'></a>Key Features
 
 - **Multi-tenant Support**: Tenant-level and user-level panel management
 - **Dynamic Data Sources**: Support for various data source types with synchronization
@@ -31,9 +71,9 @@ The Panels system allows organizations to:
 - **Change Management**: Track panel changes and notify affected view users
 - **Cohort Rules**: Define population criteria for panels
 
-## Tech Stack
+##  3. <a name='TechStack'></a>Tech Stack
 
-### Backend (Services)
+###  3.1. <a name='BackendServices'></a>Backend (Services)
 
 - **Runtime**: Node.js 22.14.0
 - **Framework**: Fastify 5.3.2 with TypeScript
@@ -44,7 +84,7 @@ The Panels system allows organizations to:
 - **Testing**: Vitest 3.2.1
 - **Code Quality**: Biome 1.9.4
 
-### Frontend (App)
+###  3.2. <a name='FrontendApp'></a>Frontend (App)
 
 - **Framework**: Next.js 15.3.3 with React 19
 - **Styling**: Tailwind CSS 4.1.7 with DaisyUI 5.0.43
@@ -52,9 +92,15 @@ The Panels system allows organizations to:
 - **Healthcare**: Medplum Core 4.1.6 with FHIR types
 - **Drag & Drop**: @dnd-kit suite
 - **AI Integration**: OpenAI 4.103.0
-- **Testing**: Vitest with React Testing Library
+- **Testing**: Vitest 3.2.1 with JSdom, comprehensive API unit tests
 
-### Infrastructure
+###  3.3. <a name='Documentation'></a>Documentation
+
+- **Framework**: VitePress 1.6.3
+- **Features**: Interactive documentation, API reference, guides, and examples
+- **Location**: `apps/docs/`
+
+###  3.4. <a name='Infrastructure'></a>Infrastructure
 
 - **Database**: PostgreSQL 16
 - **Cache**: Redis 7
@@ -62,7 +108,7 @@ The Panels system allows organizations to:
 - **Development**: Docker Compose for infrastructure
 - **Build System**: Turbo with TypeScript 5.8.3
 
-## Prerequisites
+##  4. <a name='Prerequisites'></a>Prerequisites
 
 - Node.js >= 22
 - pnpm >= 10.11.0
@@ -70,12 +116,23 @@ The Panels system allows organizations to:
 - PostgreSQL 16 (if running locally)
 - Redis 7 (if running locally)
 
-## Project Structure
+##  5. <a name='ProjectStructure'></a>Project Structure
 
 ```
 .
 ├── apps/
 │   ├── app/                    # Next.js frontend application
+│   │   └── src/api/            # API client functions
+│   │       ├── config/         # API configuration
+│   │       ├── *.test.ts       # Unit tests (alongside API files)
+│   │       ├── testUtils.ts    # Testing utilities and mocks
+│   │       └── README.md       # API testing documentation
+│   ├── docs/                   # VitePress documentation site
+│   │   ├── getting-started/    # Installation and setup guides
+│   │   ├── guides/            # How-to guides and tutorials
+│   │   ├── reference/         # API reference documentation
+│   │   ├── examples/          # Code examples and use cases
+│   │   └── .vitepress/        # VitePress configuration
 │   └── services/               # Fastify backend API
 │       └── src/modules/        # API modules
 │           ├── panel/          # Panel management routes
@@ -91,9 +148,9 @@ The Panels system allows organizations to:
 └── compose.yaml               # Docker Compose configuration
 ```
 
-## API Modules
+##  6. <a name='APIModules'></a>API Modules
 
-### Panel Management
+###  6.1. <a name='PanelManagement'></a>Panel Management
 
 - **GET** `/panels` - List user/tenant panels
 - **POST** `/panels` - Create new panel
@@ -101,7 +158,7 @@ The Panels system allows organizations to:
 - **PUT** `/panels/:id` - Update panel
 - **DELETE** `/panels/:id` - Delete panel
 
-### Data Source Management
+###  6.2. <a name='DataSourceManagement'></a>Data Source Management
 
 - **GET** `/panels/:panelId/datasources` - List panel data sources
 - **POST** `/panels/:panelId/datasources` - Add data source
@@ -109,7 +166,7 @@ The Panels system allows organizations to:
 - **DELETE** `/datasources/:id` - Remove data source
 - **POST** `/datasources/:id/sync` - Sync data source
 
-### Column Management
+###  6.3. <a name='ColumnManagement'></a>Column Management
 
 - **GET** `/panels/:panelId/columns` - List panel columns
 - **POST** `/panels/:panelId/columns/base` - Create base column
@@ -117,7 +174,7 @@ The Panels system allows organizations to:
 - **PUT** `/columns/:id` - Update column
 - **DELETE** `/columns/:id` - Delete column
 
-### View Management
+###  6.4. <a name='ViewManagement'></a>View Management
 
 - **GET** `/panels/:panelId/views` - List user views
 - **POST** `/panels/:panelId/views` - Create view
@@ -126,7 +183,7 @@ The Panels system allows organizations to:
 - **DELETE** `/views/:id` - Delete view
 - **POST** `/views/:id/publish` - Publish view tenant-wide
 
-## Getting Started
+##  7. <a name='GettingStarted'></a>Getting Started
 
 1. **Install Dependencies**
 
@@ -148,9 +205,10 @@ The Panels system allows organizations to:
    - Frontend: http://localhost:3003
    - Backend API: http://localhost:3001
    - API Documentation: http://localhost:3001/docs
+   - Project Documentation: http://localhost:3004 (run `pnpm --filter @panels/docs docs:dev`)
    - Database UI (pgweb): http://localhost:8081
 
-## Database Setup
+##  8. <a name='DatabaseSetup'></a>Database Setup
 
 The services use MikroORM for database management:
 
@@ -165,7 +223,7 @@ pnpm --filter @panels/services migration:apply
 pnpm --filter @panels/services schema:fresh
 ```
 
-## API Testing
+##  9. <a name='APITesting'></a>API Testing
 
 The project includes a comprehensive Bruno collection for API testing with all endpoints covered. The collection provides:
 
@@ -176,7 +234,84 @@ The project includes a comprehensive Bruno collection for API testing with all e
 
 📋 **[View the complete Bruno API Test Collection](dev/api-tests/README.md)**
 
-## Development Tools
+##  10. <a name='UnitTesting'></a>Unit Testing
+
+The project includes comprehensive unit testing infrastructure for API functions with advanced mocking and environment configuration capabilities.
+
+###  10.1. <a name='FrontendAPITesting'></a>Frontend API Testing
+
+- **Framework**: Vitest with JSdom environment
+- **Location**: `apps/app/src/api/` (tests alongside API files)
+- **Coverage**: Complete test coverage for `panelsAPI` and `viewsAPI`
+- **Configuration**: Environment-based API URL configuration
+
+####  10.1.1. <a name='KeyFeatures-1'></a>Key Features
+
+- **Configurable Base URL**: APIs support environment-based URL configuration
+  ```typescript
+  // Environment variable: NEXT_PUBLIC_API_BASE_URL
+  // Development: http://localhost:3001
+  // Testing: https://api.test.com (or custom)
+  ```
+
+- **Advanced Mocking**: Comprehensive mock data generators and response builders
+- **Error Testing**: Network failures, HTTP errors, and validation testing
+- **Environment Management**: Dynamic environment variable stubbing in tests
+
+####  10.1.2. <a name='TestFiles'></a>Test Files
+
+- `panelsAPI.test.ts` - 20 test cases covering CRUD operations, nested resources
+- `viewsAPI.test.ts` - 27 test cases covering views, publishing, and sorts
+- `testUtils.ts` - Mock data generators and testing utilities
+- `vitest.config.ts` - Test environment configuration
+- `vitest.setup.ts` - Global test setup and mocks
+
+####  10.1.3. <a name='RunningTests'></a>Running Tests
+
+```bash
+# Run frontend API tests
+pnpm --filter @panels/app test
+
+# Run with coverage
+pnpm --filter @panels/app test:coverage
+
+# Run in watch mode
+pnpm --filter @panels/app test:watch
+
+# Run specific test file
+pnpm --filter @panels/app test panelsAPI.test.ts
+```
+
+###  10.2. <a name='BackendTesting'></a>Backend Testing
+
+- **Framework**: Vitest 3.2.1
+- **Location**: `apps/services/src/`
+
+```bash
+# Run backend tests
+pnpm --filter @panels/services test
+
+# Run with coverage
+pnpm --filter @panels/services test:coverage
+```
+
+###  10.3. <a name='APIConfiguration'></a>API Configuration
+
+The API functions now support configurable base URLs through environment variables:
+
+```typescript
+// apps/app/src/api/config/apiConfig.ts
+export const apiConfig = {
+  get baseUrl(): string {
+    return process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3001'
+  },
+  buildUrl: (path: string): string => `${apiConfig.baseUrl}${path}`
+}
+```
+
+This enables seamless switching between development, testing, and production environments.
+
+##  11. <a name='DevelopmentTools'></a>Development Tools
 
 - **Biome**: Used for code formatting and linting
 
@@ -195,14 +330,29 @@ The project includes a comprehensive Bruno collection for API testing with all e
 
 - **Testing**:
   ```bash
-  pnpm test                    # Run all tests
-  pnpm --filter @panels/services test:coverage  # Test with coverage
+  # Run all tests (frontend + backend)
+  pnpm test
+
+  # Frontend API tests only
+  pnpm --filter @panels/app test
+
+  # Backend tests only  
+  pnpm --filter @panels/services test
+
+  # Run with coverage
+  pnpm --filter @panels/services test:coverage
+  pnpm --filter @panels/app test:coverage
+  
+  # Watch mode for development
+  pnpm --filter @panels/app test:watch
   ```
 
-## Available Scripts
+##  12. <a name='AvailableScripts'></a>Available Scripts
 
 - `pnpm dev`: Start development servers
 - `pnpm build`: Build all applications
+- `pnpm --filter @panels/docs docs:dev`: Start documentation server
+- `pnpm --filter @panels/docs docs:build`: Build documentation
 - `pnpm clean`: Clean build artifacts
 - `pnpm clean:all`: Clean all artifacts including datastore
 - `pnpm run:infra`: Start infrastructure services
@@ -214,7 +364,7 @@ The project includes a comprehensive Bruno collection for API testing with all e
 - `pnpm typecheck`: Run TypeScript type checking
 - `pnpm test`: Run tests
 
-## Infrastructure
+##  13. <a name='Infrastructure-1'></a>Infrastructure
 
 The project uses Docker Compose to manage the following services:
 
@@ -231,7 +381,7 @@ The project uses Docker Compose to manage the following services:
 - **pgweb**: Database management UI
   - Port: 8081
 
-## Contributing
+##  14. <a name='Contributing'></a>Contributing
 
 1. Install pre-commit hooks:
 
@@ -244,6 +394,6 @@ The project uses Docker Compose to manage the following services:
    pnpm commit
    ```
 
-## License
+##  15. <a name='License'></a>License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
