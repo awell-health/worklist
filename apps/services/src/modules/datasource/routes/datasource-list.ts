@@ -1,48 +1,36 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type DataSourcesResponse,
+  DataSourcesResponseSchema,
+} from '@panels/types/datasources'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
 
 const querystringSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
 })
 
-const dataSourceResponseSchema = z.object({
-  id: z.number(),
-  type: z.enum(['database', 'api', 'file', 'custom']),
-  config: z.record(z.any()),
-  lastSync: z.date(),
-})
-
-const responseSchema = z.array(dataSourceResponseSchema)
-
 // Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const datasourceList = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
-    Reply: ResponseType
+    Reply: DataSourcesResponse
   }>({
     method: 'GET',
     schema: {
       description: 'List all data sources for a panel',
       tags: ['panel', 'datasource'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
-        200: responseSchema,
-        404: errorSchema,
+        200: DataSourcesResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id/datasources',

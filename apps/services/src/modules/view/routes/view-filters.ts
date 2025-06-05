@@ -1,72 +1,42 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
+import {
+  type ViewFiltersInfo,
+  type ViewFiltersInfoResponse,
+  ViewFiltersInfoResponseSchema,
+  ViewFiltersInfoSchema,
+  type ViewFiltersResponse,
+  ViewFiltersResponseSchema,
+} from '@panels/types/views'
+
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { FilterOperator } from '../entities/view-filter.entity.js'
-
-// Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
 
 const querystringSchema = z.object({
   tenantId: z.string(),
   userId: z.string(),
 })
 
-const filterSchema = z.object({
-  id: z.number(),
-  columnName: z.string(),
-  operator: z.nativeEnum(FilterOperator),
-  value: z.any(),
-  logicalOperator: z.enum(['and', 'or']).optional(),
-})
-
-const getFiltersResponseSchema = z.object({
-  filters: z.array(filterSchema),
-})
-
-const updateFiltersBodySchema = z.object({
-  filters: z.array(
-    z.object({
-      columnName: z.string(),
-      operator: z.nativeEnum(FilterOperator),
-      value: z.any(),
-      logicalOperator: z.enum(['and', 'or']).optional(),
-    }),
-  ),
-  tenantId: z.string(),
-  userId: z.string(),
-})
-
-const updateFiltersResponseSchema = z.object({
-  filters: z.array(filterSchema),
-})
-
 // Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
-type GetFiltersResponseType = z.infer<typeof getFiltersResponseSchema>
-type UpdateFiltersBodyType = z.infer<typeof updateFiltersBodySchema>
-type UpdateFiltersResponseType = z.infer<typeof updateFiltersResponseSchema>
 
 export const viewFilters = async (app: FastifyInstance) => {
   // GET /views/:id/filters - List view filters
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
-    Reply: GetFiltersResponseType
+    Reply: ViewFiltersResponse
   }>({
     method: 'GET',
     schema: {
       description: 'Get filters for a view',
       tags: ['view', 'configuration'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
-        200: getFiltersResponseSchema,
-        404: errorSchema,
+        200: ViewFiltersResponseSchema,
+        404: ErrorSchema,
       },
     },
     url: '/views/:id/filters',
@@ -108,20 +78,20 @@ export const viewFilters = async (app: FastifyInstance) => {
 
   // PUT /views/:id/filters - Update view filters
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
-    Body: UpdateFiltersBodyType
-    Reply: UpdateFiltersResponseType
+    Params: IdParam
+    Body: ViewFiltersInfo
+    Reply: ViewFiltersInfoResponse
   }>({
     method: 'PUT',
     schema: {
       description: 'Update filters for a view (only owner can update)',
       tags: ['view', 'configuration'],
-      params: paramsSchema,
-      body: updateFiltersBodySchema,
+      params: IdParamSchema,
+      body: ViewFiltersInfoSchema,
       response: {
-        200: updateFiltersResponseSchema,
-        404: errorSchema,
-        400: errorSchema,
+        200: ViewFiltersInfoResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views/:id/filters',

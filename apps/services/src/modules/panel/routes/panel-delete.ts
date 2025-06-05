@@ -1,5 +1,10 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import {
+  ErrorSchema,
+  IdParamSchema,
+  type OperationResult,
+  OperationResultSchema,
+} from '@panels/types'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -9,23 +14,20 @@ export const panelDelete = async (app: FastifyInstance) => {
     Params: {
       id: string
     }
+    Reply: OperationResult
   }>({
     method: 'DELETE',
     schema: {
       description: 'Delete a panel',
       tags: ['panel'],
-      params: z.object({
-        id: z.string(),
-      }),
+      params: IdParamSchema,
       body: z.object({
         tenantId: z.string(),
         userId: z.string(),
       }),
       response: {
-        204: z.object({
-          success: z.boolean(),
-        }),
-        404: errorSchema,
+        204: OperationResultSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id',

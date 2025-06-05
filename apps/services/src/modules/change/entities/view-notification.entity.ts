@@ -6,26 +6,12 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core'
+import {
+  NotificationImpact,
+  NotificationStatus,
+} from '@panels/types/view-notifications'
 import { View } from '../../view/entities/view.entity.js'
 import { PanelChange } from './panel-change.entity.js'
-
-export const NotificationStatus = {
-  PENDING: 'pending',
-  ACKNOWLEDGED: 'acknowledged',
-  RESOLVED: 'resolved',
-} as const
-
-export type NotificationStatus =
-  (typeof NotificationStatus)[keyof typeof NotificationStatus]
-
-export const NotificationImpact = {
-  BREAKING: 'breaking',
-  WARNING: 'warning',
-  INFO: 'info',
-} as const
-
-export type NotificationImpact =
-  (typeof NotificationImpact)[keyof typeof NotificationImpact]
 
 @Entity()
 @Index({ properties: ['userId', 'status'] })

@@ -1,13 +1,8 @@
-export const CohortLogic = {
-  AND: 'AND',
-  OR: 'OR',
-} as const
-
-export type CohortLogic = (typeof CohortLogic)[keyof typeof CohortLogic]
+import type { CohortLogic, CohortOperator } from '@panels/types/panels'
 
 export interface CohortCondition {
   field: string
-  operator: 'eq' | 'gt' | 'lt' | 'gte' | 'lte' | 'contains' | 'in' | 'between'
+  operator: (typeof CohortOperator)[keyof typeof CohortOperator]
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   value: any
 }

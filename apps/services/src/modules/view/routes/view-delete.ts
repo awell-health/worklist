@@ -1,13 +1,10 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 
 // Zod Schemas
-const paramsSchema = z.object({
-  id: z.string(),
-})
 
 const querystringSchema = z.object({
   tenantId: z.string(),
@@ -15,24 +12,23 @@ const querystringSchema = z.object({
 })
 
 // Types
-type ParamsType = z.infer<typeof paramsSchema>
 type QuerystringType = z.infer<typeof querystringSchema>
 
 export const viewDelete = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Params: ParamsType
+    Params: IdParam
     Querystring: QuerystringType
   }>({
     method: 'DELETE',
     schema: {
       description: 'Delete a view (only owner can delete)',
       tags: ['view'],
-      params: paramsSchema,
+      params: IdParamSchema,
       querystring: querystringSchema,
       response: {
         204: z.void(),
-        404: errorSchema,
-        400: errorSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views/:id',

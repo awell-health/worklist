@@ -1,0 +1,69 @@
+{
+  "name": "@panels/types",
+  "version": "0.1.0",
+  "description": "Awell Panels API Types",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "run-s clean:outputs build:outputs validate-exports",
+    "build:outputs": "tsc -p tsconfig.build.json && tsc -p tsconfig.cjs.json && cp cjs-package.json dist/cjs/package.json",
+    "clean": "rm -rf node_modules",
+    "clean:outputs": "rimraf ./dist",
+    "lint": "biome lint ./src",
+    "format": "biome format ./src",
+    "typecheck": "tsc -p ./tsconfig.json --noEmit",
+    "validate-exports": "validate-package-exports --check --verify --info"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./changes": {
+      "import": "./dist/esm/changes.js",
+      "require": "./dist/cjs/changes.js",
+      "types": "./dist/esm/changes.d.ts"
+    },
+    "./columns": {
+      "import": "./dist/esm/columns.js",
+      "require": "./dist/cjs/columns.js",
+      "types": "./dist/esm/columns.d.ts"
+    },
+    "./datasources": {
+      "import": "./dist/esm/datasources.js",
+      "require": "./dist/cjs/datasources.js",
+      "types": "./dist/esm/datasources.d.ts"
+    },
+    "./panels": {
+      "import": "./dist/esm/panels.js",
+      "require": "./dist/cjs/panels.js",
+      "types": "./dist/esm/panels.d.ts"
+    },
+    "./view-notifications": {
+      "import": "./dist/esm/view-notifications.js",
+      "require": "./dist/cjs/view-notifications.js",
+      "types": "./dist/esm/view-notifications.d.ts"
+    },
+    "./views": {
+      "import": "./dist/esm/views.js",
+      "require": "./dist/cjs/views.js",
+      "types": "./dist/esm/views.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "keywords": ["types", "api", "panels-api"],
+  "author": "Awell Health",
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@10.11.1",
+  "dependencies": {
+    "zod": "^3.25.51"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.2",
+    "validate-package-exports": "^0.9.0"
+  }
+}

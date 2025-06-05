@@ -1,15 +1,6 @@
 import { Entity, Enum, ManyToOne, PrimaryKey, Property } from '@mikro-orm/core'
+import { ChangeType } from '@panels/types/changes'
 import { Panel } from '../../panel/entities/panel.entity.js'
-
-export const ChangeType = {
-  COLUMN_ADDED: 'column_added',
-  COLUMN_REMOVED: 'column_removed',
-  COLUMN_MODIFIED: 'column_modified',
-  SOURCE_CHANGED: 'source_changed',
-  COHORT_CHANGED: 'cohort_changed',
-} as const
-
-export type ChangeType = (typeof ChangeType)[keyof typeof ChangeType]
 
 @Entity()
 export class PanelChange {

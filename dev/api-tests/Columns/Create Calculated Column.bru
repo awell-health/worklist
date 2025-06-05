@@ -1,0 +1,47 @@
+meta {
+  name: Create Calculated Column
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/panels/{{panelId}}/columns/calculated
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Full Name",
+    "type": "text",
+    "formula": "CONCAT(firstName, ' ', lastName)",
+    "dependencies": ["firstName", "lastName"],
+    "properties": {
+      "display": {
+        "width": 250,
+        "visible": true
+      }
+    },
+    "metadata": {
+      "description": "Calculated full name from first and last name"
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Column has formula", function() {
+    expect(res.getBody()).to.have.property('formula');
+    expect(res.getBody().formula).to.include('CONCAT');
+  });
+  
+  test("Column has dependencies", function() {
+    expect(res.getBody()).to.have.property('dependencies');
+    expect(res.getBody().dependencies).to.be.an('array');
+  });
+} 

@@ -1,0 +1,29 @@
+meta {
+  name: List Panels
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/panels?tenantId={{tenantId}}&userId={{userId}}&limit=10&offset=0
+  body: none
+  auth: none
+}
+
+params:query {
+  tenantId: {{tenantId}}
+  userId: {{userId}}
+  limit: 10
+  offset: 0
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has panels array", function() {
+    expect(res.getBody()).to.have.property('panels');
+    expect(res.getBody().panels).to.be.an('array');
+  });
+} 

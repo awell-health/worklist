@@ -1,0 +1,33 @@
+meta {
+  name: List Views
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/views?tenantId={{tenantId}}&userId={{userId}}&panelId={{panelId}}
+  body: none
+  auth: none
+}
+
+params:query {
+  tenantId: {{tenantId}}
+  userId: {{userId}}
+  panelId: {{panelId}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has views array", function() {
+    expect(res.getBody()).to.have.property('views');
+    expect(res.getBody().views).to.be.an('array');
+  });
+  
+  test("Response has total count", function() {
+    expect(res.getBody()).to.have.property('total');
+    expect(res.getBody().total).to.be.a('number');
+  });
+} 

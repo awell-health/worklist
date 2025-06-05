@@ -1,0 +1,52 @@
+meta {
+  name: Update View Filters
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/views/{{viewId}}/filters
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "filters": [
+      {
+        "columnName": "status",
+        "operator": "eq",
+        "value": "active",
+        "logicalOperator": "and"
+      },
+      {
+        "columnName": "email",
+        "operator": "contains",
+        "value": "@company.com",
+        "logicalOperator": "and"
+      },
+      {
+        "columnName": "createdAt",
+        "operator": "gte",
+        "value": "2024-01-01T00:00:00Z"
+      }
+    ],
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has filters array", function() {
+    expect(res.getBody()).to.have.property('filters');
+    expect(res.getBody().filters).to.be.an('array');
+  });
+  
+  test("Filters have correct length", function() {
+    expect(res.getBody().filters).to.have.lengthOf(3);
+  });
+} 

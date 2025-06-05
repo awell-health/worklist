@@ -1,5 +1,5 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import { ErrorSchema } from '@panels/types'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -32,8 +32,8 @@ export const columnDelete = async (app: FastifyInstance) => {
       querystring: querystringSchema,
       response: {
         204: z.void(),
-        404: errorSchema,
-        400: errorSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/panels/:id/columns/:colId',

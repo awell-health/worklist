@@ -1,5 +1,6 @@
-import { type ViewList, viewListSchema } from '@/types.js'
 import type { FilterQuery } from '@mikro-orm/core'
+import { ErrorSchema } from '@panels/types'
+import { type ViewsResponse, ViewsResponseSchema } from '@panels/types/views'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -19,7 +20,7 @@ type QuerystringType = z.infer<typeof querystringSchema>
 export const viewList = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Querystring: QuerystringType
-    Reply: ViewList
+    Reply: ViewsResponse
   }>({
     method: 'GET',
     schema: {
@@ -27,7 +28,9 @@ export const viewList = async (app: FastifyInstance) => {
       tags: ['view'],
       querystring: querystringSchema,
       response: {
-        200: viewListSchema,
+        200: ViewsResponseSchema,
+        404: ErrorSchema,
+        400: ErrorSchema,
       },
     },
     url: '/views',

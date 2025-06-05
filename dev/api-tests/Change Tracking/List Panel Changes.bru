@@ -1,0 +1,40 @@
+meta {
+  name: List Panel Changes
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/changes/panels?tenantId={{tenantId}}&userId={{userId}}&panelId={{panelId}}&limit=20&offset=0
+  body: none
+  auth: none
+}
+
+params:query {
+  tenantId: {{tenantId}}
+  userId: {{userId}}
+  panelId: {{panelId}}
+  limit: 20
+  offset: 0
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has changes array", function() {
+    expect(res.getBody()).to.have.property('changes');
+    expect(res.getBody().changes).to.be.an('array');
+  });
+  
+  test("Response has total count", function() {
+    expect(res.getBody()).to.have.property('total');
+    expect(res.getBody().total).to.be.a('number');
+  });
+  
+  test("Response has hasMore flag", function() {
+    expect(res.getBody()).to.have.property('hasMore');
+    expect(res.getBody().hasMore).to.be.a('boolean');
+  });
+} 

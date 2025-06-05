@@ -1,5 +1,9 @@
 import { NotFoundError } from '@/errors/not-found-error.js'
-import { errorSchema } from '@/types.js'
+import {
+  ErrorSchema,
+  type OperationResult,
+  OperationResultSchema,
+} from '@panels/types'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -15,20 +19,15 @@ const bodySchema = z.object({
   userId: z.string(),
 })
 
-const successResponseSchema = z.object({
-  success: z.boolean(),
-})
-
 // Types
 type ParamsType = z.infer<typeof paramsSchema>
 type BodyType = z.infer<typeof bodySchema>
-type ResponseType = z.infer<typeof successResponseSchema>
 
 export const datasourceDelete = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
     Params: ParamsType
     Body: BodyType
-    Reply: ResponseType
+    Reply: OperationResult
   }>({
     method: 'DELETE',
     schema: {
@@ -37,8 +36,8 @@ export const datasourceDelete = async (app: FastifyInstance) => {
       params: paramsSchema,
       body: bodySchema,
       response: {
-        204: successResponseSchema,
-        404: errorSchema,
+        204: OperationResultSchema,
+        404: ErrorSchema,
       },
     },
     url: '/panels/:id/datasources/:dsId',

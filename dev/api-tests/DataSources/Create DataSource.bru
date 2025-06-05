@@ -1,0 +1,44 @@
+meta {
+  name: Create DataSource
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/panels/{{panelId}}/datasources
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "Test Database",
+    "type": "database",
+    "config": {
+      "connectionString": "postgresql://localhost:5432/testdb",
+      "query": "SELECT * FROM users",
+      "refreshInterval": 3600
+    },
+    "isActive": true,
+    "metadata": {
+      "description": "Test database connection"
+    },
+    "tenantId": "{{tenantId}}",
+    "userId": "{{userId}}"
+  }
+}
+
+tests {
+  test("Status is 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("DataSource has ID", function() {
+    expect(res.getBody()).to.have.property('id');
+    expect(res.getBody().id).to.be.a('number');
+  });
+  
+  test("DataSource type matches", function() {
+    expect(res.getBody().type).to.equal('database');
+  });
+} 

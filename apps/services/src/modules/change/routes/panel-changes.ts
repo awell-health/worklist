@@ -1,57 +1,29 @@
 import type { FilterQuery } from '@mikro-orm/core'
+import {
+  type ChangeType,
+  type PanelChangesQuery,
+  PanelChangesQuerySchema,
+  type PanelChangesResponse,
+  PanelChangesResponseSchema,
+} from '@panels/types/changes'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
-import {
-  ChangeType,
-  type PanelChange,
-} from '../entities/panel-change.entity.js'
+import type { PanelChange } from '../entities/panel-change.entity.js'
 
 // Zod Schemas
-const querystringSchema = z.object({
-  tenantId: z.string(),
-  userId: z.string(),
-  panelId: z.string().optional(),
-  changeType: z.nativeEnum(ChangeType).optional(),
-  since: z.string().optional(), // ISO date string
-  limit: z.coerce.number().min(1).max(100).default(50),
-  offset: z.coerce.number().min(0).default(0),
-})
-
-const panelChangeSchema = z.object({
-  id: z.number(),
-  panelId: z.number(),
-  changeType: z.nativeEnum(ChangeType),
-  description: z.string(),
-  changedBy: z.string(),
-  changedAt: z.date(),
-  oldValues: z.record(z.any()).optional(),
-  newValues: z.record(z.any()).optional(),
-  affectedColumn: z.string().optional(),
-})
-
-const responseSchema = z.object({
-  changes: z.array(panelChangeSchema),
-  total: z.number(),
-  hasMore: z.boolean(),
-})
-
-// Types
-type QuerystringType = z.infer<typeof querystringSchema>
-type ResponseType = z.infer<typeof responseSchema>
 
 export const panelChanges = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
-    Querystring: QuerystringType
-    Reply: ResponseType
+    Querystring: PanelChangesQuery
+    Reply: PanelChangesResponse
   }>({
     method: 'GET',
     schema: {
       description: 'List panel changes with affected views',
       tags: ['change-tracking'],
-      querystring: querystringSchema,
+      querystring: PanelChangesQuerySchema,
       response: {
-        200: responseSchema,
+        200: PanelChangesResponseSchema,
       },
     },
     url: '/changes/panels',

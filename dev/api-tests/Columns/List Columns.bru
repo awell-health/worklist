@@ -1,0 +1,32 @@
+meta {
+  name: List Columns
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/panels/{{panelId}}/columns?tenantId={{tenantId}}&userId={{userId}}
+  body: none
+  auth: none
+}
+
+params:query {
+  tenantId: {{tenantId}}
+  userId: {{userId}}
+}
+
+tests {
+  test("Status is 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("Response has base columns", function() {
+    expect(res.getBody()).to.have.property('baseColumns');
+    expect(res.getBody().baseColumns).to.be.an('array');
+  });
+  
+  test("Response has calculated columns", function() {
+    expect(res.getBody()).to.have.property('calculatedColumns');
+    expect(res.getBody().calculatedColumns).to.be.an('array');
+  });
+} 
