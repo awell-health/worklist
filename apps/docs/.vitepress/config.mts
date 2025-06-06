@@ -11,11 +11,11 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Intro', link: '/intro' },
-      { text: 'Getting Started', link: '/getting-started/' },
+      { text: 'Tutorials', link: '/getting-started/' },
       { text: 'How-to Guides', link: '/guides/' },
-      { text: 'API Reference', link: '/reference/' },
-      { text: 'Understanding', link: '/explanation/' },
-      { text: 'Projects', link: '/projects/' },
+      { text: 'Reference', link: '/reference/' },
+      { text: 'Explanation', link: '/explanation/' },
+      { text: 'Interactive', link: '/interactive/' },
       { text: 'Examples', link: '/examples/' },
     ],
 
@@ -27,6 +27,10 @@ export default defineConfig({
           items: [
             { text: 'Introduction', link: '/getting-started/' },
             { text: 'Installation', link: '/getting-started/installation' },
+            {
+              text: 'Environment Setup',
+              link: '/getting-started/environment-setup',
+            },
             { text: 'Your First Panel', link: '/getting-started/first-panel' },
             {
               text: 'Adding Data Sources',
@@ -44,66 +48,161 @@ export default defineConfig({
 
       '/guides/': [
         {
-          text: 'API Client',
+          text: 'Panel Management',
           items: [
             {
-              text: 'Error Handling',
-              link: '/guides/api-client/handling-errors',
+              text: 'How to create a panel',
+              link: '/guides/panels/create-panel',
             },
+            { text: 'How to add columns', link: '/guides/panels/add-columns' },
             {
-              text: 'Authentication',
-              link: '/guides/api-client/authentication',
+              text: 'How to configure filters',
+              link: '/guides/panels/configure-filters',
             },
+            { text: 'How to share views', link: '/guides/panels/share-views' },
             {
-              text: 'Caching Responses',
-              link: '/guides/api-client/caching-responses',
-            },
-            { text: 'Testing APIs', link: '/guides/api-client/testing-apis' },
-          ],
-        },
-        {
-          text: 'Panels',
-          items: [
-            {
-              text: 'Complex Formulas',
-              link: '/guides/panels/complex-formulas',
-            },
-            {
-              text: 'Multi-Source Panels',
-              link: '/guides/panels/multi-source-panels',
-            },
-            {
-              text: 'Performance Tips',
-              link: '/guides/panels/performance-tips',
+              text: 'How to set up alerts',
+              link: '/guides/panels/setup-alerts',
             },
           ],
         },
         {
-          text: 'Views',
+          text: 'Data Sources',
           items: [
             {
-              text: 'Advanced Filtering',
-              link: '/guides/views/advanced-filtering',
+              text: 'How to connect to FHIR',
+              link: '/guides/data-sources/connect-fhir',
             },
-            { text: 'Custom Layouts', link: '/guides/views/custom-layouts' },
             {
-              text: 'Sharing Workflows',
-              link: '/guides/views/sharing-workflows',
+              text: 'How to integrate with EHR',
+              link: '/guides/data-sources/integrate-ehr',
+            },
+            {
+              text: 'How to sync data',
+              link: '/guides/data-sources/sync-data',
+            },
+            {
+              text: 'How to troubleshoot connections',
+              link: '/guides/data-sources/troubleshoot',
             },
           ],
         },
         {
-          text: 'Deployment',
+          text: 'Healthcare Workflows',
           items: [
             {
-              text: 'Production Setup',
-              link: '/guides/deployment/production-setup',
+              text: 'How to manage patient cohorts',
+              link: '/guides/healthcare/manage-cohorts',
             },
             {
-              text: 'Environment Config',
-              link: '/guides/deployment/environment-config',
+              text: 'How to track quality measures',
+              link: '/guides/healthcare/quality-measures',
             },
-            { text: 'Monitoring', link: '/guides/deployment/monitoring' },
+            {
+              text: 'How to set up clinical alerts',
+              link: '/guides/healthcare/clinical-alerts',
+            },
+            {
+              text: 'How to generate reports',
+              link: '/guides/healthcare/generate-reports',
+            },
+          ],
+        },
+        {
+          text: 'Administration',
+          items: [
+            { text: 'How to manage users', link: '/guides/admin/manage-users' },
+            {
+              text: 'How to configure permissions',
+              link: '/guides/admin/configure-permissions',
+            },
+            {
+              text: 'How to set up multi-tenancy',
+              link: '/guides/admin/multi-tenancy',
+            },
+            {
+              text: 'How to audit activities',
+              link: '/guides/admin/audit-activities',
+            },
+          ],
+        },
+        {
+          text: 'Development',
+          items: [
+            {
+              text: 'How to integrate the API',
+              link: '/guides/development/integrate-api',
+            },
+            {
+              text: 'How to create custom columns',
+              link: '/guides/development/custom-columns',
+            },
+            {
+              text: 'How to extend the UI',
+              link: '/guides/development/extend-ui',
+            },
+            {
+              text: 'How to write tests',
+              link: '/guides/development/write-tests',
+            },
+          ],
+        },
+        {
+          text: 'Deployment & Operations',
+          items: [
+            {
+              text: 'How to deploy to AWS',
+              link: '/guides/deployment/deploy-aws',
+            },
+            {
+              text: 'How to deploy to Kubernetes',
+              link: '/guides/deployment/deploy-k8s',
+            },
+            {
+              text: 'How to set up monitoring',
+              link: '/guides/deployment/setup-monitoring',
+            },
+            {
+              text: 'How to backup data',
+              link: '/guides/deployment/backup-data',
+            },
+            {
+              text: 'How to scale the system',
+              link: '/guides/deployment/scale-system',
+            },
+          ],
+        },
+        {
+          text: 'Troubleshooting',
+          items: [
+            {
+              text: 'How to debug performance issues',
+              link: '/guides/troubleshooting/performance',
+            },
+            {
+              text: 'How to fix connection problems',
+              link: '/guides/troubleshooting/connections',
+            },
+            {
+              text: 'How to resolve data sync errors',
+              link: '/guides/troubleshooting/data-sync',
+            },
+            {
+              text: 'How to handle authentication issues',
+              link: '/guides/troubleshooting/auth',
+            },
+          ],
+        },
+      ],
+
+      '/interactive/': [
+        {
+          text: 'Interactive Tools',
+          items: [
+            {
+              text: 'Configuration Generator',
+              link: '/interactive/config-generator',
+            },
           ],
         },
       ],
@@ -141,15 +240,28 @@ export default defineConfig({
           ],
         },
         {
+          text: 'Database',
+          items: [
+            {
+              text: 'MikroORM Entities',
+              link: '/reference/database/entities',
+            },
+            {
+              text: 'Database Schema',
+              link: '/reference/database/schema',
+            },
+            {
+              text: 'Migrations',
+              link: '/reference/database/migrations',
+            },
+          ],
+        },
+        {
           text: 'Configuration',
           items: [
             {
               text: 'Environment Variables',
               link: '/reference/configuration/environment-vars',
-            },
-            {
-              text: 'Database Schema',
-              link: '/reference/configuration/database-schema',
             },
             { text: 'Data Types', link: '/reference/configuration/data-types' },
           ],
@@ -167,22 +279,22 @@ export default defineConfig({
 
       '/explanation/': [
         {
-          text: 'Architecture',
+          text: 'System Architecture',
           items: [
             {
-              text: 'System Overview',
+              text: 'Why this architecture',
               link: '/explanation/architecture/system-overview',
             },
             {
-              text: 'Data Model',
+              text: 'Understanding the data model',
               link: '/explanation/architecture/data-model',
             },
             {
-              text: 'Multi-tenancy',
+              text: 'Multi-tenancy explained',
               link: '/explanation/architecture/multi-tenancy',
             },
             {
-              text: 'Security Model',
+              text: 'Security model rationale',
               link: '/explanation/architecture/security-model',
             },
           ],
@@ -191,19 +303,19 @@ export default defineConfig({
           text: 'Core Concepts',
           items: [
             {
-              text: 'Panels vs Views',
+              text: 'Panels vs Views explained',
               link: '/explanation/concepts/panels-vs-views',
             },
             {
-              text: 'Calculated Columns',
+              text: 'How calculated columns work',
               link: '/explanation/concepts/calculated-columns',
             },
             {
-              text: 'Change Tracking',
+              text: 'Understanding change tracking',
               link: '/explanation/concepts/change-tracking',
             },
             {
-              text: 'Publishing Model',
+              text: 'The publishing model',
               link: '/explanation/concepts/publishing-model',
             },
           ],
@@ -212,13 +324,33 @@ export default defineConfig({
           text: 'Design Decisions',
           items: [
             {
-              text: 'Technology Stack',
+              text: 'Why we chose this tech stack',
               link: '/explanation/decisions/tech-stack',
             },
-            { text: 'API Design', link: '/explanation/decisions/api-design' },
             {
-              text: 'Database Design',
+              text: 'API design principles',
+              link: '/explanation/decisions/api-design',
+            },
+            {
+              text: 'Database design rationale',
               link: '/explanation/decisions/database-design',
+            },
+          ],
+        },
+        {
+          text: 'Healthcare Context',
+          items: [
+            {
+              text: 'Why healthcare needs panels',
+              link: '/explanation/healthcare/why-panels',
+            },
+            {
+              text: 'FHIR integration benefits',
+              link: '/explanation/healthcare/fhir-benefits',
+            },
+            {
+              text: 'Clinical workflow challenges',
+              link: '/explanation/healthcare/workflow-challenges',
             },
           ],
         },

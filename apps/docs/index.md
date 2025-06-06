@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "Awell Panels"
   text: "Management System"
-  tagline: a powerful platform for creating dynamic data panels with configurable columns, user-specific views, and multi-tenant architecture.
+  tagline: Ditch the spreadsheets, empower your providers
   actions:
     - theme: brand
       text: Introduction
