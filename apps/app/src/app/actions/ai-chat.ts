@@ -69,6 +69,10 @@ export type ChatMessage = {
             - str.endsWith(suffix)
             - str.contains(substring)
 
+            When looking into extensions be aware that some extensions are inside other extensions. For that case you need to do:
+            extension('https://awellhealth.com/fhir/StructureDefinition/awell-data-points').extension('call_category').valueString
+
+
             Be concise and clear in your explanations.
             When suggesting changes, always include the complete updated worklist definition in a JSON code block. Never add comments to the worklist JSON definition.
 `
@@ -117,7 +121,7 @@ export async function chatWithAI(messages: ChatMessage[], botDescription?: strin
             model: 'gpt-4-turbo-preview',
             messages: formattedMessages,
             temperature: 0.2,
-            max_tokens: 1000,
+            max_tokens: 4096,
         });
 
         return response.choices[0].message.content || 'I apologize, but I could not generate a response.';

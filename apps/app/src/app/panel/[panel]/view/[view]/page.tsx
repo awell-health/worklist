@@ -7,9 +7,15 @@ import { useColumnCreator } from "@/hooks/use-column-creator";
 import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
 import { usePanelStore } from "@/hooks/use-panel-store";
 import { useSearch } from "@/hooks/use-search";
-import { ColumnDefinition, PanelDefinition, ViewDefinition, WorklistDefinition } from "@/types/worklist";
+import { ColumnDefinition, Filter, PanelDefinition, ViewDefinition, WorklistDefinition } from "@/types/worklist";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+interface TableFilter {
+  key: string;
+  value: string;
+}
+
 export default function WorklistPage() {
   const params = useParams();
   const viewId = params.view as string;
@@ -22,13 +28,12 @@ export default function WorklistPage() {
   const [viewDefinition, setViewDefinition] = useState<ViewDefinition | undefined>(undefined);
   const [columns, setColumns] = useState<ColumnDefinition[]>([]);
   const [tableData, setTableData] = useState<(WorklistPatient | WorklistTask)[]>([]);
+  const [tableFilters, setTableFilters] = useState<TableFilter[]>([]);
   const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
   const router = useRouter();
 
   useEffect(() => {
-    
     setIsLoading(isMedplumLoading || isPanelLoading || !panelDefinition || !viewDefinition);
-
   }, [isMedplumLoading, isPanelLoading, panelDefinition, viewDefinition, panelId, viewId]);
 
   useEffect(() => {
@@ -37,8 +42,13 @@ export default function WorklistPage() {
     }
     setColumns(currentView === 'patient' ? viewDefinition.patientViewColumns : viewDefinition.taskViewColumns);
     setTableData(currentView === 'patient' ? patients : tasks);
+    // Convert view filters to table filters
+    const newTableFilters = viewDefinition.filters.map(filter => ({
+      key: filter.fhirPathFilter[0],
+      value: filter.fhirPathFilter[1] || ''
+    }));
+    setTableFilters(newTableFilters);
     updateView(panelId, viewId, viewDefinition);
-
   }, [viewDefinition, currentView, tasks, patients]);
 
   useEffect(() => {
@@ -58,7 +68,6 @@ export default function WorklistPage() {
       return;
     }
     setViewDefinition(view);
-    
   }, [panelId, viewId, isPanelLoading]);
 
   useEffect(() => {
@@ -74,6 +83,54 @@ export default function WorklistPage() {
     setPanelDefinition(panel);
   }, [panels]);
 
+  const onColumnUpdate = (updates: Partial<ColumnDefinition>) => {
+    console.log("updates", updates);
+
+    if (!viewDefinition) {
+      return;
+    }
+    console.log("updates", updates);
+    const newView = {
+      ...viewDefinition,
+      taskViewColumns: viewDefinition.taskViewColumns.map(column => {
+        if (column.id === updates.id) {
+          return {
+            ...column,
+            ...updates,
+          }
+        }
+        return column;
+      }),
+      patientViewColumns: viewDefinition.patientViewColumns.map(column => {
+        if (column.id === updates.id) {
+          return {
+            ...column,
+            ...updates,
+          }
+        }
+        return column;
+      }),
+    }
+    updateView(panelId, viewId, newView);
+    setViewDefinition(newView);
+  }
+
+  const onFiltersChange = (newTableFilters: TableFilter[]) => {
+    if (!viewDefinition) {
+      return;
+    }
+    // Convert table filters to view filters
+    const newFilters: Filter[] = newTableFilters.map(filter => ({
+      fhirPathFilter: [filter.key, filter.value]
+    }));
+    const newView = {
+      ...viewDefinition,
+      filters: newFilters,
+    }
+    updateView(panelId, viewId, newView);
+    setViewDefinition(newView);
+    setTableFilters(newTableFilters);
+  }
 
   const onColumnChange = (column: WorklistDefinition) => {
     if(!viewDefinition) {
@@ -144,15 +201,19 @@ export default function WorklistPage() {
           worklistColumns={columns}
           onAddColumn={onAddColumn}
           isBlank={false} 
-        tableData={filteredData}
-        handlePDFClick={() => {}}
-        handleTaskClick={() => {}}
-        handleRowHover={() => {}}
-        toggleSelectRow={() => {}}
-        handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
-        setIsAddingIngestionSource={() => {}}
-        currentView={currentView}
-        handleDragEnd={() => {}} />
+          tableData={filteredData}
+          handlePDFClick={() => {}}
+          handleTaskClick={() => {}}
+          handleRowHover={() => {}}
+          toggleSelectRow={() => {}}
+          handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+          setIsAddingIngestionSource={() => {}}
+          currentView={currentView}
+          handleDragEnd={() => {}} 
+          onColumnUpdate={onColumnUpdate}
+          filters={tableFilters}
+          onFiltersChange={onFiltersChange}
+        />
       <WorklistFooter 
         columnsCounter={columns.length} 
         rowsCounter={tableData.length} 

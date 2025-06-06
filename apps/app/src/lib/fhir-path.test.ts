@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { getNestedValue } from './fhir-path';
 import { Task } from '@medplum/fhirtypes';
+import { describe, expect, it } from 'vitest';
+import { getNestedValue, isMatchingFhirPathCondition } from './fhir-path';
 
 
 describe('getNestedValue', () => {
@@ -236,6 +236,12 @@ describe('getNestedValue', () => {
             const patient = { resourceType: 'Patient', name: [{ given: ['John'], family: 'Doe' }], birthDate: '1990-01-01' };
             const result = getNestedValue(patient, "subtractDates(now(), birthDate)");
             expect(result).toBeGreaterThan(1000 * 60 * 60 * 24 * 365 * 25);
+        });
+    });
+
+    describe('isMatchingFhirPathCondition', () => {
+        it('should return true if the condition is met', () => {
+            expect(isMatchingFhirPathCondition(testData, 'input.where(type.coding[0].code = \'stakeholder\').valueString')).toBe(true);
         });
     });
 }); 

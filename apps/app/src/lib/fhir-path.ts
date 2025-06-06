@@ -83,8 +83,12 @@ export const getNestedValue = (obj: Record<string, any>, path: string): any | an
 };
 
 export const isMatchingFhirPathCondition = (obj: Record<string, any>, path: string): boolean => {
-    const result = fhirpath.evaluate(obj, path, undefined, undefined, { });
-    console.log(result);
-    if (result.length === 0) return false;
-    return !result.every((value: any) => value === false);
+    try {
+        const result = fhirpath.evaluate(obj, path, undefined, undefined, { });
+        if (result.length === 0) return false;
+        return !result.every((value: any) => value === false);
+    } catch (error) {
+        console.error('Error evaluating FHIRPath:', error);
+        return true;
+    }
 };

@@ -1,4 +1,5 @@
 "use client";
+import { isMatchingFhirPathCondition } from "@/lib/fhir-path";
 import type { ColumnDefinition } from "@/types/worklist";
 import { closestCenter, DndContext, type DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
@@ -9,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { SortableColumnHeader } from "./WorklistSortableColumnHeader";
 import WorklistTableRow from "./WorklistTableRow";
 
-interface FilterConfig {
+interface TableFilter {
   key: string;
   value: string;
 }
@@ -31,7 +32,10 @@ interface WorklistTableProps {
   toggleSelectRow: (row: number) => void;
   setIsAddingIngestionSource: (open: boolean) => void;
   handleAssigneeClick: (taskId: string) => void;
+  onColumnUpdate: (updates: Partial<ColumnDefinition>) => void;
   currentView: string;
+  filters: TableFilter[];
+  onFiltersChange: (filters: TableFilter[]) => void;
 }
 
 interface SortConfig {
@@ -54,20 +58,24 @@ export default function WorklistTable({
   toggleSelectRow, 
   setIsAddingIngestionSource, 
   handleAssigneeClick,
+  onColumnUpdate,
   currentView, 
-  handleDragEnd }: WorklistTableProps) {
+  handleDragEnd,
+  filters,
+  onFiltersChange }: WorklistTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
-  const [filters, setFilters] = useState<FilterConfig[]>([]);
+
+  console.log("data", tableData);
   
   const filteredAndSortedData = useMemo(() => {
     // First apply filters
     let filteredData = tableData;
-    if (filters.length > 0) {
+    if (filters && filters.length > 0) {
       filteredData = tableData.filter(row => {
         return filters.every(filter => {
-          const value = row[filter.key];
-          if (value === null || value === undefined) return false;
-          return String(value).toLowerCase().includes(filter.value.toLowerCase());
+          // TODO this is very basic, we need to support more complex FHIRPath expressions
+          const fhirPath = `${filter.key} = '${filter.value}'`;
+          return isMatchingFhirPathCondition(row, fhirPath);
         });
       });
     }
@@ -119,13 +127,11 @@ export default function WorklistTable({
   };
 
   const handleFilter = (columnKey: string, value: string) => {
-    setFilters(current => {
-      const newFilters = current.filter(f => f.key !== columnKey);
-      if (value) {
-        newFilters.push({ key: columnKey, value });
-      }
-      return newFilters;
-    });
+    const newFilters = filters ? filters.filter(f => f.key !== columnKey) : [];
+    if (value) {
+      newFilters.push({ key: columnKey, value });
+    }
+    onFiltersChange(newFilters);
   };
 
   const sensors = useSensors(
@@ -175,8 +181,9 @@ export default function WorklistTable({
                       index={index}
                       sortConfig={sortConfig}
                       onSort={() => handleSort(column.key)}
-                      filterValue={filters.find(f => f.key === column.key)?.value || ''}
+                      filterValue={filters ? filters.find(f => f.key === column.key)?.value || '' : ''}
                       onFilter={(value) => handleFilter(column.key, value)}
+                      onColumnUpdate={onColumnUpdate}
                     />
                   ))}
                   <TableHead className="text-xs font-normal text-gray-700 p-2">

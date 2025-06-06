@@ -50,7 +50,6 @@ export default function WorklistPage() {
     }
   }, [panelId, router, isPanelLoading]);
 
-
   useEffect(() => {
     if (!panelDefinition) {
       return;
@@ -106,6 +105,36 @@ export default function WorklistPage() {
     setPanelDefinition(newPanel);
   }
 
+  const onColumnUpdate = (updates: Partial<ColumnDefinition>) => {
+    if (!panelDefinition) {
+      return;
+    }
+    const newPanel = {
+      ...panelDefinition,
+      taskViewColumns: panelDefinition.taskViewColumns.map(column => {
+        if (column.id === updates.id) {
+          return {
+            ...column,
+            ...updates,
+          }
+        }
+        return column;
+      }),
+      patientViewColumns: panelDefinition.patientViewColumns.map(column => {
+        if (column.id === updates.id) {
+          return {
+            ...column,
+            ...updates,
+          }
+        }
+        return column;
+      }),
+    }
+    updatePanel(panelDefinition.id, newPanel);
+    setPanelDefinition(newPanel);
+  }
+
+
   return (
     <>
       {isLoading ? (
@@ -124,11 +153,13 @@ export default function WorklistPage() {
             setCurrentView={setCurrentView} 
           />
           <WorklistTable isLoading={isLoading}
-              selectedRows={[]}
-              toggleSelectAll={() => {}}
-              worklistColumns={columns}
-              onAddColumn={onAddColumn}
-              isBlank={false} 
+            selectedRows={[]}
+            toggleSelectAll={() => {}}
+            worklistColumns={columns}
+            filters={[]}
+            onFiltersChange={() => {}}
+            onAddColumn={onAddColumn}
+            isBlank={false} 
             tableData={filteredData}
             handlePDFClick={() => {}}
             handleTaskClick={() => {}}
@@ -137,7 +168,8 @@ export default function WorklistPage() {
             handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
             setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
             currentView={currentView}
-            handleDragEnd={() => {}} />
+            handleDragEnd={() => {}}
+            onColumnUpdate={onColumnUpdate} />
           {isAddingIngestionSource && (
             <AddIngestionModal 
               isOpen={isAddingIngestionSource} 

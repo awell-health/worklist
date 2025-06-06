@@ -1,9 +1,9 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
-import { createPortal } from "react-dom"
-import { ArrowUpDown, Database, Hash, Calendar, Text, ToggleLeft } from "lucide-react"
 import type { ColumnDefinition } from "@/types/worklist"
+import { ArrowUpDown, Calendar, Database, Hash, Text, ToggleLeft } from "lucide-react"
+import { useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 
 type ColumnMenuProps = {
   column: ColumnDefinition
@@ -14,23 +14,31 @@ type ColumnMenuProps = {
   sortConfig: { key: string; direction: 'asc' | 'desc' } | null
   filterValue: string
   onFilter: (value: string) => void
+  onColumnUpdate?: (updates: Partial<ColumnDefinition>) => void
 }
 
-export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConfig, filterValue, onFilter }: ColumnMenuProps) {
+export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConfig, filterValue, onFilter, onColumnUpdate }: ColumnMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
   const [localFilterValue, setLocalFilterValue] = useState(filterValue)
-
+  const [localColumnKey, setLocalColumnKey] = useState(column.key)
+  const [localColumnName, setLocalColumnName] = useState(column.name)
+  const [localColumnDescription, setLocalColumnDescription] = useState(column.description)
+  const [localColumnType, setLocalColumnType] = useState(column.type)
   // Set mounted state after component mounts (for SSR compatibility)
   useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
 
-  // Update local filter value when prop changes
+  // Update local values when props change
   useEffect(() => {
     setLocalFilterValue(filterValue)
-  }, [filterValue])
+    setLocalColumnKey(column.key)
+    setLocalColumnName(column.name)
+    setLocalColumnDescription(column.description)
+    setLocalColumnType(column.type)
+  }, [filterValue, column])
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -160,12 +168,75 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
           </div>
         </div>
 
-        {/* Type */}
-        <div className="flex items-center w-full px-3 py-2 text-xs font-normal text-left border-b border-gray-100">
-          {getTypeIcon()}
-          <div className="flex flex-col">
-            <span>Type: {column.type.charAt(0).toUpperCase() + column.type.slice(1)}</span>
-            <span>Key: <span className="text-[10px] text-gray-400"> {column.key}</span></span>
+        {/* Column Properties */}
+        <div className="px-3 py-2 border-b border-gray-100">
+          <div className="space-y-2">
+            <div>
+              <label htmlFor="column-key" className="block text-xs text-gray-500 mb-1">Column Key:</label>
+              <input
+                id="column-key"
+                type="text"
+                value={localColumnKey}
+                onChange={(e) => setLocalColumnKey(e.target.value)}
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            <div>
+              <label htmlFor="column-type" className="block text-xs text-gray-500 mb-1">Column Type:</label>
+              <select
+                id="column-type"
+                value={localColumnType}
+                onChange={(e) => setLocalColumnType(e.target.value as ColumnDefinition['type'])}
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="string">String</option>
+                <option value="number">Number</option>
+                <option value="boolean">Boolean</option>
+                <option value="date">Date</option>
+                <option value="tasks">Tasks</option>
+                <option value="select">Select</option>
+                <option value="array">Array</option>
+                <option value="assignee">Assignee</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="column-name" className="block text-xs text-gray-500 mb-1">Column Name:</label>
+              <input
+                id="column-name"
+                type="text"
+                value={localColumnName}
+                onChange={(e) => setLocalColumnName(e.target.value)}
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            <div>
+              <label htmlFor="column-description" className="block text-xs text-gray-500 mb-1">Column Description:</label>
+              <textarea
+                id="column-description"
+                value={localColumnDescription}
+                onChange={(e) => setLocalColumnDescription(e.target.value)}
+                className="textarea min-h-[60px] text-xs resize-y w-full p-2 border border-gray-200 rounded"
+                placeholder="Enter a description or prompt for this column..."
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            <button
+              className="w-full px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
+              onClick={() => {
+                onColumnUpdate?.({
+                  id: column.id,
+                  key: localColumnKey,
+                  name: localColumnName,
+                  description: localColumnDescription,
+                  type: localColumnType,
+                })
+                onClose()
+              }}
+            >
+              Save Changes
+            </button>
           </div>
         </div>
 
@@ -173,17 +244,6 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
         <div className="flex items-center w-full px-3 py-2 text-xs font-normal text-left border-b border-gray-100">
           <Database className="h-3.5 w-3.5 mr-2 text-gray-500" />
           <span>Source: {column.source || "Unknown"}</span>
-        </div>
-
-        {/* Multiline text field for column description */}
-        <div className="px-3 py-2 border-b border-gray-100">
-          <label htmlFor="column-description" className="block text-xs text-gray-500 mb-1">Column Description:</label>
-          {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
-          <textarea
-            className="textarea min-h-[60px] text-xs resize-y w-full p-2 border border-gray-200 rounded"
-            placeholder="Enter a description or prompt for this column..."
-            onClick={(e: React.MouseEvent<HTMLTextAreaElement>) => e.stopPropagation()}
-          />
         </div>
 
         {/* Options with colors (if available) */}
