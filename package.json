@@ -17,6 +17,10 @@
     "commit": "git-cz",
     "dev": "turbo dev --parallel",
     "docs:dev": "turbo run docs:dev --parallel",
+    "docs:validate": "node dev/scripts/validate-docs.js",
+    "generate:env": "node dev/scripts/generate-env.js",
+    "generate:env:prod": "node dev/scripts/generate-env.js production",
+    "generate:env:staging": "node dev/scripts/generate-env.js staging",
     "format": "turbo format --continue --",
     "format:fix": "turbo format --continue -- --write",
     "info": "node --version && pnpm --version && turbo --version",
@@ -57,7 +61,8 @@
   },
   "dependencies": {
     "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.6.1"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912"
 }

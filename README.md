@@ -35,7 +35,13 @@ This project provides a comprehensive Panel Management System for healthcare app
     - [API Configuration](#api-configuration)
   - [Development Tools](#development-tools)
   - [Available Scripts](#available-scripts)
-  - [Infrastructure](#infrastructure-1)
+    - [Development \& Build](#development--build)
+    - [Environment Setup](#environment-setup)
+    - [Infrastructure](#infrastructure-1)
+    - [Code Quality](#code-quality)
+    - [Testing](#testing)
+    - [Documentation](#documentation-1)
+  - [Infrastructure](#infrastructure-2)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -148,6 +154,7 @@ The Panels system allows organizations to:
 │   └── types/                  # Shared TypeScript types
 ├── dev/                        # Development configuration
 │   ├── config/                 # Configuration files
+│   ├── scripts/               # Development scripts (env generation)
 │   └── datastore/             # Local database storage
 └── compose.yaml               # Docker Compose configuration
 ```
@@ -195,7 +202,14 @@ The Panels system allows organizations to:
    pnpm bootstrap
    ```
 
-2. **Start Development Environment**
+2. **Generate Environment Files**
+
+   ```bash
+   # Generate .env files from compose.yaml configuration
+   pnpm generate:env
+   ```
+
+3. **Start Development Environment**
 
    ```bash
    # Start the infrastructure (PostgreSQL, Redis)
@@ -205,12 +219,15 @@ The Panels system allows organizations to:
    pnpm dev
    ```
 
-3. **Access the Applications**
-   - Frontend: http://localhost:3003
-   - Backend API: http://localhost:3001
-   - API Documentation: http://localhost:3001/docs
-   - Project Documentation: http://localhost:3004 (run `pnpm --filter @panels/docs docs:dev`)
-   - Database UI (pgweb): http://localhost:8081
+4. **Access the Applications**
+   - **Frontend App**: http://localhost:3003 - Main application interface
+   - **Backend API**: http://localhost:3001 - RESTful API server
+   - **API Documentation**: http://localhost:3001/docs - Interactive API docs (Swagger)
+   - **Project Documentation**: http://localhost:3004 - Comprehensive guides and references
+     ```bash
+     pnpm --filter @panels/docs docs:dev
+     ```
+   - **Database UI**: http://localhost:8081 - pgweb interface for PostgreSQL
 
 ## <a name='DatabaseSetup'></a>Database Setup
 
@@ -353,20 +370,34 @@ This enables seamless switching between development, testing, and production env
 
 ## <a name='AvailableScripts'></a>Available Scripts
 
+### <a name='DevelopmentBuild'></a>Development & Build
 - `pnpm dev`: Start development servers
 - `pnpm build`: Build all applications
-- `pnpm --filter @panels/docs docs:dev`: Start documentation server
-- `pnpm --filter @panels/docs docs:build`: Build documentation
 - `pnpm clean`: Clean build artifacts
 - `pnpm clean:all`: Clean all artifacts including datastore
+
+### <a name='EnvironmentSetup'></a>Environment Setup
+- `pnpm generate:env`: Generate development .env files
+- `pnpm generate:env:prod`: Generate production .env files
+- `pnpm generate:env:staging`: Generate staging .env files
+
+### <a name='Infrastructure-1'></a>Infrastructure
 - `pnpm run:infra`: Start infrastructure services
 - `pnpm run:infra:stop`: Stop infrastructure services
+
+### <a name='CodeQuality'></a>Code Quality
 - `pnpm format`: Check code formatting
 - `pnpm format:fix`: Fix code formatting
 - `pnpm lint`: Run linter
 - `pnpm lint:fix`: Fix linting issues
 - `pnpm typecheck`: Run TypeScript type checking
-- `pnpm test`: Run tests
+
+### <a name='Testing'></a>Testing
+- `pnpm test`: Run all tests
+
+### <a name='Documentation-1'></a>Documentation
+- `pnpm --filter @panels/docs docs:dev`: Start documentation server
+- `pnpm --filter @panels/docs docs:build`: Build documentation
 
 ## <a name='Infrastructure-1'></a>Infrastructure
 
