@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { Send } from "lucide-react"
-import { ChatMessage } from "@/app/actions/ai-chat"
+import type { ChatMessage } from "@/app/actions/ai-chat"
 import ReactMarkdown from "react-markdown"
 
 interface AIConversationDrawerProps {
@@ -11,10 +11,10 @@ interface AIConversationDrawerProps {
   getInitialMessage: () => Promise<string>
 }
 
-export default function AIConversationDrawer({ 
-  onClose, 
+export default function AIConversationDrawer({
+  onClose,
   onSendMessage,
-  getInitialMessage = () => Promise.resolve("Hi, I'm the your Assistant. How can I help you?")
+  getInitialMessage = () => Promise.resolve("Hi, I'm the your Assistant. How can I help you?"),
 }: AIConversationDrawerProps) {
   const [message, setMessage] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -22,21 +22,35 @@ export default function AIConversationDrawer({
   const [conversation, setConversation] = useState<ChatMessage[]>([])
   const initialMessageLoaded = useRef(false)
 
+  // Helper function to safely convert error to string
+  const getErrorMessage = (error: unknown): string => {
+    if (error instanceof Error) {
+      return error.message
+    }
+    if (typeof error === "string") {
+      return error
+    }
+    return "An unexpected error occurred"
+  }
+
   // Load initial message
   useEffect(() => {
     const loadInitialMessage = async () => {
-      if (initialMessageLoaded.current) return;
-      initialMessageLoaded.current = true;
-      
+      if (initialMessageLoaded.current) return
+      initialMessageLoaded.current = true
+
       try {
         const initialMessage = await getInitialMessage()
         setConversation([{ role: "assistant", content: initialMessage }])
       } catch (error) {
-        console.error('Error loading initial message:', error)
-        setConversation([{ 
-          role: "assistant", 
-          content: "I apologize, but I encountered an error while loading the initial message. Please try again." 
-        }])
+        console.error("Error loading initial message:", error)
+        const errorMessage = getErrorMessage(error)
+        setConversation([
+          {
+            role: "assistant",
+            content: `I apologize, but I encountered an error while loading the initial message: ${errorMessage}. Please try again.`,
+          },
+        ])
       } finally {
         setIsInitialLoading(false)
       }
@@ -55,18 +69,25 @@ export default function AIConversationDrawer({
     setIsLoading(true)
 
     try {
-        const botResponse = await onSendMessage(updatedConversation)
-        // Add bot response to conversation
-        setConversation(prev => [...prev, {
-            role: "assistant",
-            content: botResponse
-        }])
+      const botResponse = await onSendMessage(updatedConversation)
+      // Add bot response to conversation
+      setConversation((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: botResponse,
+        },
+      ])
     } catch (error) {
-        console.error('Error sending message:', error)
-        setConversation(prev => [...prev, {
-            role: "assistant",
-            content: "I apologize, but I encountered an error while processing your message. Please try again."
-        }])
+      console.error("Error sending message:", error)
+      const errorMessage = getErrorMessage(error)
+      setConversation((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `I apologize, but I encountered an error while processing your message: ${errorMessage}. Please try again.`,
+        },
+      ])
     } finally {
       setIsLoading(false)
     }
@@ -87,15 +108,10 @@ export default function AIConversationDrawer({
         ) : (
           <>
             {conversation.map((msg, index) => (
-              <div
-                key={index}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-              >
+              <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
                   className={`max-w-[80%] rounded-lg p-4 ${
-                    msg.role === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-900"
+                    msg.role === "user" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-900"
                   }`}
                 >
                   {msg.role === "assistant" ? (
@@ -103,7 +119,7 @@ export default function AIConversationDrawer({
                       <ReactMarkdown>{msg.content}</ReactMarkdown>
                     </div>
                   ) : (
-                    msg.content
+                    <span>{msg.content}</span>
                   )}
                 </div>
               </div>
@@ -135,7 +151,7 @@ export default function AIConversationDrawer({
           <button
             onClick={handleSendMessage}
             disabled={isLoading || isInitialLoading}
-            className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 ${(isLoading || isInitialLoading) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500 ${isLoading || isInitialLoading ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <Send className="h-4 w-4" />
           </button>
