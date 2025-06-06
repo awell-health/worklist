@@ -2,14 +2,14 @@
 
 import type React from "react"
 
-import { useState, useRef } from "react"
 import { TableHead } from "@/components/ui/table"
-import { Calendar, Hash, ToggleLeft, Text, MoreVertical } from "lucide-react"
+import { cn } from "@/lib/utils"
+import type { ColumnDefinition } from "@/types/worklist"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { cn } from "@/lib/utils"
+import { Calendar, Hash, MoreVertical, Text, ToggleLeft } from "lucide-react"
+import { useRef, useState } from "react"
 import { ColumnMenu } from "./WorklistColumnMenu"
-import type { ColumnDefinition } from "@/types/worklist"
 
 type SortableColumnHeaderProps = {
   column: ColumnDefinition
@@ -18,9 +18,10 @@ type SortableColumnHeaderProps = {
   onSort: () => void
   filterValue: string
   onFilter: (value: string) => void
+  onColumnUpdate: (updates: Partial<ColumnDefinition>) => void
 }
 
-export function SortableColumnHeader({ column, index, sortConfig, onSort, filterValue, onFilter }: SortableColumnHeaderProps) {
+export function SortableColumnHeader({ column, index, sortConfig, onSort, filterValue, onFilter, onColumnUpdate }: SortableColumnHeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
   const [isFilterVisible, setIsFilterVisible] = useState(false)
@@ -212,6 +213,7 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
         sortConfig={sortConfig}
         filterValue={filterValue}
         onFilter={onFilter}
+        onColumnUpdate={onColumnUpdate}
       />
     </TableHead>
   )
