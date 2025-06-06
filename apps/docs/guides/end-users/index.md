@@ -175,4 +175,4 @@ Welcome to the Panels user guide! This section is designed for healthcare profes
 - **📞 Support Hotline**: [Contact Information](./support/contact.md)
 - **💬 Live Chat**: Available during business hours
 - **📚 Knowledge Base**: [Search all documentation](./support/knowledge-base.md)
-- **🎥 Training Videos**: [Video tutorial library](./support/video-tutorials.md) 
+- **🎥 Training Videos**: [Video tutorial library](./support/video-tutorials.md)

@@ -12,7 +12,7 @@ This script automatically generates `.env` files for your application based on t
 
 ## Usage
 
-```bash
+\`\`\`bash
 # Generate development environment files (default)
 pnpm generate:env
 
@@ -24,7 +24,7 @@ pnpm generate:env:staging
 
 # Force overwrite existing files
 pnpm generate:env -- --force
-```
+\`\`\`
 
 ## Generated Files
 
@@ -52,7 +52,7 @@ The script creates the following files:
 
 ## Example Output
 
-```bash
+\`\`\`bash
 🚀 Generating .env files for environment: development
 
 📊 Extracted from compose.yaml:
@@ -78,7 +78,7 @@ The script creates the following files:
 ✅ Generated: .env.test.example
 
 🎉 Environment file generation complete!
-```
+\`\`\`
 
 ## Safety Features
 
@@ -100,4 +100,4 @@ You can modify the script to:
 2. **Start infrastructure**: `pnpm run:infra`
 3. **Start development**: `pnpm dev`
 
-The generated `.env` files will be automatically loaded by your applications. 
+The generated `.env` files will be automatically loaded by your applications.

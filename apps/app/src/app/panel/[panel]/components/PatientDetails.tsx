@@ -150,4 +150,4 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
       </div>
     </div>
   )
-} 
+}

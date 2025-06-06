@@ -33,7 +33,7 @@ This guide walks you through deploying the Panels Management System to productio
 
 Create `docker-compose.prod.yml`:
 
-```yaml
+\`\`\`yaml
 version: '3.8'
 
 services:
@@ -185,13 +185,13 @@ volumes:
 networks:
   panels-network:
     driver: bridge
-```
+\`\`\`
 
 ### 2. Create Production Dockerfiles
 
 **Backend Dockerfile** (`apps/services/Dockerfile.prod`):
 
-```dockerfile
+\`\`\`dockerfile
 FROM node:22-alpine AS base
 WORKDIR /app
 RUN apk add --no-cache curl
@@ -234,11 +234,11 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3001/health || exit 1
 
 CMD ["node", "--enable-source-maps", "dist/server.js"]
-```
+\`\`\`
 
 **Frontend Dockerfile** (`apps/app/Dockerfile.prod`):
 
-```dockerfile
+\`\`\`dockerfile
 FROM node:22-alpine AS base
 WORKDIR /app
 RUN apk add --no-cache libc6-compat curl
@@ -274,13 +274,13 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/api/health || exit 1
 
 CMD ["node", "server.js"]
-```
+\`\`\`
 
 ## nginx Configuration
 
 Create `nginx/nginx.conf`:
 
-```nginx
+\`\`\`nginx
 events {
     worker_connections 1024;
 }
@@ -397,13 +397,13 @@ http {
         }
     }
 }
-```
+\`\`\`
 
 ## Environment Configuration
 
 Create `.env.prod`:
 
-```bash
+\`\`\`bash
 # Database
 DB_HOST=panels-db
 DB_PORT=5432
@@ -428,13 +428,13 @@ NEXTAUTH_SECRET=your_nextauth_secret_key
 
 # Medplum
 MEDPLUM_BASE_URL=http://medplum-server:8103
-```
+\`\`\`
 
 ## SSL Certificate Setup
 
 ### Using Let's Encrypt (Recommended)
 
-```bash
+\`\`\`bash
 # Install Certbot
 sudo apt-get update
 sudo apt-get install certbot python3-certbot-nginx
@@ -444,11 +444,11 @@ sudo certbot --nginx -d your-domain.com
 
 # Setup auto-renewal
 echo "0 12 * * * /usr/bin/certbot renew --quiet" | sudo crontab -
-```
+\`\`\`
 
 ### Using Custom Certificates
 
-```bash
+\`\`\`bash
 # Create SSL directory
 mkdir -p nginx/ssl
 
@@ -459,13 +459,13 @@ cp your-domain.com.key nginx/ssl/privkey.pem
 # Set proper permissions
 chmod 600 nginx/ssl/privkey.pem
 chmod 644 nginx/ssl/fullchain.pem
-```
+\`\`\`
 
 ## Deployment Process
 
 ### 1. Server Preparation
 
-```bash
+\`\`\`bash
 # Update system
 sudo apt-get update && sudo apt-get upgrade -y
 
@@ -480,11 +480,11 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # Reboot to apply group changes
 sudo reboot
-```
+\`\`\`
 
 ### 2. Application Deployment
 
-```bash
+\`\`\`bash
 # Clone repository
 git clone https://github.com/your-org/panels.git
 cd panels
@@ -500,11 +500,11 @@ docker-compose -f docker-compose.prod.yml up -d
 
 # Run database migrations
 docker-compose -f docker-compose.prod.yml exec panels-api npm run migration:apply
-```
+\`\`\`
 
 ### 3. Verify Deployment
 
-```bash
+\`\`\`bash
 # Check all services are running
 docker-compose -f docker-compose.prod.yml ps
 
@@ -514,7 +514,7 @@ docker-compose -f docker-compose.prod.yml logs -f
 # Test endpoints
 curl -f https://your-domain.com/api/health
 curl -f https://your-domain.com
-```
+\`\`\`
 
 ## Monitoring and Maintenance
 
@@ -522,7 +522,7 @@ curl -f https://your-domain.com
 
 Create `scripts/health-check.sh`:
 
-```bash
+\`\`\`bash
 #!/bin/bash
 
 # Check all services
@@ -547,13 +547,13 @@ if ! curl -f -s https://your-domain.com > /dev/null; then
 fi
 
 echo "All health checks passed"
-```
+\`\`\`
 
 ### Backup Script
 
 Create `scripts/backup.sh`:
 
-```bash
+\`\`\`bash
 #!/bin/bash
 
 BACKUP_DIR="/backups"
@@ -574,13 +574,13 @@ find $BACKUP_DIR -name "*.rdb" -mtime +7 -delete
 find $BACKUP_DIR -name "medplum_backup_*" -mtime +7 -exec rm -rf {} +
 
 echo "Backup completed: $DATE"
-```
+\`\`\`
 
 ### Monitoring with Prometheus (Optional)
 
 Add to `docker-compose.prod.yml`:
 
-```yaml
+\`\`\`yaml
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -603,7 +603,7 @@ Add to `docker-compose.prod.yml`:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     networks:
       - panels-network
-```
+\`\`\`
 
 ## Performance Optimization
 
@@ -611,7 +611,7 @@ Add to `docker-compose.prod.yml`:
 
 PostgreSQL configuration in `postgresql.conf`:
 
-```ini
+\`\`\`ini
 # Memory settings
 shared_buffers = 256MB
 effective_cache_size = 1GB
@@ -625,24 +625,24 @@ default_statistics_target = 100
 
 # Connection settings
 max_connections = 200
-```
+\`\`\`
 
 ### Redis Optimization
 
-```bash
+\`\`\`bash
 # Add to redis.conf
 maxmemory 2gb
 maxmemory-policy allkeys-lru
 save 900 1
 save 300 10
 save 60 10000
-```
+\`\`\`
 
 ### Next.js Optimization
 
 Update `next.config.js`:
 
-```javascript
+\`\`\`javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
@@ -662,7 +662,7 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
-```
+\`\`\`
 
 ## Security Checklist
 
@@ -682,7 +682,7 @@ module.exports = nextConfig
 ### Common Issues
 
 **Service won't start:**
-```bash
+\`\`\`bash
 # Check logs
 docker-compose -f docker-compose.prod.yml logs service-name
 
@@ -691,35 +691,35 @@ docker stats
 
 # Check disk space
 df -h
-```
+\`\`\`
 
 **Database connection issues:**
-```bash
+\`\`\`bash
 # Test database connection
 docker-compose -f docker-compose.prod.yml exec panels-db psql -U $DB_USER -d $DB_NAME -c "SELECT 1;"
 
 # Check database logs
 docker-compose -f docker-compose.prod.yml logs panels-db
-```
+\`\`\`
 
 **High memory usage:**
-```bash
+\`\`\`bash
 # Check memory usage
 free -h
 docker stats --no-stream
 
 # Restart services if needed
 docker-compose -f docker-compose.prod.yml restart
-```
+\`\`\`
 
 **SSL certificate issues:**
-```bash
+\`\`\`bash
 # Check certificate expiry
 openssl x509 -in nginx/ssl/fullchain.pem -text -noout | grep "Not After"
 
 # Renew Let's Encrypt certificate
 sudo certbot renew --dry-run
-```
+\`\`\`
 
 ## Scaling Considerations
 
@@ -739,4 +739,4 @@ sudo certbot renew --dry-run
 - Use connection pooling
 - Configure proper indexes
 
-This production setup provides a robust, secure, and scalable deployment for the Panels Management System. Always test thoroughly in a staging environment before deploying to production. 
+This production setup provides a robust, secure, and scalable deployment for the Panels Management System. Always test thoroughly in a staging environment before deploying to production.

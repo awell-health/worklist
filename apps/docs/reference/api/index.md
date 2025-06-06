@@ -8,7 +8,7 @@ The Panels API is a RESTful service that provides comprehensive functionality fo
 
 ## Base Configuration
 
-```typescript
+\`\`\`typescript
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 
 // Configure the API client
@@ -19,7 +19,7 @@ panelsAPI.configure({
     token: 'your-jwt-token'
   }
 })
-```
+\`\`\`
 
 ## API Endpoints
 
@@ -30,49 +30,49 @@ panelsAPI.configure({
 - **Description**: Manage panel lifecycle, metadata, and configuration
 - **Operations**: Create, read, update, delete, list panels
 
-```typescript
+\`\`\`typescript
 // Panel operations
 const panels = await panelsAPI.panels.list(tenantId, userId)
 const panel = await panelsAPI.panels.create(data, tenantId, userId)
 const panel = await panelsAPI.panels.get(panelId, tenantId, userId)
 const panel = await panelsAPI.panels.update(panelId, data, tenantId, userId)
 await panelsAPI.panels.delete(panelId, tenantId, userId)
-```
+\`\`\`
 
 #### Data Sources API
 - **Base URL**: `/panels/{panelId}/data-sources`
 - **Description**: Manage data source connections and synchronization
 - **Operations**: Create, read, update, delete, list, sync data sources
 
-```typescript
+\`\`\`typescript
 // Data source operations
 const sources = await panelsAPI.dataSources.list(panelId, tenantId, userId)
 const source = await panelsAPI.dataSources.create(panelId, data, tenantId, userId)
 const source = await panelsAPI.dataSources.update(panelId, sourceId, data, tenantId, userId)
 const result = await panelsAPI.dataSources.sync(panelId, sourceId, tenantId, userId)
 await panelsAPI.dataSources.delete(panelId, sourceId, tenantId, userId)
-```
+\`\`\`
 
 #### Columns API
 - **Base URL**: `/panels/{panelId}/columns`
 - **Description**: Manage panel columns (base and calculated)
 - **Operations**: Create base/calculated columns, update, delete, list, reorder
 
-```typescript
+\`\`\`typescript
 // Column operations
 const columns = await panelsAPI.columns.list(panelId, tenantId, userId)
 const column = await panelsAPI.columns.createBase(panelId, data, tenantId, userId)
 const column = await panelsAPI.columns.createCalculated(panelId, data, tenantId, userId)
 const column = await panelsAPI.columns.update(panelId, columnId, data, tenantId, userId)
 await panelsAPI.columns.delete(panelId, columnId, tenantId, userId)
-```
+\`\`\`
 
 #### Views API
 - **Base URL**: `/panels/{panelId}/views`
 - **Description**: Manage panel views, filtering, sorting, and publishing
 - **Operations**: Create, update, delete, list, publish, sort views
 
-```typescript
+\`\`\`typescript
 // View operations
 const views = await viewsAPI.list(panelId, tenantId, userId)
 const view = await viewsAPI.create(panelId, data, tenantId, userId)
@@ -80,13 +80,13 @@ const view = await viewsAPI.update(panelId, viewId, data, tenantId, userId)
 await viewsAPI.publish(panelId, viewId, publishConfig, tenantId, userId)
 await viewsAPI.sort(panelId, viewId, sortConfig, tenantId, userId)
 await viewsAPI.delete(panelId, viewId, tenantId, userId)
-```
+\`\`\`
 
 ## Authentication
 
 ### JWT Token Authentication
 
-```typescript
+\`\`\`typescript
 // Configure with JWT token
 panelsAPI.configure({
   baseURL: 'https://api.yourcompany.com',
@@ -95,11 +95,11 @@ panelsAPI.configure({
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
   }
 })
-```
+\`\`\`
 
 ### API Key Authentication
 
-```typescript
+\`\`\`typescript
 // Configure with API key
 panelsAPI.configure({
   baseURL: 'https://api.yourcompany.com',
@@ -109,26 +109,26 @@ panelsAPI.configure({
     tenantId: 'your-tenant-id'
   }
 })
-```
+\`\`\`
 
 ### Multi-tenant Context
 
 All API operations require tenant and user context:
 
-```typescript
+\`\`\`typescript
 // Required parameters for all operations
 const tenantId = "tenant-123"  // Organization/workspace identifier
 const userId = "user-456"      // Current user identifier
 
 // Example usage
 const panels = await panelsAPI.panels.list(tenantId, userId)
-```
+\`\`\`
 
 ## Request/Response Format
 
 ### Standard Response Format
 
-```typescript
+\`\`\`typescript
 // Success response
 {
   data: T,                    // Response data
@@ -146,7 +146,7 @@ const panels = await panelsAPI.panels.list(tenantId, userId)
   details?: any,             // Additional error details
   timestamp: string          // ISO timestamp
 }
-```
+\`\`\`
 
 ### HTTP Status Codes
 
@@ -167,7 +167,7 @@ const panels = await panelsAPI.panels.list(tenantId, userId)
 
 ### Core Entity Types
 
-```typescript
+\`\`\`typescript
 // Panel entity
 interface Panel {
   id: string
@@ -217,11 +217,11 @@ interface View {
   tenantId: string
   userId: string
 }
-```
+\`\`\`
 
 ### Data Types
 
-```typescript
+\`\`\`typescript
 type DataType = 
   | 'text'
   | 'number'
@@ -231,11 +231,11 @@ type DataType =
   | 'boolean'
   | 'select'
   | 'json'
-```
+\`\`\`
 
 ### Configuration Types
 
-```typescript
+\`\`\`typescript
 // Data source configurations
 interface DatabaseConfig {
   connectionString: string
@@ -258,7 +258,7 @@ interface FileConfig {
   hasHeaders?: boolean
   delimiter?: string
 }
-```
+\`\`\`
 
 ## Rate Limiting
 
@@ -273,15 +273,15 @@ interface FileConfig {
 
 ### Rate Limit Headers
 
-```http
+\`\`\`http
 X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
 X-RateLimit-Reset: 1640995200
-```
+\`\`\`
 
 ### Handling Rate Limits
 
-```typescript
+\`\`\`typescript
 try {
   const panels = await panelsAPI.panels.list(tenantId, userId)
 } catch (error) {
@@ -291,13 +291,13 @@ try {
     console.log(`Rate limited, retry after ${retryAfter} seconds`)
   }
 }
-```
+\`\`\`
 
 ## Error Handling
 
 ### Error Types
 
-```typescript
+\`\`\`typescript
 // Authentication errors
 class AuthenticationError extends Error {
   status: 401 | 403
@@ -317,11 +317,11 @@ class NotFoundError extends Error {
   code: 'NOT_FOUND'
   resource: string
 }
-```
+\`\`\`
 
 ### Error Handling Pattern
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 try {
@@ -349,13 +349,13 @@ try {
       showGenericError()
   }
 }
-```
+\`\`\`
 
 ## Pagination
 
 ### Request Parameters
 
-```typescript
+\`\`\`typescript
 // Pagination parameters
 interface PaginationParams {
   page?: number        // Page number (1-based)
@@ -371,11 +371,11 @@ const panels = await panelsAPI.panels.list(tenantId, userId, {
   sort: 'title',
   order: 'asc'
 })
-```
+\`\`\`
 
 ### Response Format
 
-```typescript
+\`\`\`typescript
 // Paginated response
 interface PaginatedResponse<T> {
   data: T[]
@@ -388,13 +388,13 @@ interface PaginatedResponse<T> {
     hasPrev: boolean   // Has previous page
   }
 }
-```
+\`\`\`
 
 ## Filtering and Searching
 
 ### Filter Syntax
 
-```typescript
+\`\`\`typescript
 // Filter criteria
 interface FilterCriteria {
   field: string
@@ -418,23 +418,23 @@ type FilterOperator =
   | 'notIn'
   | 'isNull'
   | 'isNotNull'
-```
+\`\`\`
 
 ### Search Example
 
-```typescript
+\`\`\`typescript
 // Search panels by title
 const panels = await panelsAPI.panels.list(tenantId, userId, {
   search: 'user dashboard',
   searchFields: ['title', 'description']
 })
-```
+\`\`\`
 
 ## Webhooks
 
 ### Webhook Configuration
 
-```typescript
+\`\`\`typescript
 // Configure webhook for data source
 const dataSource = await panelsAPI.dataSources.create(panelId, {
   type: 'webhook',
@@ -444,7 +444,7 @@ const dataSource = await panelsAPI.dataSources.create(panelId, {
     events: ['data.updated', 'data.created']
   }
 }, tenantId, userId)
-```
+\`\`\`
 
 ### Webhook Events
 
@@ -460,18 +460,18 @@ const dataSource = await panelsAPI.dataSources.create(panelId, {
 
 ### TypeScript/JavaScript
 
-```bash
+\`\`\`bash
 # Install the official client
 pnpm add @panels/app
-```
+\`\`\`
 
-```typescript
+\`\`\`typescript
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 
 // Configure and use
 panelsAPI.configure({ /* config */ })
 const panels = await panelsAPI.panels.list(tenantId, userId)
-```
+\`\`\`
 
 ### Available Methods
 
@@ -486,7 +486,7 @@ See detailed documentation for each API module:
 
 ### Common Patterns
 
-```typescript
+\`\`\`typescript
 // Create a complete panel workflow
 async function createCompletePanel() {
   // 1. Create panel
@@ -519,7 +519,7 @@ async function createCompletePanel() {
 
   return panel
 }
-```
+\`\`\`
 
 ## API Versioning
 
@@ -531,10 +531,10 @@ async function createCompletePanel() {
 
 ### Version Headers
 
-```http
+\`\`\`http
 Accept: application/vnd.panels.v1+json
 API-Version: v1
-```
+\`\`\`
 
 ## OpenAPI Specification
 
@@ -549,4 +549,4 @@ The complete OpenAPI specification is available at:
 - **[Data Types Reference](../schemas/data-types.md)** - Complete data type documentation
 - **[Error Codes Reference](../errors/index.md)** - All error codes and handling
 - **[Rate Limiting Guide](../rate-limiting/index.md)** - Rate limit details and best practices
-- **[Bruno API Collection](../bruno-collection/index.md)** - API testing collection 
+- **[Bruno API Collection](../bruno-collection/index.md)** - API testing collection

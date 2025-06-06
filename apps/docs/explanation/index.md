@@ -163,4 +163,4 @@ Help improve the collective understanding:
 - **Share Insights** - Document discoveries and insights
 - **Ask Questions** - Questions often reveal gaps in understanding
 - **Explain Concepts** - Teaching others helps solidify understanding
-- **Connect Dots** - Help connect concepts across different areas 
+- **Connect Dots** - Help connect concepts across different areas

@@ -29,4 +29,3 @@ export function positionStyle(
 
   return style
 }
-

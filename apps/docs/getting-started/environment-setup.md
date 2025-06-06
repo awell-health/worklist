@@ -4,7 +4,7 @@ This guide covers comprehensive environment configuration for the Panels project
 
 ## Quick Start
 
-```bash
+\`\`\`bash
 # 1. Generate environment files from your compose.yaml
 pnpm generate:env
 
@@ -13,7 +13,7 @@ pnpm run:infra
 
 # 3. Start development
 pnpm dev
-```
+\`\`\`
 
 ## Environment File Generation
 
@@ -45,7 +45,7 @@ The generator intelligently extracts settings from multiple sources:
 
 ### Commands
 
-```bash
+\`\`\`bash
 # Generate development environment (default)
 pnpm generate:env
 
@@ -57,13 +57,13 @@ pnpm generate:env:prod
 
 # Force overwrite existing files
 pnpm generate:env -- --force
-```
+\`\`\`
 
 ### Example Output
 
 When you run `pnpm generate:env`, you'll see:
 
-```bash
+\`\`\`bash
 🚀 Generating .env files for environment: development
 
 📊 Extracted from compose.yaml:
@@ -89,7 +89,7 @@ When you run `pnpm generate:env`, you'll see:
 ✅ Generated: .env.test.example
 
 🎉 Environment file generation complete!
-```
+\`\`\`
 
 ## Manual Configuration
 
@@ -97,7 +97,7 @@ If you prefer manual setup or need custom configuration:
 
 ### Backend Services (`.env`)
 
-```bash
+\`\`\`bash
 # Server Configuration
 NODE_ENV=development
 PORT=3001
@@ -131,11 +131,11 @@ DEFAULT_USER_ID=user-dev
 # API Configuration
 API_BASE_URL=http://localhost:3001
 CORS_ORIGINS=http://localhost:3000,http://localhost:3003
-```
+\`\`\`
 
 ### Frontend App (`.env.local`)
 
-```bash
+\`\`\`bash
 # Environment
 NODE_ENV=development
 
@@ -150,11 +150,11 @@ NEXTAUTH_SECRET=your-nextauth-secret-change-in-production
 # Feature Flags
 NEXT_PUBLIC_ENABLE_DEBUG=true
 NEXT_PUBLIC_APP_ENV=development
-```
+\`\`\`
 
 ### Testing Environment (`.env.test`)
 
-```bash
+\`\`\`bash
 # Environment
 NODE_ENV=test
 
@@ -175,7 +175,7 @@ DEFAULT_TENANT_ID=tenant-test
 DEFAULT_USER_ID=user-test
 
 LOG_LEVEL=warn
-```
+\`\`\`
 
 ## Environment-Specific Configurations
 
@@ -220,47 +220,47 @@ LOG_LEVEL=warn
 ### Common Issues
 
 **Q: Environment files not being loaded**
-```bash
+\`\`\`bash
 # Check if files exist
 ls -la apps/services/.env
 ls -la apps/app/.env.local
 
 # Regenerate if missing
 pnpm generate:env --force
-```
+\`\`\`
 
 **Q: Database connection errors**
-```bash
+\`\`\`bash
 # Ensure infrastructure is running
 pnpm run:infra
 
 # Check PostgreSQL is healthy
 docker ps | grep postgres
-```
+\`\`\`
 
 **Q: Redis connection errors**
-```bash
+\`\`\`bash
 # Check Redis is running
 docker ps | grep redis
 
 # Test Redis connection
 docker exec -it wl-redis redis-cli -a medplum ping
-```
+\`\`\`
 
 **Q: Port conflicts**
-```bash
+\`\`\`bash
 # Check what's using the ports
 lsof -i :3001  # API server
 lsof -i :3000  # Frontend
 lsof -i :5432  # PostgreSQL
 lsof -i :6379  # Redis
-```
+\`\`\`
 
 ### Environment Validation
 
 You can validate your environment setup:
 
-```bash
+\`\`\`bash
 # Check all environment variables are loaded
 pnpm --filter @panels/services dev --dry-run
 
@@ -269,7 +269,7 @@ pnpm --filter @panels/services test:db-connection
 
 # Test API endpoints
 curl http://localhost:3001/health
-```
+\`\`\`
 
 ## Integration with Development Workflow
 
@@ -285,4 +285,4 @@ The environment setup integrates seamlessly with your development workflow:
 
 - [Create Your First Panel](./first-panel.md) - Build your first panel using the configured environment
 - [Database Schema](../reference/database.md) - Understand the MikroORM entities and schema
-- [API Integration](../guides/api-integration/) - Learn how to interact with the API 
+- [API Integration](../guides/api-integration/) - Learn how to interact with the API

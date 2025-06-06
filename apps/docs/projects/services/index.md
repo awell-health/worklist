@@ -35,7 +35,7 @@ The backend services provide the core API and business logic for the Panels Mana
 
 ## Project Structure
 
-```
+\`\`\`
 apps/services/
 ├── src/
 │   ├── modules/               # Feature modules
@@ -57,14 +57,14 @@ apps/services/
 ├── mikro-orm.config.ts      # ORM configuration
 ├── tsconfig.json           # TypeScript configuration
 └── package.json            # Package configuration
-```
+\`\`\`
 
 ## API Architecture
 
 ### REST API Design
 The API follows RESTful principles with consistent patterns:
 
-```
+\`\`\`
 GET    /api/panels                 # List panels
 POST   /api/panels                 # Create panel
 GET    /api/panels/:id             # Get panel
@@ -79,13 +79,13 @@ DELETE /api/datasources/:id        # Delete data source
 GET    /api/panels/:id/columns     # List columns
 POST   /api/panels/:id/columns/base # Create base column
 POST   /api/panels/:id/columns/calculated # Create calculated column
-```
+\`\`\`
 
 ### Module-based Organization
 Each feature is organized into self-contained modules:
 
 #### Panel Module
-```typescript
+\`\`\`typescript
 // Entity definition
 @Entity()
 export class Panel {
@@ -113,10 +113,10 @@ export class Panel {
   @OneToMany(() => BaseColumn, col => col.panel)
   baseColumns = new Collection<BaseColumn>(this)
 }
-```
+\`\`\`
 
 #### Route Handlers
-```typescript
+\`\`\`typescript
 // Panel routes with Zod validation
 export async function panelRoutes(fastify: FastifyInstance) {
   // Create panel
@@ -141,12 +141,12 @@ export async function panelRoutes(fastify: FastifyInstance) {
     return reply.send(panels)
   })
 }
-```
+\`\`\`
 
 ## Database Design
 
 ### Entity Relationship Model
-```
+\`\`\`
 Panel (1) ←→ (N) DataSource
 Panel (1) ←→ (N) BaseColumn
 Panel (1) ←→ (N) CalculatedColumn
@@ -158,12 +158,12 @@ View (1) ←→ (N) ViewFilter
 
 Panel (1) ←→ (N) PanelChange
 View (1) ←→ (N) ViewNotification
-```
+\`\`\`
 
 ### Core Entities
 
 #### Panel Entity
-```typescript
+\`\`\`typescript
 @Entity()
 export class Panel {
   @PrimaryKey()
@@ -190,10 +190,10 @@ export class Panel {
   @OneToOne(() => CohortRule, { eager: true })
   cohortRule!: CohortRule
 }
-```
+\`\`\`
 
 #### Data Source Entity
-```typescript
+\`\`\`typescript
 @Entity()
 export class DataSource {
   @PrimaryKey()
@@ -217,10 +217,10 @@ export class DataSource {
   @Property()
   userId!: string
 }
-```
+\`\`\`
 
 #### Column Entities
-```typescript
+\`\`\`typescript
 @Entity()
 export class BaseColumn {
   @PrimaryKey()
@@ -262,12 +262,12 @@ export class CalculatedColumn {
   @ManyToOne(() => Panel)
   panel!: Panel
 }
-```
+\`\`\`
 
 ## Business Logic Services
 
 ### Panel Service
-```typescript
+\`\`\`typescript
 export class PanelService {
   constructor(
     private readonly em: EntityManager,
@@ -312,10 +312,10 @@ export class PanelService {
     return panels
   }
 }
-```
+\`\`\`
 
 ### Data Source Service
-```typescript
+\`\`\`typescript
 export class DataSourceService {
   async create(panelId: string, data: CreateDataSourceRequest): Promise<CreateDataSourceResponse> {
     const panel = await this.em.findOneOrFail(Panel, panelId)
@@ -355,12 +355,12 @@ export class DataSourceService {
     await this.em.flush()
   }
 }
-```
+\`\`\`
 
 ## Validation & Type Safety
 
 ### Zod Schema Definitions
-```typescript
+\`\`\`typescript
 // Panel schemas
 export const CreatePanelSchema = z.object({
   name: z.string().min(1).max(255),
@@ -387,21 +387,21 @@ export const CreateDataSourceSchema = z.object({
   tenantId: z.string(),
   userId: z.string()
 })
-```
+\`\`\`
 
 ### Type Generation
 Types are automatically generated from Zod schemas:
 
-```typescript
+\`\`\`typescript
 export type CreatePanelRequest = z.infer<typeof CreatePanelSchema>
 export type CreatePanelResponse = z.infer<typeof CreatePanelResponseSchema>
 export type CreateDataSourceRequest = z.infer<typeof CreateDataSourceSchema>
-```
+\`\`\`
 
 ## Authentication & Authorization
 
 ### JWT Authentication
-```typescript
+\`\`\`typescript
 // JWT plugin configuration
 await fastify.register(fastifyJwt, {
   secret: process.env.JWT_SECRET!,
@@ -419,10 +419,10 @@ fastify.addHook('preHandler', async (request, reply) => {
     reply.send(err)
   }
 })
-```
+\`\`\`
 
 ### Multi-tenant Security
-```typescript
+\`\`\`typescript
 // Tenant isolation middleware
 export async function tenantIsolation(request: FastifyRequest, reply: FastifyReply) {
   const userTenant = request.user.tenantId
@@ -432,12 +432,12 @@ export async function tenantIsolation(request: FastifyRequest, reply: FastifyRep
     return reply.code(403).send({ error: 'Access denied to tenant' })
   }
 }
-```
+\`\`\`
 
 ## Performance Optimization
 
 ### Database Optimization
-```typescript
+\`\`\`typescript
 // Connection pooling
 const config: Options = {
   type: 'postgresql',
@@ -462,10 +462,10 @@ const config: Options = {
 @Index({ properties: ['tenantId', 'createdAt'] })
 @Entity()
 export class Panel { ... }
-```
+\`\`\`
 
 ### Caching Strategy
-```typescript
+\`\`\`typescript
 // Redis caching
 export class CacheService {
   constructor(private redis: Redis) {}
@@ -486,12 +486,12 @@ export class CacheService {
     }
   }
 }
-```
+\`\`\`
 
 ## Testing Framework
 
 ### Test Setup
-```typescript
+\`\`\`typescript
 // Test configuration
 import { MikroORM } from '@mikro-orm/core'
 import { FastifyInstance } from 'fastify'
@@ -516,10 +516,10 @@ describe('Panel API', () => {
     await orm.getSchemaGenerator().clearDatabase()
   })
 })
-```
+\`\`\`
 
 ### API Testing
-```typescript
+\`\`\`typescript
 // Panel creation test
 it('should create a panel', async () => {
   const response = await app.inject({
@@ -543,12 +543,12 @@ it('should create a panel', async () => {
   expect(panel.tenantId).toBe('tenant-123')
   expect(panel.cohortRule).toBeDefined()
 })
-```
+\`\`\`
 
 ## Development Workflow
 
 ### Available Scripts
-```bash
+\`\`\`bash
 # Development
 pnpm dev                 # Start development server with watch mode
 pnpm build              # Build TypeScript to JavaScript
@@ -568,10 +568,10 @@ pnpm format             # Format code with Biome
 pnpm test               # Run tests
 pnpm test:watch         # Run tests in watch mode
 pnpm test:coverage      # Run tests with coverage
-```
+\`\`\`
 
 ### Development Server
-```bash
+\`\`\`bash
 # Start development server
 cd apps/services
 pnpm dev
@@ -581,12 +581,12 @@ pnpm dev
 # - Auto-compilation of TypeScript
 # - Database connection pooling
 # - API documentation at /docs
-```
+\`\`\`
 
 ## API Documentation
 
 ### Auto-generated Documentation
-```typescript
+\`\`\`typescript
 // Swagger/OpenAPI setup
 await fastify.register(fastifySwagger, {
   openapi: {
@@ -612,12 +612,12 @@ await fastify.register(fastifySwaggerUi, {
     deepLinking: false
   }
 })
-```
+\`\`\`
 
 ### Bruno API Collection
 The project includes a comprehensive Bruno API testing collection:
 
-```
+\`\`\`
 api-tests/
 ├── panels/
 │   ├── create-panel.bru
@@ -629,12 +629,12 @@ api-tests/
 └── environments/
     ├── development.bru
     └── production.bru
-```
+\`\`\`
 
 ## Deployment & Production
 
 ### Environment Configuration
-```bash
+\`\`\`bash
 # Production environment variables
 NODE_ENV=production
 PORT=3001
@@ -642,10 +642,10 @@ DATABASE_URL=postgresql://user:pass@host:5432/panels
 REDIS_URL=redis://host:6379
 JWT_SECRET=your-secure-secret
 LOG_LEVEL=info
-```
+\`\`\`
 
 ### Docker Configuration
-```dockerfile
+\`\`\`dockerfile
 FROM node:22-alpine
 WORKDIR /app
 
@@ -662,7 +662,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 EXPOSE 3001
 CMD ["node", "dist/app.js"]
-```
+\`\`\`
 
 ### Production Optimizations
 - **Connection pooling** for database efficiency
@@ -676,7 +676,7 @@ CMD ["node", "dist/app.js"]
 ## Monitoring & Observability
 
 ### Health Checks
-```typescript
+\`\`\`typescript
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {
   const dbStatus = await checkDatabaseConnection()
@@ -692,10 +692,10 @@ fastify.get('/health', async (request, reply) => {
   
   return reply.send(health)
 })
-```
+\`\`\`
 
 ### Structured Logging
-```typescript
+\`\`\`typescript
 // Logger configuration
 const logger = {
   level: process.env.LOG_LEVEL || 'info',
@@ -708,7 +708,7 @@ const logger = {
     }
   }
 }
-```
+\`\`\`
 
 ## Future Enhancements
 
@@ -730,4 +730,4 @@ const logger = {
 - [API Reference](/reference/backend-api/panel-endpoints.md)
 - [Database Schema](/reference/database/schema.md)
 - [Deployment Guide](/guides/deployment/production-setup.md)
-- [Testing Strategies](/guides/development/testing-strategies.md) 
+- [Testing Strategies](/guides/development/testing-strategies.md)

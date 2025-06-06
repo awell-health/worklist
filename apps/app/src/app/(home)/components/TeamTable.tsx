@@ -44,4 +44,4 @@ const TeamTable: React.FC<TeamTableProps> = ({ users }) => {
   );
 };
 
-export default TeamTable; 
+export default TeamTable;

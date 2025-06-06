@@ -49,4 +49,4 @@ export const useColumnCreator = ({
   };
 
   return { onAddColumn };
-}; 
+};

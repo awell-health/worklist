@@ -129,4 +129,4 @@ const PanelRow: React.FC<{ panel: PanelDefinition,  onDeletePanel: (panelId: str
   );
 };
 
-export default PanelsTable; 
+export default PanelsTable;

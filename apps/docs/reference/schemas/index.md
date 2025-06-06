@@ -10,7 +10,7 @@ This reference documents all the TypeScript interfaces, types, and schemas used 
 
 ### Panel Schema
 
-```typescript
+\`\`\`typescript
 interface Panel {
   id: string                    // Unique panel identifier (UUID)
   title: string                 // Panel display name
@@ -35,11 +35,11 @@ interface PanelSettings {
   enableExport?: boolean      // Allow data export
   enableComments?: boolean    // Enable user comments
 }
-```
+\`\`\`
 
 ### Data Source Schema
 
-```typescript
+\`\`\`typescript
 interface DataSource {
   id: number                   // Auto-incrementing ID
   panelId: string             // Parent panel ID
@@ -77,11 +77,11 @@ type DataSourceConfig =
   | APIConfig
   | FileConfig
   | WebhookConfig
-```
+\`\`\`
 
 ### Column Schema
 
-```typescript
+\`\`\`typescript
 interface Column {
   id: number                   // Auto-incrementing ID
   panelId: string             // Parent panel ID
@@ -174,11 +174,11 @@ interface SelectOption {
   icon?: string               // Option icon
   description?: string        // Option description
 }
-```
+\`\`\`
 
 ### View Schema
 
-```typescript
+\`\`\`typescript
 interface View {
   id: number                  // Auto-incrementing ID
   panelId: string            // Parent panel ID
@@ -262,13 +262,13 @@ interface PublishConfig {
 }
 
 type Permission = 'read' | 'edit' | 'create' | 'delete' | 'manage'
-```
+\`\`\`
 
 ## Data Source Configuration Schemas
 
 ### Database Configuration
 
-```typescript
+\`\`\`typescript
 interface DatabaseConfig {
   connectionString: string   // Database connection URL
   schema?: string           // Database schema (default: public)
@@ -290,11 +290,11 @@ interface DatabaseConfig {
   password?: string          // Database password
   authType?: 'password' | 'certificate' | 'iam'
 }
-```
+\`\`\`
 
 ### API Configuration
 
-```typescript
+\`\`\`typescript
 interface APIConfig {
   apiEndpoint: string        // API URL
   method: 'GET' | 'POST' | 'PUT' | 'PATCH'
@@ -343,11 +343,11 @@ interface APIAuthentication {
   tokenUrl?: string
   scope?: string
 }
-```
+\`\`\`
 
 ### File Configuration
 
-```typescript
+\`\`\`typescript
 interface FileConfig {
   filePath: string           // File path or URL
   format: FileFormat         // File format
@@ -376,11 +376,11 @@ interface FileConfig {
 }
 
 type FileFormat = 'csv' | 'json' | 'excel' | 'tsv' | 'xml'
-```
+\`\`\`
 
 ### Webhook Configuration
 
-```typescript
+\`\`\`typescript
 interface WebhookConfig {
   endpoint: string           // Webhook endpoint URL
   secret?: string            // Webhook secret for verification
@@ -406,13 +406,13 @@ type WebhookEvent =
   | 'sync.started'
   | 'sync.completed'
   | 'sync.failed'
-```
+\`\`\`
 
 ## Request/Response Schemas
 
 ### API Request Parameters
 
-```typescript
+\`\`\`typescript
 interface ListParams {
   page?: number              // Page number (1-based)
   limit?: number             // Items per page (max 100)
@@ -431,11 +431,11 @@ interface TenantUserParams {
   tenantId: string           // Tenant identifier
   userId: string             // User identifier
 }
-```
+\`\`\`
 
 ### API Response Schemas
 
-```typescript
+\`\`\`typescript
 interface APIResponse<T> {
   data: T                    // Response data
   meta?: ResponseMeta        // Optional metadata
@@ -465,13 +465,13 @@ interface APIError {
   timestamp: string          // ISO timestamp
   requestId?: string         // Request identifier
 }
-```
+\`\`\`
 
 ## Validation Schemas
 
 ### Zod Validation Examples
 
-```typescript
+\`\`\`typescript
 import { z } from 'zod'
 
 // Panel validation schema
@@ -514,13 +514,13 @@ const DataSourceSchema = z.object({
     WebhookConfigSchema
   ])
 })
-```
+\`\`\`
 
 ## Formula and Expression Schemas
 
 ### Formula Functions
 
-```typescript
+\`\`\`typescript
 interface FormulaFunction {
   name: string               // Function name
   category: FunctionCategory // Function category
@@ -552,11 +552,11 @@ interface FormulaExample {
   description: string       // Example description
   result: any              // Expected result
 }
-```
+\`\`\`
 
 ### Expression Validation
 
-```typescript
+\`\`\`typescript
 interface ExpressionContext {
   availableColumns: Column[]  // Available column references
   functions: FormulaFunction[]  // Available functions
@@ -569,13 +569,13 @@ interface ExpressionError {
   position?: number         // Character position
   suggestion?: string       // Suggested fix
 }
-```
+\`\`\`
 
 ## Event and Change Tracking Schemas
 
 ### Change Events
 
-```typescript
+\`\`\`typescript
 interface ChangeEvent {
   id: string                // Event ID
   entityType: EntityType    // Changed entity type
@@ -602,13 +602,13 @@ interface ChangeMetadata {
   sessionId?: string        // Session identifier
   source?: 'web' | 'api' | 'system'  // Change source
 }
-```
+\`\`\`
 
 ## Export/Import Schemas
 
 ### Export Configuration
 
-```typescript
+\`\`\`typescript
 interface ExportConfig {
   format: ExportFormat      // Export format
   includeData?: boolean     // Include data or just structure
@@ -625,11 +625,11 @@ interface DateRange {
   end: Date                 // End date
   column?: string           // Date column to filter on
 }
-```
+\`\`\`
 
 ### Import Configuration
 
-```typescript
+\`\`\`typescript
 interface ImportConfig {
   format: ImportFormat      // Import format
   mapping: FieldMapping[]   // Field mappings
@@ -659,13 +659,13 @@ interface ImportValidation {
   requiredFields?: string[] // Required fields
   uniqueFields?: string[]   // Fields that must be unique
 }
-```
+\`\`\`
 
 ## Type Utilities
 
 ### Common Type Utilities
 
-```typescript
+\`\`\`typescript
 // Utility types for working with schemas
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 type Required<T, K extends keyof T> = T & Required<Pick<T, K>>
@@ -685,13 +685,13 @@ type PanelParams = TenantUserParams
 type DataSourceParams = TenantUserParams & { panelId: string }
 type ColumnParams = TenantUserParams & { panelId: string }
 type ViewParams = TenantUserParams & { panelId: string }
-```
+\`\`\`
 
 ## Schema Versioning
 
 ### Version Management
 
-```typescript
+\`\`\`typescript
 interface SchemaVersion {
   version: string           // Schema version (semver)
   description: string       // Version description
@@ -707,7 +707,7 @@ interface SchemaChange {
   field?: string            // Field name
   description: string       // Change description
 }
-```
+\`\`\`
 
 ## Further Reading
 
@@ -715,4 +715,4 @@ interface SchemaChange {
 - **[Column Types Reference](./column-types.md)** - Column-specific schemas
 - **[Formula Functions Reference](./formula-functions.md)** - All available formula functions
 - **[Validation Rules Reference](./validation-rules.md)** - Complete validation documentation
-- **[API Reference](../api/index.md)** - API endpoint documentation 
+- **[API Reference](../api/index.md)** - API endpoint documentation

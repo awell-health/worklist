@@ -4,9 +4,9 @@ The `panelsAPI` provides comprehensive panel management functionality including 
 
 ## Import
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
-```
+\`\`\`
 
 ## Panel Operations
 
@@ -15,9 +15,9 @@ import { panelsAPI } from '@panels/app/api'
 Retrieves a specific panel by ID.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 get(panel: IdParam, options?: RequestOptions): Promise<PanelResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `panel.id` (number): Panel identifier
@@ -26,19 +26,19 @@ get(panel: IdParam, options?: RequestOptions): Promise<PanelResponse>
 **Returns:** `Promise<PanelResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const panel = await panelsAPI.get({ id: 123 })
 console.log(panel.name) // "User Management Panel"
-```
+\`\`\`
 
 ### `panelsAPI.all()`
 
 Lists all panels for a tenant and user.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 all(tenantId: string, userId: string, options?: RequestOptions): Promise<PanelsResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `tenantId` (string): Tenant identifier  
@@ -48,19 +48,19 @@ all(tenantId: string, userId: string, options?: RequestOptions): Promise<PanelsR
 **Returns:** `Promise<PanelsResponse>` - Array of panels
 
 **Example:**
-```typescript
+\`\`\`typescript
 const panels = await panelsAPI.all("tenant-123", "user-456")
 panels.forEach(panel => console.log(panel.name))
-```
+\`\`\`
 
 ### `panelsAPI.create()`
 
 Creates a new panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 create(panel: PanelInfo, options?: RequestOptions): Promise<CreatePanelResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `panel.name` (string): Panel display name
@@ -72,23 +72,23 @@ create(panel: PanelInfo, options?: RequestOptions): Promise<CreatePanelResponse>
 **Returns:** `Promise<CreatePanelResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const panel = await panelsAPI.create({
   name: "User Management Panel",
   description: "Manage user accounts and permissions",
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.update()`
 
 Updates an existing panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 update(panel: PanelInfo & IdParam, options?: RequestOptions): Promise<PanelResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `panel.id` (number): Panel identifier
@@ -101,7 +101,7 @@ update(panel: PanelInfo & IdParam, options?: RequestOptions): Promise<PanelRespo
 **Returns:** `Promise<PanelResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const updatedPanel = await panelsAPI.update({
   id: 123,
   name: "Updated Panel Name",
@@ -109,16 +109,16 @@ const updatedPanel = await panelsAPI.update({
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.delete()`
 
 Deletes a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 delete(panel: IdParam & { tenantId: string; userId: string }, options?: RequestOptions): Promise<void>
-```
+\`\`\`
 
 **Parameters:**
 - `panel.id` (number): Panel identifier
@@ -129,13 +129,13 @@ delete(panel: IdParam & { tenantId: string; userId: string }, options?: RequestO
 **Returns:** `Promise<void>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 await panelsAPI.delete({
   id: 123,
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ## Data Source Operations
 
@@ -144,23 +144,23 @@ await panelsAPI.delete({
 Lists all data sources for a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 dataSources.list(panelId: string, tenantId: string, userId: string, options?: RequestOptions): Promise<DataSourcesResponse>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const dataSources = await panelsAPI.dataSources.list("123", "tenant-123", "user-456")
-```
+\`\`\`
 
 ### `panelsAPI.dataSources.create()`
 
 Adds a data source to a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 dataSources.create(panelId: string, dataSource: DataSourceInfo, options?: RequestOptions): Promise<DataSourceResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `dataSource.type`: `"database" | "api" | "file" | "custom"`
@@ -169,7 +169,7 @@ dataSources.create(panelId: string, dataSource: DataSourceInfo, options?: Reques
 - `dataSource.userId`: User identifier
 
 **Example:**
-```typescript
+\`\`\`typescript
 const dataSource = await panelsAPI.dataSources.create("123", {
   type: "database",
   config: {
@@ -179,58 +179,58 @@ const dataSource = await panelsAPI.dataSources.create("123", {
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.dataSources.update()`
 
 Updates a data source configuration.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 dataSources.update(dataSourceId: string, dataSource: DataSourceInfo, options?: RequestOptions): Promise<DataSourceResponse>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const updatedDataSource = await panelsAPI.dataSources.update("456", {
   type: "database",
   config: { tableName: "active_users" },
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.dataSources.delete()`
 
 Removes a data source from a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 dataSources.delete(dataSourceId: string, context: { tenantId: string; userId: string }, options?: RequestOptions): Promise<void>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 await panelsAPI.dataSources.delete("456", {
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.dataSources.sync()`
 
 Synchronizes a data source to fetch latest data.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 dataSources.sync(dataSourceId: string, options?: RequestOptions): Promise<DataSourceSyncResponse>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const syncResult = await panelsAPI.dataSources.sync("456")
 console.log(syncResult.syncStatus) // "success" | "error"
-```
+\`\`\`
 
 ## Column Operations
 
@@ -239,25 +239,25 @@ console.log(syncResult.syncStatus) // "success" | "error"
 Lists all columns (base and calculated) for a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 columns.list(panelId: string, tenantId: string, userId: string, options?: RequestOptions): Promise<ColumnsResponse>
-```
+\`\`\`
 
 **Returns:** Object with `baseColumns` and `calculatedColumns` arrays
 
 **Example:**
-```typescript
+\`\`\`typescript
 const { baseColumns, calculatedColumns } = await panelsAPI.columns.list("123", "tenant-123", "user-456")
-```
+\`\`\`
 
 ### `panelsAPI.columns.createBase()`
 
 Creates a base column from a data source field.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 columns.createBase(panelId: string, column: ColumnBaseCreate, options?: RequestOptions): Promise<ColumnBaseCreateResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `column.name`: Column display name
@@ -267,7 +267,7 @@ columns.createBase(panelId: string, column: ColumnBaseCreate, options?: RequestO
 - `column.properties`: Column properties (validation, display, etc.)
 
 **Example:**
-```typescript
+\`\`\`typescript
 const emailColumn = await panelsAPI.columns.createBase("123", {
   name: "Email Address",
   type: "text",
@@ -280,16 +280,16 @@ const emailColumn = await panelsAPI.columns.createBase("123", {
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.columns.createCalculated()`
 
 Creates a calculated column with a formula.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 columns.createCalculated(panelId: string, column: ColumnCalculatedCreate, options?: RequestOptions): Promise<ColumnCalculatedCreateResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `column.name`: Column display name
@@ -298,7 +298,7 @@ columns.createCalculated(panelId: string, column: ColumnCalculatedCreate, option
 - `column.dependencies`: Array of column names used in the formula
 
 **Example:**
-```typescript
+\`\`\`typescript
 const fullNameColumn = await panelsAPI.columns.createCalculated("123", {
   name: "Full Name",
   type: "text", 
@@ -308,49 +308,49 @@ const fullNameColumn = await panelsAPI.columns.createCalculated("123", {
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.columns.update()`
 
 Updates column properties.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 columns.update(columnId: string, column: ColumnInfo, options?: RequestOptions): Promise<ColumnInfoResponse>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const updatedColumn = await panelsAPI.columns.update("789", {
   name: "Updated Column Name",
   properties: { required: false },
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `panelsAPI.columns.delete()`
 
 Deletes a column from a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 columns.delete(columnId: string, context: { tenantId: string; userId: string }, options?: RequestOptions): Promise<void>
-```
+\`\`\`
 
 **Example:**
-```typescript
+\`\`\`typescript
 await panelsAPI.columns.delete("789", {
   tenantId: "tenant-123", 
   userId: "user-456"
 })
-```
+\`\`\`
 
 ## Error Handling
 
 All API methods return promises and should be wrapped in try-catch blocks:
 
-```typescript
+\`\`\`typescript
 try {
   const panel = await panelsAPI.create({
     name: "My Panel",
@@ -360,10 +360,10 @@ try {
 } catch (error) {
   console.error("Failed to create panel:", error)
 }
-```
+\`\`\`
 
 ## Related
 
 - [Views API Reference](./views-api.md)
 - [TypeScript Types](./types.md)
-- [Error Handling Guide](/guides/api-client/handling-errors.md) 
+- [Error Handling Guide](/guides/api-client/handling-errors.md)

@@ -30,7 +30,7 @@ Testing your Panels API integration ensures reliability, catches regressions ear
 
 ### Jest Configuration
 
-```typescript
+\`\`\`typescript
 // jest.config.js
 module.exports = {
   preset: 'ts-jest',
@@ -51,11 +51,11 @@ module.exports = {
     }
   }
 }
-```
+\`\`\`
 
 ### Test Setup
 
-```typescript
+\`\`\`typescript
 // src/test/setup.ts
 import { panelsAPI } from '@panels/app/api'
 import nock from 'nock'
@@ -124,13 +124,13 @@ afterEach(() => {
   // Verify all HTTP mocks were called
   nock.isDone()
 })
-```
+\`\`\`
 
 ## Unit Testing Patterns
 
 ### Testing Panel Operations
 
-```typescript
+\`\`\`typescript
 // __tests__/panels.test.ts
 import { panelsAPI } from '@panels/app/api'
 import nock from 'nock'
@@ -298,11 +298,11 @@ describe('Panel API Operations', () => {
     })
   })
 })
-```
+\`\`\`
 
 ### Testing Data Source Operations
 
-```typescript
+\`\`\`typescript
 // __tests__/dataSources.test.ts
 import { panelsAPI } from '@panels/app/api'
 import nock from 'nock'
@@ -454,11 +454,11 @@ describe('Data Source API Operations', () => {
     })
   })
 })
-```
+\`\`\`
 
 ### Testing Column Operations
 
-```typescript
+\`\`\`typescript
 // __tests__/columns.test.ts
 import { panelsAPI } from '@panels/app/api'
 import nock from 'nock'
@@ -632,13 +632,13 @@ describe('Column API Operations', () => {
     })
   })
 })
-```
+\`\`\`
 
 ## Integration Testing
 
 ### Test Database Setup
 
-```typescript
+\`\`\`typescript
 // src/test/integration/setup.ts
 import { Pool } from 'pg'
 import { panelsAPI } from '@panels/app/api'
@@ -692,11 +692,11 @@ panelsAPI.configure({
     token: process.env.TEST_JWT_TOKEN || 'test-token'
   }
 })
-```
+\`\`\`
 
 ### Complete Workflow Integration Tests
 
-```typescript
+\`\`\`typescript
 // __tests__/integration/panel-workflow.test.ts
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 import { 
@@ -971,13 +971,13 @@ describe('Complete Panel Workflow Integration', () => {
     expect(calculatedColumn.type).toBe('calculated')
   })
 })
-```
+\`\`\`
 
 ## Performance Testing
 
 ### Load Testing Setup
 
-```typescript
+\`\`\`typescript
 // __tests__/performance/load.test.ts
 import { panelsAPI } from '@panels/app/api'
 import { performance } from 'perf_hooks'
@@ -1048,13 +1048,13 @@ describe('Performance Tests', () => {
     console.log(`Listed ${columns.length} columns in ${(listEndTime - listStartTime).toFixed(2)}ms`)
   })
 })
-```
+\`\`\`
 
 ## Test Utilities and Helpers
 
 ### API Test Helpers
 
-```typescript
+\`\`\`typescript
 // src/test/helpers/api.ts
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 
@@ -1148,11 +1148,11 @@ export class TestPanelBuilder {
 // Usage in tests:
 export const createTestPanel = (tenantId: string, userId: string) => 
   new TestPanelBuilder(tenantId, userId)
-```
+\`\`\`
 
 ### Assertion Helpers
 
-```typescript
+\`\`\`typescript
 // src/test/helpers/assertions.ts
 import { expect } from '@jest/globals'
 
@@ -1197,13 +1197,13 @@ export const expectValidView = (view: any) => {
     columnVisibility: expect.any(Object)
   })
 }
-```
+\`\`\`
 
 ## Continuous Integration
 
 ### GitHub Actions Configuration
 
-```yaml
+\`\`\`yaml
 # .github/workflows/api-tests.yml
 name: API Tests
 
@@ -1288,7 +1288,7 @@ jobs:
         TEST_DB_NAME: panels_test
         TEST_DB_USER: test
         TEST_DB_PASSWORD: test
-```
+\`\`\`
 
 ## Summary
 
@@ -1300,4 +1300,4 @@ Comprehensive API testing ensures:
 4. **Test Utilities** provide reusable patterns and helpers
 5. **CI/CD Integration** runs tests automatically on code changes
 
-This testing strategy provides confidence in your Panels API integration and catches issues before they reach production. 
+This testing strategy provides confidence in your Panels API integration and catches issues before they reach production.

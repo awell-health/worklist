@@ -63,4 +63,4 @@ Throughout this tutorial, we'll build a **User Management Panel** that:
 
 Let's begin by setting up your development environment!
 
-[Next: Installation →](./installation) 
+[Next: Installation →](./installation)

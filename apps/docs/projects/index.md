@@ -4,7 +4,7 @@ The Awell Panels project is organized as a monorepo using pnpm workspaces, conta
 
 ## Project Structure
 
-```
+\`\`\`
 worklist/
 ├── apps/                      # Applications
 │   ├── app/                   # Next.js frontend application
@@ -19,7 +19,7 @@ worklist/
 ├── package.json              # Root package configuration
 ├── pnpm-workspace.yaml       # pnpm workspace configuration
 └── turbo.json               # Turbo build configuration
-```
+\`\`\`
 
 ## Applications
 
@@ -111,12 +111,12 @@ worklist/
 
 **pnpm Workspaces**: Efficient dependency management with workspace linking
 
-```yaml
+\`\`\`yaml
 # pnpm-workspace.yaml
 packages:
   - "apps/*"
   - "packages/*"
-```
+\`\`\`
 
 **Benefits**:
 - Shared dependencies across packages
@@ -128,7 +128,7 @@ packages:
 
 **Turbo**: High-performance build system for monorepos
 
-```json
+\`\`\`json
 {
   "pipeline": {
     "build": {
@@ -142,7 +142,7 @@ packages:
     "typecheck": {}
   }
 }
-```
+\`\`\`
 
 **Benefits**:
 - Parallel execution of tasks
@@ -154,13 +154,13 @@ packages:
 
 **Docker Compose**: Containerized infrastructure services
 
-```yaml
+\`\`\`yaml
 # compose.yaml
 services:
   postgresql:   # Database server
   redis:        # Cache and session store
   pgweb:        # Database management UI
-```
+\`\`\`
 
 **Benefits**:
 - Consistent development environment
@@ -174,7 +174,7 @@ services:
 
 Available from the root directory:
 
-```bash
+\`\`\`bash
 # Development
 pnpm dev                    # Start all applications
 pnpm build                  # Build all packages
@@ -192,11 +192,11 @@ pnpm typecheck             # Type check all packages
 # Maintenance
 pnpm clean                 # Clean build artifacts
 pnpm clean:all             # Clean everything including data
-```
+\`\`\`
 
 ### Package-Specific Scripts
 
-```bash
+\`\`\`bash
 # Frontend development
 pnpm --filter @panels/app dev
 pnpm --filter @panels/app build
@@ -212,13 +212,13 @@ pnpm --filter @panels/docs build
 # Types package
 pnpm --filter @panels/types build
 pnpm --filter @panels/types typecheck
-```
+\`\`\`
 
 ## Inter-Package Dependencies
 
 ### Dependency Graph
 
-```
+\`\`\`
 @panels/app
 ├── @panels/types (workspace:^)
 └── External dependencies
@@ -232,7 +232,7 @@ pnpm --filter @panels/types typecheck
 
 @panels/types
 └── External dependencies (Zod, etc.)
-```
+\`\`\`
 
 ### Workspace Benefits
 
@@ -245,7 +245,7 @@ pnpm --filter @panels/types typecheck
 
 ### Setting Up
 
-```bash
+\`\`\`bash
 # 1. Clone repository
 git clone <repository-url>
 cd worklist
@@ -258,11 +258,11 @@ pnpm run:infra
 
 # 4. Start development
 pnpm dev
-```
+\`\`\`
 
 ### Making Changes
 
-```bash
+\`\`\`bash
 # 1. Create feature branch
 git checkout -b feature/my-feature
 
@@ -281,11 +281,11 @@ pnpm build
 git add .
 git commit -m "feat: add new feature"
 git push origin feature/my-feature
-```
+\`\`\`
 
 ### Package-Specific Development
 
-```bash
+\`\`\`bash
 # Work on frontend only
 cd apps/app
 pnpm dev
@@ -301,13 +301,13 @@ pnpm dev
 # Update shared types
 cd packages/types
 pnpm build
-```
+\`\`\`
 
 ## Production Deployment
 
 ### Build Process
 
-```bash
+\`\`\`bash
 # 1. Install dependencies
 pnpm install --frozen-lockfile
 
@@ -319,13 +319,13 @@ pnpm test
 
 # 4. Package for deployment
 # (Specific to deployment target)
-```
+\`\`\`
 
 ### Container Strategy
 
 Each application can be containerized independently:
 
-```dockerfile
+\`\`\`dockerfile
 # Example for services
 FROM node:22-alpine
 WORKDIR /app
@@ -333,7 +333,7 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 COPY dist/ ./dist/
 CMD ["node", "dist/server.js"]
-```
+\`\`\`
 
 ## Monitoring and Observability
 
@@ -378,4 +378,4 @@ CMD ["node", "dist/server.js"]
 - [App Project](./app/) - Frontend application details
 - [Services Project](./services/) - Backend API details
 - [Types Package](./types/) - Shared types and schemas
-- [Docs Project](./docs/) - Documentation site details 
+- [Docs Project](./docs/) - Documentation site details

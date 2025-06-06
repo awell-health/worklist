@@ -1,9 +1,9 @@
-import { NotFoundError } from '@/errors/not-found-error.js'
-import { ErrorSchema, type IdParam, IdParamSchema } from '@panels/types'
-import { type PanelResponse, PanelResponseSchema } from '@panels/types/panels'
-import type { FastifyInstance } from 'fastify'
-import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { z } from 'zod'
+import { NotFoundError } from "@/errors/not-found-error.js"
+import { ErrorSchema, type IdParam, IdParamSchema } from "@panels/types"
+import { type PanelResponse, PanelResponseSchema } from "@panels/types/panels"
+import type { FastifyInstance } from "fastify"
+import type { ZodTypeProvider } from "fastify-type-provider-zod"
+import { z } from "zod"
 
 export const panelGet = async (app: FastifyInstance) => {
   app.withTypeProvider<ZodTypeProvider>().route<{
@@ -14,10 +14,10 @@ export const panelGet = async (app: FastifyInstance) => {
     }
     Reply: PanelResponse
   }>({
-    method: 'GET',
+    method: "GET",
     schema: {
-      description: 'Get a panel by ID',
-      tags: ['panel'],
+      description: "Get a panel by ID",
+      tags: ["panel"],
       params: IdParamSchema,
       querystring: z.object({
         tenantId: z.string(),
@@ -28,44 +28,44 @@ export const panelGet = async (app: FastifyInstance) => {
         404: ErrorSchema,
       },
     },
-    url: '/panels/:id',
+    url: "/panels/:id",
     handler: async (request, reply) => {
-      const { id } = request.params as { id: string }
-      const { tenantId, userId } = request.query as {
-        tenantId: string
-        userId: string
-      }
+      try {
+        const { id } = request.params as { id: string }
+        const { tenantId, userId } = request.query as {
+          tenantId: string
+          userId: string
+        }
 
-      const panel = await request.store.panel.findOne(
-        {
-          id: Number(id),
-          tenantId,
-          userId,
-        },
-        {
-          populate: [
-            'dataSources',
-            'baseColumns',
-            'baseColumns.dataSource',
-            'calculatedColumns',
-            'views',
-          ],
-        },
-      )
+        const panel = await request.store.panel.findOne(
+          {
+            id: Number(id),
+            tenantId,
+            userId,
+          },
+          {
+            populate: ["dataSources", "baseColumns", "baseColumns.dataSource", "calculatedColumns", "views"],
+          },
+        )
 
-      if (!panel) {
-        throw new NotFoundError('Panel not found')
-      }
+        if (!panel) {
+          // Use the function directly - it will handle both with and without 'new'
+          throw NotFoundError("Panel not found")
+        }
 
-      return {
-        id: panel.id,
-        name: panel.name,
-        description: panel.description ?? null,
-        tenantId: panel.tenantId,
-        userId: panel.userId,
-        cohortRule: panel.cohortRule,
-        createdAt: panel.createdAt,
-        updatedAt: panel.updatedAt,
+        return {
+          id: panel.id,
+          name: panel.name,
+          description: panel.description ?? null,
+          tenantId: panel.tenantId,
+          userId: panel.userId,
+          cohortRule: panel.cohortRule,
+          createdAt: panel.createdAt,
+          updatedAt: panel.updatedAt,
+        }
+      } catch (error) {
+        // Re-throw to let the error handler deal with it
+        throw error
       }
     },
   })

@@ -19,7 +19,7 @@ This guide walks you through creating a new panel in the Panels system step by s
 ## Step 2: Configure Basic Panel Settings
 
 ### Panel Information
-```typescript
+\`\`\`typescript
 // Panel configuration structure
 interface PanelConfig {
   name: string
@@ -28,7 +28,7 @@ interface PanelConfig {
   tenantId: string
   isPublic: boolean
 }
-```
+\`\`\`
 
 1. **Enter Panel Name**
    - Use a descriptive name (e.g., "Diabetes Patients - Q4 2024")
@@ -57,7 +57,7 @@ Select the primary resource type for your panel:
 - **Encounters** - For visit-based analysis
 
 ### Example: Patient Panel
-```sql
+\`\`\`sql
 -- Example base query for patient panel
 SELECT DISTINCT
   p.id as patient_id,
@@ -67,7 +67,7 @@ SELECT DISTINCT
   p.gender
 FROM patients p
 WHERE p.tenant_id = :tenantId
-```
+\`\`\`
 
 ## Step 4: Add Data Columns
 
@@ -90,7 +90,7 @@ Always include essential patient identifiers:
 Add relevant clinical information:
 
 1. **Most Recent A1C** (for diabetes panel)
-   ```typescript
+   \`\`\`typescript
    {
      name: "Latest A1C",
      type: "number",
@@ -101,10 +101,10 @@ Add relevant clinical information:
      },
      aggregation: "latest"
    }
-   ```
+   \`\`\`
 
 2. **Current Medications**
-   ```typescript
+   \`\`\`typescript
    {
      name: "Active Medications",
      type: "array",
@@ -113,7 +113,7 @@ Add relevant clinical information:
        status: "active"
      }
    }
-   ```
+   \`\`\`
 
 ## Step 5: Configure Calculated Columns
 
@@ -121,17 +121,17 @@ Add relevant clinical information:
 Add computed values to enhance your panel:
 
 1. **Age Calculation**
-   ```typescript
+   \`\`\`typescript
    {
      name: "Age",
      type: "calculated",
      formula: "DATEDIFF('year', patient.birthDate, NOW())",
      dataType: "number"
    }
-   ```
+   \`\`\`
 
 2. **BMI Calculation**
-   ```typescript
+   \`\`\`typescript
    {
      name: "BMI",
      type: "calculated",
@@ -139,18 +139,18 @@ Add computed values to enhance your panel:
      dataType: "number",
      dependencies: ["weight", "height"]
    }
-   ```
+   \`\`\`
 
 ### Healthcare-Specific Calculations
 3. **Days Since Last Visit**
-   ```typescript
+   \`\`\`typescript
    {
      name: "Days Since Last Visit",
      type: "calculated",
      formula: "DATEDIFF('day', MAX(encounter.date), NOW())",
      dataType: "number"
    }
-   ```
+   \`\`\`
 
 ## Step 6: Set Up Filtering and Sorting
 
@@ -158,7 +158,7 @@ Add computed values to enhance your panel:
 Configure filters that users will commonly need:
 
 1. **Age Range Filter**
-   ```typescript
+   \`\`\`typescript
    {
      type: "range",
      column: "age",
@@ -166,10 +166,10 @@ Configure filters that users will commonly need:
      defaultMax: 100,
      userConfigurable: true
    }
-   ```
+   \`\`\`
 
 2. **Condition-Based Filter**
-   ```typescript
+   \`\`\`typescript
    {
      type: "condition",
      column: "conditions",
@@ -178,18 +178,18 @@ Configure filters that users will commonly need:
        { value: "I10", label: "Hypertension" }
      ]
    }
-   ```
+   \`\`\`
 
 ### Default Sorting
 Set up logical default sorting:
-```typescript
+\`\`\`typescript
 {
   defaultSort: [
     { column: "family_name", direction: "asc" },
     { column: "given_name", direction: "asc" }
   ]
 }
-```
+\`\`\`
 
 ## Step 7: Configure Access and Permissions
 
@@ -200,7 +200,7 @@ Set up logical default sorting:
 4. **Public Panel** - All users (use carefully)
 
 ### Role-Based Access
-```typescript
+\`\`\`typescript
 {
   permissions: {
     "care-manager": ["read", "edit"],
@@ -209,7 +209,7 @@ Set up logical default sorting:
     "admin": ["read", "edit", "delete", "manage"]
   }
 }
-```
+\`\`\`
 
 ## Step 8: Test Your Panel
 
@@ -225,7 +225,7 @@ Set up logical default sorting:
 3. **Test with different filter combinations**
 
 ### Example Test Cases
-```typescript
+\`\`\`typescript
 // Test calculated columns
 const testPatient = {
   birthDate: "1980-01-01",
@@ -236,7 +236,7 @@ const testPatient = {
 // Expected: Age ≈ 44, BMI ≈ 22.9
 console.log("Age:", calculateAge(testPatient.birthDate))
 console.log("BMI:", calculateBMI(testPatient.weight, testPatient.height))
-```
+\`\`\`
 
 ## Step 9: Save and Publish
 
@@ -259,7 +259,7 @@ console.log("BMI:", calculateBMI(testPatient.weight, testPatient.height))
 
 ### Create Views
 Help users by creating predefined views:
-```typescript
+\`\`\`typescript
 {
   name: "High Risk Diabetics",
   filters: {
@@ -268,7 +268,7 @@ Help users by creating predefined views:
     lastVisit: { daysAgo: 90 }
   }
 }
-```
+\`\`\`
 
 ## Troubleshooting
 
@@ -331,7 +331,7 @@ The current implementation uses localStorage for panel storage and has a simpler
 
 ### Step 2: Configure Panel Basic Info
 The current panel structure is:
-```typescript
+\`\`\`typescript
 interface PanelDefinition {
   id: string
   title: string
@@ -341,7 +341,7 @@ interface PanelDefinition {
   createdAt: string
   views?: ViewDefinition[]
 }
-```
+\`\`\`
 
 ### Step 3: Edit Panel Title
 1. **Click on the panel tab** at the top
@@ -350,7 +350,7 @@ interface PanelDefinition {
 
 ### Step 4: Add Columns
 Currently supported column types:
-```typescript
+\`\`\`typescript
 type ColumnDefinition = {
   id: string
   key: string
@@ -360,7 +360,7 @@ type ColumnDefinition = {
   source?: string
   options?: Array<{ value: string; color: string }>
 }
-```
+\`\`\`
 
 1. **Click the "+" button** in the table header
 2. **Configure column properties** in the add column interface
@@ -399,4 +399,4 @@ type ColumnDefinition = {
 
 - **[Understanding Panels vs Views](../../explanation/concepts/panels-vs-views.md)** - Learn the difference
 - **[Panel API Reference](../../reference/backend-api/panels/)** - Technical details
-- **[Data Source Configuration](../../guides/data-sources/connect-fhir.md)** - Connect your data 
+- **[Data Source Configuration](../../guides/data-sources/connect-fhir.md)** - Connect your data

@@ -43,7 +43,7 @@ Let's start by connecting to a database - the most common data source type.
 
 First, let's set up our imports and get our panel reference:
 
-```typescript
+\`\`\`typescript
 // data-source-demo.ts
 import { panelsAPI } from '@panels/app/api'
 
@@ -53,11 +53,11 @@ const TENANT_ID = "tenant-123"
 const USER_ID = "user-456"
 
 console.log("Starting data source tutorial...")
-```
+\`\`\`
 
 ### Create Database Data Source
 
-```typescript
+\`\`\`typescript
 async function createDatabaseDataSource() {
   try {
     console.log("🔌 Creating database data source...")
@@ -87,13 +87,13 @@ async function createDatabaseDataSource() {
 
 // Create the data source
 const dbDataSource = await createDatabaseDataSource()
-```
+\`\`\`
 
 ### Verify Connection
 
 Let's check that our data source was created successfully:
 
-```typescript
+\`\`\`typescript
 async function verifyDataSource(dataSourceId: number) {
   try {
     console.log("🔍 Verifying data source...")
@@ -120,13 +120,13 @@ async function verifyDataSource(dataSourceId: number) {
 
 // Verify our data source
 await verifyDataSource(dbDataSource.id)
-```
+\`\`\`
 
 ## Step 2: API Data Source
 
 Now let's add an API data source to demonstrate connecting to external services:
 
-```typescript
+\`\`\`typescript
 async function createAPIDataSource() {
   try {
     console.log("🌐 Creating API data source...")
@@ -160,13 +160,13 @@ async function createAPIDataSource() {
 
 // Create API data source
 const apiDataSource = await createAPIDataSource()
-```
+\`\`\`
 
 ## Step 3: File Data Source
 
 Let's add a file-based data source for importing existing data:
 
-```typescript
+\`\`\`typescript
 async function createFileDataSource() {
   try {
     console.log("📁 Creating file data source...")
@@ -198,13 +198,13 @@ async function createFileDataSource() {
 
 // Create file data source
 const fileDataSource = await createFileDataSource()
-```
+\`\`\`
 
 ## Step 4: Data Synchronization
 
 Now let's sync our data sources to pull in actual data:
 
-```typescript
+\`\`\`typescript
 async function syncDataSources() {
   try {
     console.log("🔄 Starting data synchronization...")
@@ -240,13 +240,13 @@ async function syncDataSources() {
 
 // Sync all data sources
 await syncDataSources()
-```
+\`\`\`
 
 ## Step 5: Monitoring Sync Status
 
 Let's check the sync status of our data sources:
 
-```typescript
+\`\`\`typescript
 async function checkSyncStatus() {
   try {
     console.log("📊 Checking sync status...")
@@ -281,13 +281,13 @@ async function checkSyncStatus() {
 
 // Check status
 await checkSyncStatus()
-```
+\`\`\`
 
 ## Complete Example
 
 Here's the complete workflow for adding and managing data sources:
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 const PANEL_ID = "123" // Your panel ID
@@ -359,13 +359,13 @@ dataSourceWorkflow()
   .catch(error => {
     console.error("\n💥 Setup failed:", error.message)
   })
-```
+\`\`\`
 
 ## Data Source Configuration Options
 
 ### Database Configuration
 
-```typescript
+\`\`\`typescript
 interface DatabaseConfig {
   connectionString: string     // Database connection URL
   schema?: string             // Database schema (default: public)
@@ -374,11 +374,11 @@ interface DatabaseConfig {
   poolSize?: number           // Connection pool size
   sslMode?: 'require' | 'prefer' | 'disable'
 }
-```
+\`\`\`
 
 ### API Configuration
 
-```typescript
+\`\`\`typescript
 interface APIConfig {
   apiEndpoint: string         // API URL
   method: 'GET' | 'POST'     // HTTP method
@@ -394,11 +394,11 @@ interface APIConfig {
   schedule?: string           // Cron schedule for sync
   timeout?: number            // Request timeout (ms)
 }
-```
+\`\`\`
 
 ### File Configuration
 
-```typescript
+\`\`\`typescript
 interface FileConfig {
   filePath: string            // File path or URL
   format: 'csv' | 'json' | 'excel'
@@ -407,13 +407,13 @@ interface FileConfig {
   encoding?: string           // File encoding
   sheetName?: string          // Excel sheet name
 }
-```
+\`\`\`
 
 ## Common Data Source Patterns
 
 ### Production Database Connection
 
-```typescript
+\`\`\`typescript
 const productionDB = await panelsAPI.dataSources.create(panelId, {
   type: "database",
   config: {
@@ -426,11 +426,11 @@ const productionDB = await panelsAPI.dataSources.create(panelId, {
   tenantId,
   userId
 })
-```
+\`\`\`
 
 ### Authenticated API
 
-```typescript
+\`\`\`typescript
 const authenticatedAPI = await panelsAPI.dataSources.create(panelId, {
   type: "api",
   config: {
@@ -446,11 +446,11 @@ const authenticatedAPI = await panelsAPI.dataSources.create(panelId, {
   tenantId,
   userId
 })
-```
+\`\`\`
 
 ### Excel File Import
 
-```typescript
+\`\`\`typescript
 const excelImport = await panelsAPI.dataSources.create(panelId, {
   type: "file",
   config: {
@@ -462,41 +462,41 @@ const excelImport = await panelsAPI.dataSources.create(panelId, {
   tenantId,
   userId
 })
-```
+\`\`\`
 
 ## Troubleshooting
 
 ### Common Issues
 
 **Database Connection Failed:**
-```typescript
+\`\`\`typescript
 // Check connection string format
 const validConnectionString = "postgresql://user:pass@host:port/database"
 
 // Verify network access and credentials
 // Check if database allows connections from your IP
-```
+\`\`\`
 
 **API Sync Errors:**
-```typescript
+\`\`\`typescript
 // Verify API endpoint is accessible
 // Check authentication credentials
 // Validate request headers and format
 // Review API rate limits
-```
+\`\`\`
 
 **File Not Found:**
-```typescript
+\`\`\`typescript
 // Ensure file path is correct and accessible
 // Verify file format matches configuration
 // Check file permissions and encoding
-```
+\`\`\`
 
 ### Debug Mode
 
 Enable detailed logging for troubleshooting:
 
-```typescript
+\`\`\`typescript
 // Add debug logging to your data source operations
 const debugDataSource = async () => {
   try {
@@ -513,7 +513,7 @@ const debugDataSource = async () => {
     throw error
   }
 }
-```
+\`\`\`
 
 ## Next Steps
 
@@ -543,4 +543,4 @@ In this tutorial, you learned how to:
 ✅ **Monitor Sync Status** - Check data freshness and sync health  
 ✅ **Handle Common Issues** - Troubleshoot connection problems
 
-Your panel now has live data! Next, we'll structure this data with columns to make it meaningful and actionable. 
+Your panel now has live data! Next, we'll structure this data with columns to make it meaningful and actionable.

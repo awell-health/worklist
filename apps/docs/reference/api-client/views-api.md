@@ -4,9 +4,9 @@ The `viewsAPI` provides comprehensive view management functionality including CR
 
 ## Import
 
-```typescript
+\`\`\`typescript
 import { viewsAPI } from '@panels/app/api'
-```
+\`\`\`
 
 ## View Operations
 
@@ -15,9 +15,9 @@ import { viewsAPI } from '@panels/app/api'
 Retrieves a specific view by ID.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 get(view: IdParam, options?: RequestOptions): Promise<ViewResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier
@@ -26,19 +26,19 @@ get(view: IdParam, options?: RequestOptions): Promise<ViewResponse>
 **Returns:** `Promise<ViewResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const view = await viewsAPI.get({ id: 456 })
 console.log(view.name) // "Active Users View"
-```
+\`\`\`
 
 ### `viewsAPI.all()`
 
 Lists all views for a tenant and user.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 all(tenantId: string, userId: string, options?: RequestOptions): Promise<ViewsResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `tenantId` (string): Tenant identifier  
@@ -48,20 +48,20 @@ all(tenantId: string, userId: string, options?: RequestOptions): Promise<ViewsRe
 **Returns:** `Promise<ViewsResponse>` - Object with views array and total count
 
 **Example:**
-```typescript
+\`\`\`typescript
 const { views, total } = await viewsAPI.all("tenant-123", "user-456")
 console.log(`Found ${total} views`)
 views.forEach(view => console.log(view.name))
-```
+\`\`\`
 
 ### `viewsAPI.create()`
 
 Creates a new view for a panel.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 create(view: ViewInfo, options?: RequestOptions): Promise<ViewResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.name` (string): View display name
@@ -76,7 +76,7 @@ create(view: ViewInfo, options?: RequestOptions): Promise<ViewResponse>
 **Returns:** `Promise<ViewResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const view = await viewsAPI.create({
   name: "Active Users",
   description: "View showing only active user accounts",
@@ -89,16 +89,16 @@ const view = await viewsAPI.create({
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `viewsAPI.update()`
 
 Updates an existing view.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 update(view: ViewInfo & IdParam, options?: RequestOptions): Promise<ViewResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier
@@ -107,7 +107,7 @@ update(view: ViewInfo & IdParam, options?: RequestOptions): Promise<ViewResponse
 **Returns:** `Promise<ViewResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const updatedView = await viewsAPI.update({
   id: 456,
   name: "Updated View Name",
@@ -120,16 +120,16 @@ const updatedView = await viewsAPI.update({
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ### `viewsAPI.delete()`
 
 Deletes a view.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 delete(view: IdParam & { tenantId: string; userId: string }, options?: RequestOptions): Promise<void>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier
@@ -140,13 +140,13 @@ delete(view: IdParam & { tenantId: string; userId: string }, options?: RequestOp
 **Returns:** `Promise<void>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 await viewsAPI.delete({
   id: 456,
   tenantId: "tenant-123",
   userId: "user-456"
 })
-```
+\`\`\`
 
 ## Publishing Operations
 
@@ -155,9 +155,9 @@ await viewsAPI.delete({
 Publishes a view to make it available tenant-wide.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 publishing.publish(view: IdParam, context: ViewPublishInfo, options?: RequestOptions): Promise<ViewPublishResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier to publish
@@ -168,7 +168,7 @@ publishing.publish(view: IdParam, context: ViewPublishInfo, options?: RequestOpt
 **Returns:** `Promise<ViewPublishResponse>` - Contains publish details
 
 **Example:**
-```typescript
+\`\`\`typescript
 const publishResult = await viewsAPI.publishing.publish(
   { id: 456 },
   {
@@ -180,7 +180,7 @@ const publishResult = await viewsAPI.publishing.publish(
 console.log(publishResult.isPublished) // true
 console.log(publishResult.publishedBy) // "user-456"
 console.log(publishResult.publishedAt) // Date
-```
+\`\`\`
 
 **Use Cases:**
 - Share useful views with the entire team
@@ -194,9 +194,9 @@ console.log(publishResult.publishedAt) // Date
 Updates the sorting configuration for a view.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 sorts.update(view: IdParam, sorts: ViewSortsInfo, options?: RequestOptions): Promise<ViewSortsResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier
@@ -210,7 +210,7 @@ sorts.update(view: IdParam, sorts: ViewSortsInfo, options?: RequestOptions): Pro
 **Returns:** `Promise<ViewSortsResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const sortResult = await viewsAPI.sorts.update(
   { id: 456 },
   {
@@ -223,16 +223,16 @@ const sortResult = await viewsAPI.sorts.update(
     userId: "user-456"
   }
 )
-```
+\`\`\`
 
 ### `viewsAPI.sorts.get()`
 
 Retrieves the current sorting configuration for a view.
 
 **Type Signature:**
-```typescript
+\`\`\`typescript
 sorts.get(view: IdParam, tenantId: string, userId: string, options?: RequestOptions): Promise<ViewSortsResponse>
-```
+\`\`\`
 
 **Parameters:**
 - `view.id` (number): View identifier
@@ -243,7 +243,7 @@ sorts.get(view: IdParam, tenantId: string, userId: string, options?: RequestOpti
 **Returns:** `Promise<ViewSortsResponse>`
 
 **Example:**
-```typescript
+\`\`\`typescript
 const { sorts } = await viewsAPI.sorts.get(
   { id: 456 },
   "tenant-123",
@@ -257,13 +257,13 @@ sorts.forEach(sort => {
 // 1: status asc
 // 2: last_name asc
 // 3: first_name asc
-```
+\`\`\`
 
 ## Complete Workflow Example
 
 Here's a complete example showing how to create a view, configure it, and publish it:
 
-```typescript
+\`\`\`typescript
 // 1. Create a view
 const view = await viewsAPI.create({
   name: "Team Dashboard",
@@ -300,40 +300,40 @@ const publishResult = await viewsAPI.publishing.publish(
 )
 
 console.log("View published successfully!", publishResult.publishedAt)
-```
+\`\`\`
 
 ## View Configuration
 
 Views support several configuration options through the `config` object:
 
 ### Columns
-```typescript
+\`\`\`typescript
 config: {
   columns: ["email", "first_name", "last_name"] // Visible columns
 }
-```
+\`\`\`
 
 ### Grouping
-```typescript
+\`\`\`typescript
 config: {
   columns: ["department", "email", "status"],
   groupBy: ["department"] // Group rows by department
 }
-```
+\`\`\`
 
 ### Layout
-```typescript
+\`\`\`typescript
 config: {
   columns: ["email", "name", "avatar"],
   layout: "card" // "table" | "card" | "kanban"
 }
-```
+\`\`\`
 
 ## Error Handling
 
 All API methods return promises and should be wrapped in try-catch blocks:
 
-```typescript
+\`\`\`typescript
 try {
   const view = await viewsAPI.create({
     name: "My View",
@@ -345,11 +345,11 @@ try {
 } catch (error) {
   console.error("Failed to create view:", error)
 }
-```
+\`\`\`
 
 ## Related
 
 - [Panels API Reference](./panels-api.md)
 - [TypeScript Types](./types.md)
 - [View Publishing Guide](/guides/views/sharing-workflows.md)
-- [Advanced Filtering Guide](/guides/views/advanced-filtering.md) 
+- [Advanced Filtering Guide](/guides/views/advanced-filtering.md)

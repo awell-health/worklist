@@ -15,18 +15,18 @@ Based on the current implementation, here are the available endpoints:
 ### Panel Management
 
 #### List Panels
-```http
+\`\`\`http
 GET /api/panels?tenantId={tenantId}&userId={userId}
-```
+\`\`\`
 
 **Example Request:**
-```bash
+\`\`\`bash
 curl -X GET "http://localhost:3001/api/panels?tenantId=tenant-123&userId=user-456" \
   -H "Content-Type: application/json"
-```
+\`\`\`
 
 **Response:**
-```json
+\`\`\`json
 [
   {
     "id": 1,
@@ -42,21 +42,21 @@ curl -X GET "http://localhost:3001/api/panels?tenantId=tenant-123&userId=user-45
     "updatedAt": "2024-01-15T10:00:00Z"
   }
 ]
-```
+\`\`\`
 
 #### Get Panel by ID
-```http
+\`\`\`http
 GET /api/panels/{id}?tenantId={tenantId}&userId={userId}
-```
+\`\`\`
 
 **Example Request:**
-```bash
+\`\`\`bash
 curl -X GET "http://localhost:3001/api/panels/1?tenantId=tenant-123&userId=user-456" \
   -H "Content-Type: application/json"
-```
+\`\`\`
 
 **Response:**
-```json
+\`\`\`json
 {
   "id": 1,
   "name": "Patient Care Panel",
@@ -70,25 +70,25 @@ curl -X GET "http://localhost:3001/api/panels/1?tenantId=tenant-123&userId=user-
   "createdAt": "2024-01-15T10:00:00Z",
   "updatedAt": "2024-01-15T10:00:00Z"
 }
-```
+\`\`\`
 
 #### Create Panel
-```http
+\`\`\`http
 POST /api/panels
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "name": "New Patient Panel",
   "description": "Panel for managing new patients",
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 **Example Request:**
-```bash
+\`\`\`bash
 curl -X POST "http://localhost:3001/api/panels" \
   -H "Content-Type: application/json" \
   -d '{
@@ -97,10 +97,10 @@ curl -X POST "http://localhost:3001/api/panels" \
     "tenantId": "tenant-123",
     "userId": "user-456"
   }'
-```
+\`\`\`
 
 **Response (201 Created):**
-```json
+\`\`\`json
 {
   "id": 2,
   "name": "New Patient Panel",
@@ -114,50 +114,50 @@ curl -X POST "http://localhost:3001/api/panels" \
   "createdAt": "2024-01-15T14:30:00Z",
   "updatedAt": "2024-01-15T14:30:00Z"
 }
-```
+\`\`\`
 
 #### Update Panel
-```http
+\`\`\`http
 PUT /api/panels/{id}
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "name": "Updated Panel Name",
   "description": "Updated description",
   "tenantId": "tenant-123", 
   "userId": "user-456"
 }
-```
+\`\`\`
 
 #### Delete Panel
-```http
+\`\`\`http
 DELETE /api/panels/{id}
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 ### Data Source Management
 
 #### List Data Sources for Panel
-```http
+\`\`\`http
 GET /api/panels/{panelId}/datasources
-```
+\`\`\`
 
 #### Create Data Source
-```http
+\`\`\`http
 POST /api/panels/{panelId}/datasources
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "type": "fhir",
   "config": {
@@ -167,27 +167,27 @@ POST /api/panels/{panelId}/datasources
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 #### Sync Data Source
-```http
+\`\`\`http
 POST /api/datasources/{datasourceId}/sync
-```
+\`\`\`
 
 ### Column Management
 
 #### List Columns for Panel
-```http
+\`\`\`http
 GET /api/panels/{panelId}/columns
-```
+\`\`\`
 
 #### Create Base Column
-```http
+\`\`\`http
 POST /api/panels/{panelId}/columns/base
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "name": "Patient Name", 
   "fhirPath": "Patient.name.given[0] + ' ' + Patient.name.family",
@@ -197,15 +197,15 @@ POST /api/panels/{panelId}/columns/base
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 #### Create Calculated Column
-```http
+\`\`\`http
 POST /api/panels/{panelId}/columns/calculated
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "name": "Age",
   "type": "number",
@@ -216,27 +216,27 @@ POST /api/panels/{panelId}/columns/calculated
   "tenantId": "tenant-123", 
   "userId": "user-456"
 }
-```
+\`\`\`
 
 ### View Management
 
 #### List Views
-```http
+\`\`\`http
 GET /api/views?tenantId={tenantId}&userId={userId}
-```
+\`\`\`
 
 #### Get View by ID
-```http
+\`\`\`http
 GET /api/views/{viewId}?tenantId={tenantId}&userId={userId}
-```
+\`\`\`
 
 #### Create View
-```http
+\`\`\`http
 POST /api/views
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "name": "High Priority Patients",
   "panelId": 1,
@@ -248,10 +248,10 @@ POST /api/views
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 **Response (201 Created):**
-```json
+\`\`\`json
 {
   "id": 10,
   "name": "High Priority Patients",
@@ -266,42 +266,42 @@ POST /api/views
     "layout": "table"
   }
 }
-```
+\`\`\`
 
 #### Update View
-```http
+\`\`\`http
 PUT /api/views/{viewId}
-```
+\`\`\`
 
 #### Publish View
-```http
+\`\`\`http
 POST /api/views/{viewId}/publish
-```
+\`\`\`
 
 **Request Body:**
-```json
+\`\`\`json
 {
   "tenantId": "tenant-123",
   "userId": "user-456"
 }
-```
+\`\`\`
 
 ### Change Tracking
 
 #### Get Panel Changes
-```http
+\`\`\`http
 GET /api/changes/panels?tenantId={tenantId}&userId={userId}&since={timestamp}
-```
+\`\`\`
 
 #### Get View Notifications
-```http
+\`\`\`http
 GET /api/notifications/views?tenantId={tenantId}&userId={userId}&isRead=false
-```
+\`\`\`
 
 ## Using JavaScript/TypeScript
 
 ### Basic Setup
-```typescript
+\`\`\`typescript
 const API_BASE_URL = 'http://localhost:3001'
 
 // Helper function for API calls
@@ -320,12 +320,12 @@ async function apiCall(endpoint: string, options: RequestInit = {}) {
   
   return response.json()
 }
-```
+\`\`\`
 
 ### Example Operations
 
 #### Fetch All Panels
-```typescript
+\`\`\`typescript
 async function getAllPanels(tenantId: string, userId: string) {
   try {
     const panels = await apiCall(
@@ -338,10 +338,10 @@ async function getAllPanels(tenantId: string, userId: string) {
     throw error
   }
 }
-```
+\`\`\`
 
 #### Create a New Panel
-```typescript
+\`\`\`typescript
 async function createPanel(
   name: string, 
   description: string,
@@ -365,10 +365,10 @@ async function createPanel(
     throw error
   }
 }
-```
+\`\`\`
 
 #### Create a View
-```typescript
+\`\`\`typescript
 async function createView(
   name: string,
   panelId: number, 
@@ -398,13 +398,13 @@ async function createView(
     throw error
   }
 }
-```
+\`\`\`
 
 ### Using the Existing API Client
 
 The codebase includes existing API client functions:
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 import { viewsAPI } from '@panels/app/api'
 
@@ -437,7 +437,7 @@ const newView = await viewsAPI.create({
   tenantId: 'tenant-123',
   userId: 'user-456'
 })
-```
+\`\`\`
 
 ## Error Handling
 
@@ -451,16 +451,16 @@ const newView = await viewsAPI.create({
 - **500 Internal Server Error**: Server error
 
 ### Example Error Response
-```json
+\`\`\`json
 {
   "error": "Panel not found",
   "statusCode": 404,
   "message": "Panel with ID 999 not found for tenant tenant-123"
 }
-```
+\`\`\`
 
 ### Error Handling in Code
-```typescript
+\`\`\`typescript
 async function safeApiCall(endpoint: string, options?: RequestInit) {
   try {
     return await apiCall(endpoint, options)
@@ -480,13 +480,13 @@ async function safeApiCall(endpoint: string, options?: RequestInit) {
     throw error
   }
 }
-```
+\`\`\`
 
 ## Multi-Tenancy
 
 All API calls require `tenantId` and `userId` parameters to ensure proper data isolation:
 
-```typescript
+\`\`\`typescript
 // Always include tenant and user context
 const apiParams = {
   tenantId: 'your-tenant-id',
@@ -506,15 +506,15 @@ const panel = await apiCall('/api/panels', {
     ...apiParams
   })
 })
-```
+\`\`\`
 
 ## API Documentation
 
 ### Swagger/OpenAPI
 The API includes Swagger documentation available at:
-```
+\`\`\`
 http://localhost:3001/docs
-```
+\`\`\`
 
 This provides interactive documentation where you can test endpoints directly.
 
@@ -569,4 +569,4 @@ This provides interactive documentation where you can test endpoints directly.
 
 - **[Understanding multi-tenancy](../../explanation/architecture/multi-tenancy.md)** - Learn about tenant isolation
 - **[Database schema](../../reference/entities/)** - Explore the data structure
-- **[Authentication setup](../admin/configure-auth.md)** - Set up user authentication 
+- **[Authentication setup](../admin/configure-auth.md)** - Set up user authentication

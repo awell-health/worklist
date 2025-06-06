@@ -92,7 +92,7 @@ The collection includes realistic test data:
 
 ## Environment Variables
 
-```
+\`\`\`
 baseUrl: http://localhost:8087
 tenantId: tenant-123
 userId: user-456
@@ -101,7 +101,7 @@ dataSourceId: 1       # Update after creating datasource
 columnId: 1           # Update after creating column
 viewId: 1             # Update after creating view
 notificationId: 1     # Update after creating notification
-```
+\`\`\`
 
 ## Notes
 

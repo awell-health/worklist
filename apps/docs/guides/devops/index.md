@@ -207,7 +207,7 @@ This guide covers deployment, infrastructure management, monitoring, and operati
 ## Quick Start for DevOps
 
 ### Initial Setup
-```bash
+\`\`\`bash
 # 1. Infrastructure setup
 terraform init && terraform apply
 
@@ -219,7 +219,7 @@ helm install prometheus prometheus-community/kube-prometheus-stack
 
 # 4. Set up CI/CD
 # Configure GitHub Actions workflows
-```
+\`\`\`
 
 ### Common Operations
 
@@ -259,4 +259,4 @@ helm install prometheus prometheus-community/kube-prometheus-stack
 - **📞 Operations Support**: [24/7 support contact](./support/operations-support.md)
 - **📚 Runbooks**: [Emergency procedures](./procedures/emergency.md)
 - **🎯 SLA Guidelines**: [Service level agreements](./procedures/sla.md)
-- **📈 Dashboards**: [Monitoring dashboards](./monitoring/dashboards.md) 
+- **📈 Dashboards**: [Monitoring dashboards](./monitoring/dashboards.md)

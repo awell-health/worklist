@@ -198,4 +198,4 @@ This reference documentation is versioned alongside the codebase:
 - **Current Version**: Latest development version
 - **Stable Versions**: Tagged release documentation
 - **Breaking Changes**: Documented in migration guides
-- **Deprecation Notices**: Clearly marked throughout reference 
+- **Deprecation Notices**: Clearly marked throughout reference

@@ -17,7 +17,7 @@ This guide walks you through deploying the Panels application to Kubernetes usin
 
 The Panels application will be deployed as a microservices architecture on Kubernetes:
 
-```mermaid
+\`\`\`mermaid
 graph TB
     Internet[Internet] --> Ingress[Ingress Controller]
     Ingress --> Frontend[Frontend Service]
@@ -33,12 +33,12 @@ graph TB
     Database --> DBPods[PostgreSQL Pods]
     Redis --> RedisPods[Redis Pods]
     Storage --> StoragePods[MinIO Pods]
-```
+\`\`\`
 
 ## Step 1: Namespace and Basic Setup
 
 ### Create Namespace
-```yaml
+\`\`\`yaml
 # k8s/namespace.yaml
 apiVersion: v1
 kind: Namespace
@@ -55,22 +55,22 @@ metadata:
   labels:
     app.kubernetes.io/name: panels-system
     app.kubernetes.io/instance: production
-```
+\`\`\`
 
 ### Apply Namespace
-```bash
+\`\`\`bash
 kubectl apply -f k8s/namespace.yaml
-```
+\`\`\`
 
 ### Set Default Namespace
-```bash
+\`\`\`bash
 kubectl config set-context --current --namespace=panels
-```
+\`\`\`
 
 ## Step 2: Configuration and Secrets
 
 ### ConfigMap for Application Config
-```yaml
+\`\`\`yaml
 # k8s/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -90,10 +90,10 @@ data:
   CORS_ORIGIN: "*"
   RATE_LIMIT_REQUESTS: "100"
   RATE_LIMIT_WINDOW: "60000"
-```
+\`\`\`
 
 ### Secrets for Sensitive Data
-```yaml
+\`\`\`yaml
 # k8s/secrets.yaml
 apiVersion: v1
 kind: Secret
@@ -127,10 +127,10 @@ metadata:
 type: Opaque
 data:
   password: cmVkaXMtcGFzc3dvcmQ=
-```
+\`\`\`
 
 ### External Secrets (if using external secret management)
-```yaml
+\`\`\`yaml
 # k8s/external-secrets.yaml
 apiVersion: external-secrets.io/v1beta1
 kind: SecretStore
@@ -170,12 +170,12 @@ spec:
     remoteRef:
       key: panels/auth
       property: jwt-secret
-```
+\`\`\`
 
 ## Step 3: Database Deployment
 
 ### PostgreSQL with Persistent Storage
-```yaml
+\`\`\`yaml
 # k8s/database.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -278,10 +278,10 @@ spec:
     targetPort: 5432
   selector:
     app: postgresql
-```
+\`\`\`
 
 ### Database Initialization Job
-```yaml
+\`\`\`yaml
 # k8s/database-init.yaml
 apiVersion: batch/v1
 kind: Job
@@ -311,12 +311,12 @@ spec:
             name: panels-config
       restartPolicy: OnFailure
       backoffLimit: 3
-```
+\`\`\`
 
 ## Step 4: Redis Cache Deployment
 
 ### Redis with Persistence
-```yaml
+\`\`\`yaml
 # k8s/redis.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -411,12 +411,12 @@ spec:
     targetPort: 6379
   selector:
     app: redis
-```
+\`\`\`
 
 ## Step 5: API Service Deployment
 
 ### API Deployment with HPA
-```yaml
+\`\`\`yaml
 # k8s/api.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -547,12 +547,12 @@ spec:
       target:
         type: Utilization
         averageUtilization: 80
-```
+\`\`\`
 
 ## Step 6: Frontend Deployment
 
 ### Frontend with Optimized Configuration
-```yaml
+\`\`\`yaml
 # k8s/frontend.yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -638,12 +638,12 @@ spec:
     name: http
   selector:
     app: panels-frontend
-```
+\`\`\`
 
 ## Step 7: Ingress and Load Balancing
 
 ### Ingress with TLS
-```yaml
+\`\`\`yaml
 # k8s/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -692,12 +692,12 @@ spec:
             name: panels-api-service
             port:
               number: 80
-```
+\`\`\`
 
 ## Step 8: Deployment Automation with Helm
 
 ### Helm Chart Values
-```yaml
+\`\`\`yaml
 # helm/panels/values.yaml
 global:
   imageRegistry: ""
@@ -765,12 +765,12 @@ ingress:
   - secretName: panels-tls
     hosts:
     - panels.yourdomain.com
-```
+\`\`\`
 
 ## Deployment Commands
 
 ### Using kubectl
-```bash
+\`\`\`bash
 # Apply all manifests
 kubectl apply -f k8s/namespace.yaml
 kubectl apply -f k8s/secrets.yaml
@@ -780,29 +780,29 @@ kubectl apply -f k8s/redis.yaml
 kubectl apply -f k8s/api.yaml
 kubectl apply -f k8s/frontend.yaml
 kubectl apply -f k8s/ingress.yaml
-```
+\`\`\`
 
 ### Using Helm
-```bash
+\`\`\`bash
 # Deploy with Helm
 helm install panels ./helm/panels \
   --namespace panels \
   --create-namespace \
   --values helm/panels/values-production.yaml
-```
+\`\`\`
 
 ### Zero-Downtime Updates
-```bash
+\`\`\`bash
 # Rolling update
 helm upgrade panels ./helm/panels \
   --set api.image.tag=v1.2.0 \
   --set frontend.image.tag=v1.2.0
-```
+\`\`\`
 
 ## Monitoring and Observability
 
 ### Prometheus Integration
-```yaml
+\`\`\`yaml
 # k8s/monitoring.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -819,12 +819,12 @@ spec:
   - port: http
     path: /metrics
     interval: 30s
-```
+\`\`\`
 
 ## Security Best Practices
 
 ### Pod Security Standards
-```yaml
+\`\`\`yaml
 # k8s/security.yaml
 apiVersion: v1
 kind: Namespace
@@ -869,12 +869,12 @@ spec:
     ports:
     - protocol: UDP
       port: 53
-```
+\`\`\`
 
 ## Backup and Disaster Recovery
 
 ### Database Backup CronJob
-```yaml
+\`\`\`yaml
 # k8s/backup.yaml
 apiVersion: batch/v1
 kind: CronJob
@@ -921,36 +921,36 @@ spec:
           - name: backup-storage
             emptyDir: {}
           restartPolicy: OnFailure
-```
+\`\`\`
 
 ## Troubleshooting
 
 ### Common Issues
 
 **Q: Pods stuck in Pending state**
-```bash
+\`\`\`bash
 # Check resource constraints
 kubectl describe pod <pod-name>
 kubectl get nodes -o wide
 kubectl top nodes
-```
+\`\`\`
 
 **Q: Database connection failures**
-```bash
+\`\`\`bash
 # Check database pod logs
 kubectl logs -l app=postgresql
 # Test connectivity
 kubectl exec -it deployment/panels-api -- nc -zv postgresql-service 5432
-```
+\`\`\`
 
 **Q: Ingress not working**
-```bash
+\`\`\`bash
 # Check ingress controller
 kubectl get pods -n ingress-nginx
 kubectl logs -n ingress-nginx deployment/ingress-nginx-controller
 # Check certificate
 kubectl describe certificate panels-tls
-```
+\`\`\`
 
 ## Best Practices
 
@@ -984,4 +984,4 @@ kubectl describe certificate panels-tls
 
 - **[Container security](../../guides/troubleshooting/container-security.md)** - Secure your containers
 - **[Infrastructure automation](../../guides/deployment/infrastructure-automation.md)** - Automate deployments
-- **[Disaster recovery](../../guides/deployment/disaster-recovery.md)** - Plan for failures 
+- **[Disaster recovery](../../guides/deployment/disaster-recovery.md)** - Plan for failures

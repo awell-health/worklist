@@ -64,7 +64,7 @@ Choose your deployment scenario:
 Based on your selections above, here's your custom configuration:
 
 #### Environment Variables (`.env`)
-```bash
+\`\`\`bash
 # Generated configuration based on your selections
 # Environment: [Selected Type]
 NODE_ENV=development
@@ -94,10 +94,10 @@ MEDPLUM_CLIENT_ID=your-client-id
 # Monitoring
 LOG_LEVEL=debug
 METRICS_ENABLED=false
-```
+\`\`\`
 
 #### Docker Compose Override
-```yaml
+\`\`\`yaml
 # docker-compose.override.yml
 # Generated based on your selections
 version: '3.8'
@@ -111,10 +111,10 @@ services:
   panels-app:
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:3001
-```
+\`\`\`
 
 #### Kubernetes Configuration
-```yaml
+\`\`\`yaml
 # k8s/configmap.yaml
 # Generated for Kubernetes deployment
 apiVersion: v1
@@ -126,14 +126,14 @@ data:
   LOG_LEVEL: "info"
   DATABASE_HOST: "postgres-service"
   REDIS_HOST: "redis-service"
-```
+\`\`\`
 
 ## 🏥 Healthcare-Specific Configuration
 
 ### FHIR Integration Setup
 
 #### 1. FHIR Server Configuration
-```typescript
+\`\`\`typescript
 // FHIR server configuration
 export const fhirConfig = {
   baseUrl: 'https://your-fhir-server.com/fhir',
@@ -152,10 +152,10 @@ export const fhirConfig = {
     encounter: true
   }
 }
-```
+\`\`\`
 
 #### 2. Clinical Terminologies
-```json
+\`\`\`json
 {
   "terminologies": {
     "icd10": {
@@ -176,10 +176,10 @@ export const fhirConfig = {
     }
   }
 }
-```
+\`\`\`
 
 ### Clinical Decision Support Rules
-```typescript
+\`\`\`typescript
 // Clinical decision support configuration
 export const cdsConfig = {
   rules: {
@@ -202,12 +202,12 @@ export const cdsConfig = {
     }
   }
 }
-```
+\`\`\`
 
 ## 🔧 Advanced Configuration Templates
 
 ### Multi-Tenant Setup
-```typescript
+\`\`\`typescript
 // Multi-tenant configuration
 export const tenantConfig = {
   strategy: 'database-per-tenant', // or 'shared-database'
@@ -230,10 +230,10 @@ export const tenantConfig = {
     }
   }
 }
-```
+\`\`\`
 
 ### Performance Configuration
-```typescript
+\`\`\`typescript
 // Performance optimization configuration
 export const performanceConfig = {
   database: {
@@ -262,12 +262,12 @@ export const performanceConfig = {
     compression: true
   }
 }
-```
+\`\`\`
 
 ## 📊 Monitoring Configuration Generator
 
 ### Application Monitoring
-```yaml
+\`\`\`yaml
 # Prometheus configuration
 global:
   scrape_interval: 15s
@@ -285,10 +285,10 @@ scrape_configs:
   - job_name: 'panels-redis'
     static_configs:
       - targets: ['redis-exporter:9121']
-```
+\`\`\`
 
 ### Logging Configuration
-```json
+\`\`\`json
 {
   "logging": {
     "level": "info",
@@ -314,12 +314,12 @@ scrape_configs:
     ]
   }
 }
-```
+\`\`\`
 
 ## 🚀 Deployment Configuration
 
 ### AWS Configuration
-```terraform
+\`\`\`terraform
 # Generated Terraform for AWS
 variable "environment" {
   description = "Environment name"
@@ -354,10 +354,10 @@ resource "aws_rds_instance" "postgres" {
   parameter_group_name = "default.postgres16"
   skip_final_snapshot = true
 }
-```
+\`\`\`
 
 ### Kubernetes Configuration
-```yaml
+\`\`\`yaml
 # Generated Kubernetes manifests
 apiVersion: apps/v1
 kind: Deployment
@@ -407,12 +407,12 @@ spec:
             port: 3001
           initialDelaySeconds: 5
           periodSeconds: 5
-```
+\`\`\`
 
 ## 🎯 Configuration Validation
 
 ### Environment Validation Script
-```bash
+\`\`\`bash
 #!/bin/bash
 # validate-config.sh
 # Generated configuration validator
@@ -455,7 +455,7 @@ else
 fi
 
 echo "🎉 All configuration checks passed!"
-```
+\`\`\`
 
 ## 🔄 Interactive Configuration Updates
 
@@ -471,12 +471,12 @@ The Panels system includes a web-based configuration dashboard for runtime confi
 - **Environment Sync** - Sync configurations across environments
 
 #### Access:
-```bash
+\`\`\`bash
 # Start configuration dashboard
 pnpm --filter @panels/app config:dashboard
 
 # Access at http://localhost:3000/admin/config
-```
+\`\`\`
 
 ## 📚 Next Steps
 
@@ -487,4 +487,4 @@ pnpm --filter @panels/app config:dashboard
 
 ---
 
-**💡 Tip**: Save your configuration selections and generated files for future reference. You can always regenerate configurations as your requirements change. 
+**💡 Tip**: Save your configuration selections and generated files for future reference. You can always regenerate configurations as your requirements change.

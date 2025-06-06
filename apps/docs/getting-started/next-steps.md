@@ -97,80 +97,80 @@ Apply your knowledge with these hands-on projects:
 ### 🏃‍♂️ Quick Wins (1-2 Hours Each)
 
 **Project 1: Customer Dashboard**
-```typescript
+\`\`\`typescript
 // Build a customer management panel
 - Data Source: Customer database table
 - Columns: Name, email, status, last_login, total_orders
 - Views: Active customers, VIP customers, Inactive customers
 - Features: Status updates, contact information management
-```
+\`\`\`
 
 **Project 2: Task Tracker**
-```typescript
+\`\`\`typescript
 // Create a team task management panel
 - Data Sources: Task API + Time tracking file
 - Columns: Task title, assignee, status, due_date, time_spent
 - Views: My tasks, overdue tasks, completed tasks
 - Features: Status transitions, time calculations
-```
+\`\`\`
 
 **Project 3: Sales Pipeline**
-```typescript
+\`\`\`typescript
 // Build a sales opportunity tracker
 - Data Source: CRM API
 - Columns: Opportunity, contact, stage, value, probability
 - Views: Hot prospects, closing this month, won/lost
 - Features: Revenue calculations, stage progression
-```
+\`\`\`
 
 ### 🚧 Weekend Projects (4-8 Hours Each)
 
 **Project 4: Multi-source Analytics**
-```typescript
+\`\`\`typescript
 // Combine multiple data sources for insights
 - Sources: Database + API + CSV files
 - Columns: Mixed base and calculated columns
 - Views: Executive dashboard, operational views
 - Features: Cross-source calculations, automated reports
-```
+\`\`\`
 
 **Project 5: User Management System**
-```typescript
+\`\`\`typescript
 // Complete user administration panel
 - Sources: User database + permissions API
 - Columns: User details, roles, permissions, activity
 - Views: By role, by status, recent activity
 - Features: Role management, permission updates
-```
+\`\`\`
 
 **Project 6: Inventory Tracker**
-```typescript
+\`\`\`typescript
 // Product inventory management
 - Sources: Inventory database + supplier API
 - Columns: Product, quantity, reorder_level, supplier
 - Views: Low stock, reorder needed, by category
 - Features: Stock calculations, reorder alerts
-```
+\`\`\`
 
 ### 🏗️ Advanced Projects (1-2 Weeks Each)
 
 **Project 7: Multi-tenant SaaS Dashboard**
-```typescript
+\`\`\`typescript
 // Full multi-tenant application
 - Multiple data sources per tenant
 - Tenant-specific views and permissions
 - Advanced filtering and sorting
 - Custom branding per tenant
-```
+\`\`\`
 
 **Project 8: Real-time Monitoring System**
-```typescript
+\`\`\`typescript
 // Live data monitoring panel
 - Webhook data sources for real-time updates
 - Status indicators and alerts
 - Historical trend analysis
 - Automated notification system
-```
+\`\`\`
 
 ## Common Learning Challenges
 
@@ -180,7 +180,7 @@ Be prepared for these typical challenges and how to overcome them:
 **Challenge:** Complex calculated columns with multiple dependencies
 **Solution:** Start simple, build incrementally, use the formula reference
 
-```typescript
+\`\`\`typescript
 // Start with this:
 formula: `IF([Status] = "active", "✅", "❌")`
 
@@ -191,31 +191,31 @@ formula: `
     "❌ Inactive"
   )
 `
-```
+\`\`\`
 
 ### 🔄 Data Sync Issues
 **Challenge:** Data not updating or sync failures
 **Solution:** Check connection settings, validate data formats, monitor sync status
 
-```typescript
+\`\`\`typescript
 // Debug sync issues:
 const sources = await panelsAPI.dataSources.list(panelId, tenantId, userId)
 sources.forEach(source => {
   console.log(`${source.type}: ${source.lastSyncAt || 'Never synced'}`)
 })
-```
+\`\`\`
 
 ### 👥 Permission Confusion
 **Challenge:** Users can't see expected views or data
 **Solution:** Verify user groups, view permissions, and published status
 
-```typescript
+\`\`\`typescript
 // Check view access:
 const views = await viewsAPI.list(panelId, tenantId, userId)
 views.forEach(view => {
   console.log(`${view.title}: ${view.userGroups.join(', ')}`)
 })
-```
+\`\`\`
 
 ## Getting Help
 
@@ -233,7 +233,7 @@ When you need assistance:
 - **[Debugging Guide](/guides/troubleshooting/debugging.md)** - Debug techniques
 
 ### 🏗️ Development Workflow
-```typescript
+\`\`\`typescript
 // Recommended development pattern:
 1. Plan your panel structure
 2. Set up data sources and test sync
@@ -243,7 +243,7 @@ When you need assistance:
 6. Test with sample data
 7. Configure permissions and publish
 8. Deploy and monitor
-```
+\`\`\`
 
 ## Success Metrics
 
@@ -297,7 +297,7 @@ Remember:
 
 Keep this handy for development:
 
-```typescript
+\`\`\`typescript
 // Essential API Patterns
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 
@@ -315,10 +315,10 @@ await viewsAPI.create(panelId, config, tenantId, userId)
 
 // Publish view
 await viewsAPI.publish(panelId, viewId, publishConfig, tenantId, userId)
-```
+\`\`\`
 
 ### Common Formula Patterns
-```typescript
+\`\`\`typescript
 // Text manipulation
 `CONCAT([First Name], " ", [Last Name])`
 `UPPER(SUBSTRING([Email], 1, FIND("@", [Email]) - 1))`
@@ -334,10 +334,10 @@ await viewsAPI.publish(panelId, viewId, publishConfig, tenantId, userId)
 // Math operations
 `ROUND(([Total Sales] / [Total Orders]), 2)`
 `([Base Salary] * 1.1) + [Bonus]`
-```
+\`\`\`
 
 ---
 
 🎯 **Your next step:** Choose a path from the roadmap above and start building! The panels community is excited to see what you create.
 
-**Happy building!** 🚀 
+**Happy building!** 🚀

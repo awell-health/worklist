@@ -238,4 +238,4 @@ describe('getNestedValue', () => {
             expect(result).toBeGreaterThan(1000 * 60 * 60 * 24 * 365 * 25);
         });
     });
-}); 
+});

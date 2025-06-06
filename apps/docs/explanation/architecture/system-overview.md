@@ -28,7 +28,7 @@ The Panels Management System is built on these core architectural principles:
 
 ## High-Level Architecture
 
-```
+\`\`\`
 ┌─────────────────────────────────────────────────────────────┐
 │                     Client Applications                     │
 ├─────────────────────┬─────────────────────┬─────────────────┤
@@ -57,7 +57,7 @@ The Panels Management System is built on these core architectural principles:
 │   PostgreSQL        │      Redis          │   External      │
 │   (Primary DB)      │   (Cache/Queue)     │   Data Sources  │
 └─────────────────────┴─────────────────────┴─────────────────┘
-```
+\`\`\`
 
 ## Core Components
 
@@ -70,7 +70,7 @@ The Panels Management System is built on these core architectural principles:
 - **Authentication**: NextAuth.js with JWT
 - **Real-time**: WebSocket connections for live updates
 
-```typescript
+\`\`\`typescript
 // Component architecture
 apps/app/
 ├── pages/           // Next.js pages and API routes
@@ -79,7 +79,7 @@ apps/app/
 ├── stores/         // Zustand state stores
 ├── utils/          // Utility functions
 └── types/          // TypeScript type definitions
-```
+\`\`\`
 
 #### Key Frontend Features
 - **Responsive Design**: Mobile-first responsive layouts
@@ -97,7 +97,7 @@ apps/app/
 - **Authentication**: JWT with multi-tenant context
 - **Documentation**: OpenAPI/Swagger integration
 
-```typescript
+\`\`\`typescript
 // Service architecture
 apps/services/
 ├── src/
@@ -109,12 +109,12 @@ apps/services/
 │   ├── database/    // Database configuration
 │   ├── plugins/     // Fastify plugins
 │   └── utils/       // Shared utilities
-```
+\`\`\`
 
 #### Module Structure
 Each module follows a consistent structure:
 
-```typescript
+\`\`\`typescript
 // Module organization
 modules/panels/
 ├── entities/        // Database entities
@@ -122,7 +122,7 @@ modules/panels/
 ├── services/       // Business logic
 ├── schemas/        // Validation schemas
 └── tests/          // Unit and integration tests
-```
+\`\`\`
 
 ### Data Layer
 
@@ -132,13 +132,13 @@ modules/panels/
 - **Migrations**: Automated schema versioning
 - **Performance**: Connection pooling and query optimization
 
-```sql
+\`\`\`sql
 -- Core entity relationships
 Tenants 1:N Panels 1:N DataSources
 Panels 1:N Columns
 Panels 1:N Views
 Columns N:M Views (visibility mapping)
-```
+\`\`\`
 
 #### Redis Cache/Queue
 - **Caching**: API response caching and session storage
@@ -150,36 +150,36 @@ Columns N:M Views (visibility mapping)
 
 ### 1. Panel Creation Flow
 
-```
+\`\`\`
 User Request → Authentication → Validation → Entity Creation → Event Emission
      ↓              ↓              ↓              ↓              ↓
    Next.js      JWT Verify      Zod Schema    MikroORM      WebSocket
    Frontend     Middleware      Validation     Entity        Broadcast
-```
+\`\`\`
 
 ### 2. Data Source Synchronization
 
-```
+\`\`\`
 Scheduled Job → Data Fetch → Transform → Store → Notify
       ↓             ↓           ↓         ↓       ↓
    BullMQ        External     Column     Panel    Users
    Queue         API/DB       Mapping    Update   (WebSocket)
-```
+\`\`\`
 
 ### 3. Real-time View Updates
 
-```
+\`\`\`
 Data Change → Event → Queue → Process → Broadcast
      ↓         ↓       ↓        ↓         ↓
   Database   Change   Redis   Formula   WebSocket
   Trigger    Event    Queue   Recalc    Clients
-```
+\`\`\`
 
 ## Security Architecture
 
 ### Authentication & Authorization
 
-```typescript
+\`\`\`typescript
 // Security layers
 ┌─────────────────────────────────────┐
 │           Client Layer              │ ← HTTPS/TLS
@@ -190,7 +190,7 @@ Data Change → Event → Queue → Process → Broadcast
 ├─────────────────────────────────────┤
 │       Database Layer                │ ← Row-level Security
 └─────────────────────────────────────┘
-```
+\`\`\`
 
 #### Multi-tenant Security
 - **Tenant Isolation**: All queries include tenant context
@@ -209,24 +209,24 @@ Data Change → Event → Queue → Process → Broadcast
 ### Horizontal Scaling
 
 #### Application Tier
-```typescript
+\`\`\`typescript
 // Load balancer configuration
 nginx → [API Server 1, API Server 2, API Server N]
        ↓
    [Worker Queue 1, Worker Queue 2, Worker Queue N]
-```
+\`\`\`
 
 #### Database Tier
-```sql
+\`\`\`sql
 -- Read replicas for query scaling
 Master DB (Write) → [Read Replica 1, Read Replica 2, Read Replica N]
-```
+\`\`\`
 
 #### Cache Tier
-```typescript
+\`\`\`typescript
 // Redis cluster for high availability
 Redis Cluster → [Node 1, Node 2, Node 3, Node 4, Node 5, Node 6]
-```
+\`\`\`
 
 ### Vertical Scaling
 - **Resource Allocation**: CPU and memory optimization
@@ -258,7 +258,7 @@ Redis Cluster → [Node 1, Node 2, Node 3, Node 4, Node 5, Node 6]
 ## Technology Stack
 
 ### Frontend Stack
-```typescript
+\`\`\`typescript
 React 19              // UI framework
 Next.js 15.3.3       // Full-stack framework
 TypeScript 5.0+      // Type safety
@@ -268,10 +268,10 @@ Zustand              // State management
 React Query          // Server state
 React Hook Form      // Form handling
 Zod                  // Schema validation
-```
+\`\`\`
 
 ### Backend Stack
-```typescript
+\`\`\`typescript
 Node.js 18+          // Runtime
 Fastify 5.3.2        // Web framework
 TypeScript 5.0+      // Type safety
@@ -281,10 +281,10 @@ Redis 7              // Cache/Queue
 BullMQ               // Job queue
 Zod                  // Schema validation
 Pino                 // Logging
-```
+\`\`\`
 
 ### Infrastructure Stack
-```bash
+\`\`\`bash
 Docker               # Containerization
 nginx                # Reverse proxy
 pnpm                 # Package manager
@@ -292,13 +292,13 @@ GitHub Actions       # CI/CD
 Sentry               # Error monitoring
 Prometheus           # Metrics
 Grafana              # Dashboards
-```
+\`\`\`
 
 ## Deployment Architecture
 
 ### Production Environment
 
-```
+\`\`\`
 Internet
     ↓
 CloudFlare (CDN/WAF)
@@ -320,33 +320,33 @@ Load Balancer (nginx)
 │  │ Primary │ │ Cluster │ │ (S3)   │ │
 │  └─────────┘ └─────────┘ └────────┘ │
 └─────────────────────────────────────┘
-```
+\`\`\`
 
 ### Development Environment
 
-```bash
+\`\`\`bash
 # Local development stack
 docker-compose up
 ├── PostgreSQL (localhost:5432)
 ├── Redis (localhost:6379)
 ├── API Server (localhost:3001)
 └── Frontend App (localhost:3000)
-```
+\`\`\`
 
 ## Monitoring and Observability
 
 ### Metrics Collection
-```typescript
+\`\`\`typescript
 // Prometheus metrics
 http_request_duration_seconds    // Request latency
 http_requests_total             // Request count
 database_query_duration         // DB performance
 active_websocket_connections    // Real-time usage
 queue_jobs_total               // Background processing
-```
+\`\`\`
 
 ### Logging Strategy
-```typescript
+\`\`\`typescript
 // Structured logging with Pino
 {
   level: 'info',
@@ -358,15 +358,15 @@ queue_jobs_total               // Background processing
   duration: 150,
   success: true
 }
-```
+\`\`\`
 
 ### Health Checks
-```typescript
+\`\`\`typescript
 // Multi-layer health monitoring
 /health                         // Basic health
 /health/detailed               // Component health
 /metrics                       // Prometheus metrics
-```
+\`\`\`
 
 ## Disaster Recovery
 
@@ -384,7 +384,7 @@ queue_jobs_total               // Background processing
 ## Future Architecture Considerations
 
 ### Microservices Evolution
-```typescript
+\`\`\`typescript
 // Potential service decomposition
 ┌─────────────┐ ┌─────────────┐ ┌─────────────┐
 │   Panel     │ │   Data      │ │    View     │
@@ -394,19 +394,19 @@ queue_jobs_total               // Background processing
 │    Auth     │ │ Notification│ │   Export    │
 │  Service    │ │  Service    │ │  Service    │
 └─────────────┘ └─────────────┘ └─────────────┘
-```
+\`\`\`
 
 ### Event Streaming
-```typescript
+\`\`\`typescript
 // Kafka for high-volume event processing
 Panel Events → Kafka → [Consumer 1, Consumer 2, Consumer N]
-```
+\`\`\`
 
 ### Global Distribution
-```typescript
+\`\`\`typescript
 // Multi-region deployment
 Region 1 (Primary) ↔ Region 2 (Secondary) ↔ Region 3 (DR)
-```
+\`\`\`
 
 ## Architectural Decisions Record (ADR)
 
@@ -445,4 +445,4 @@ The Panels Management System architecture provides:
 5. **Maintainability**: Clean architecture with clear boundaries
 6. **Extensibility**: Plugin architecture for future enhancements
 
-This architecture supports the current requirements while providing a foundation for future growth and evolution. 
+This architecture supports the current requirements while providing a foundation for future growth and evolution.

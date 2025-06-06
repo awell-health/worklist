@@ -37,7 +37,7 @@ Think of **columns** as the blueprint for how your data appears in the panel:
 
 Let's start by creating base columns from your data source:
 
-```typescript
+\`\`\`typescript
 // columns-demo.ts
 import { panelsAPI } from '@panels/app/api'
 
@@ -47,13 +47,13 @@ const TENANT_ID = "tenant-123"
 const USER_ID = "user-456"
 
 console.log("Starting columns tutorial...")
-```
+\`\`\`
 
 ### List Available Data Source Fields
 
 First, let's see what fields are available from our data sources:
 
-```typescript
+\`\`\`typescript
 async function exploreDataSourceFields() {
   try {
     console.log("🔍 Exploring available data source fields...")
@@ -88,13 +88,13 @@ async function exploreDataSourceFields() {
 
 // Explore available fields
 const dataSources = await exploreDataSourceFields()
-```
+\`\`\`
 
 ### Create Your First Base Column
 
 Let's create a base column for displaying user names:
 
-```typescript
+\`\`\`typescript
 async function createBaseColumn() {
   try {
     console.log("📋 Creating base column...")
@@ -133,13 +133,13 @@ async function createBaseColumn() {
 
 // Create base column
 const nameColumn = await createBaseColumn()
-```
+\`\`\`
 
 ### Create Multiple Base Columns
 
 Let's add several more base columns to build out our panel structure:
 
-```typescript
+\`\`\`typescript
 async function createMultipleBaseColumns() {
   try {
     console.log("📋 Creating multiple base columns...")
@@ -217,7 +217,7 @@ async function createMultipleBaseColumns() {
 
 // Create additional columns
 const [emailColumn, statusColumn, createdColumn] = await createMultipleBaseColumns()
-```
+\`\`\`
 
 ## Step 2: Your First Calculated Column
 
@@ -225,7 +225,7 @@ Now let's create calculated columns that derive values from your base columns:
 
 ### Simple Text Calculated Column
 
-```typescript
+\`\`\`typescript
 async function createTextCalculatedColumn() {
   try {
     console.log("🧮 Creating text calculated column...")
@@ -260,11 +260,11 @@ async function createTextCalculatedColumn() {
 
 // Create calculated column
 const displayNameColumn = await createTextCalculatedColumn()
-```
+\`\`\`
 
 ### Date-Based Calculated Column
 
-```typescript
+\`\`\`typescript
 async function createDateCalculatedColumn() {
   try {
     console.log("📅 Creating date calculated column...")
@@ -299,11 +299,11 @@ async function createDateCalculatedColumn() {
 
 // Create date calculated column
 const accountAgeColumn = await createDateCalculatedColumn()
-```
+\`\`\`
 
 ### Conditional Logic Calculated Column
 
-```typescript
+\`\`\`typescript
 async function createConditionalCalculatedColumn() {
   try {
     console.log("🔀 Creating conditional calculated column...")
@@ -342,7 +342,7 @@ async function createConditionalCalculatedColumn() {
 
 // Create conditional column
 const statusLabelColumn = await createConditionalCalculatedColumn()
-```
+\`\`\`
 
 ## Step 3: Column Management
 
@@ -350,7 +350,7 @@ Let's learn how to list, update, and organize our columns:
 
 ### List All Columns
 
-```typescript
+\`\`\`typescript
 async function listAllColumns() {
   try {
     console.log("📊 Listing all panel columns...")
@@ -392,11 +392,11 @@ async function listAllColumns() {
 
 // List all columns
 const allColumns = await listAllColumns()
-```
+\`\`\`
 
 ### Update Column Configuration
 
-```typescript
+\`\`\`typescript
 async function updateColumnConfig() {
   try {
     console.log("⚙️ Updating column configuration...")
@@ -434,7 +434,7 @@ async function updateColumnConfig() {
 
 // Update column
 const updatedNameColumn = await updateColumnConfig()
-```
+\`\`\`
 
 ## Step 4: Advanced Column Types
 
@@ -442,7 +442,7 @@ Let's explore some advanced column configurations:
 
 ### Number Column with Formatting
 
-```typescript
+\`\`\`typescript
 async function createNumberColumn() {
   try {
     console.log("🔢 Creating formatted number column...")
@@ -483,11 +483,11 @@ async function createNumberColumn() {
 
 // Create number column
 const scoreColumn = await createNumberColumn()
-```
+\`\`\`
 
 ### URL/Link Column
 
-```typescript
+\`\`\`typescript
 async function createLinkColumn() {
   try {
     console.log("🔗 Creating link column...")
@@ -523,13 +523,13 @@ async function createLinkColumn() {
 
 // Create link column
 const profileLinkColumn = await createLinkColumn()
-```
+\`\`\`
 
 ## Step 5: Column Ordering and Organization
 
 Let's organize our columns in a logical order:
 
-```typescript
+\`\`\`typescript
 async function organizeColumns() {
   try {
     console.log("📐 Organizing column order...")
@@ -583,13 +583,13 @@ async function organizeColumns() {
 
 // Organize columns
 await organizeColumns()
-```
+\`\`\`
 
 ## Complete Column Creation Workflow
 
 Here's a complete example that creates a full set of columns:
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 const PANEL_ID = "123" // Your panel ID
@@ -699,7 +699,7 @@ createCompleteColumnSet()
   .catch(error => {
     console.error("\n💥 Setup failed:", error.message)
   })
-```
+\`\`\`
 
 ## Column Configuration Reference
 
@@ -718,7 +718,7 @@ createCompleteColumnSet()
 
 ### Display Settings
 
-```typescript
+\`\`\`typescript
 interface DisplaySettings {
   width?: number              // Column width in pixels
   alignment?: 'left' | 'center' | 'right'
@@ -744,11 +744,11 @@ interface DisplaySettings {
   linkText?: string           // Display text for links
   openInNewTab?: boolean      // Link behavior
 }
-```
+\`\`\`
 
 ### Validation Rules
 
-```typescript
+\`\`\`typescript
 interface ValidationRules {
   required?: boolean          // Field is required
   minLength?: number          // Minimum text length
@@ -758,7 +758,7 @@ interface ValidationRules {
   max?: number                // Maximum number value
   customMessage?: string      // Custom error message
 }
-```
+\`\`\`
 
 ## Formula Functions Reference
 
@@ -793,31 +793,31 @@ interface ValidationRules {
 ### Common Issues
 
 **Column Not Displaying:**
-```typescript
+\`\`\`typescript
 // Check if column is visible
 const column = await panelsAPI.columns.get(panelId, columnId, tenantId, userId)
 console.log("Visible:", column.displaySettings?.visible !== false)
 
 // Check column order
 console.log("Order:", column.displaySettings?.order || "No order set")
-```
+\`\`\`
 
 **Formula Errors:**
-```typescript
+\`\`\`typescript
 // Verify column dependencies exist
 const dependencies = column.dependencies || []
 console.log("Dependencies:", dependencies)
 
 // Check for circular references
 // Make sure columns don't depend on themselves
-```
+\`\`\`
 
 **Data Type Mismatches:**
-```typescript
+\`\`\`typescript
 // Ensure source field matches expected data type
 // Use appropriate formatting for display
 // Validate formula output matches column data type
-```
+\`\`\`
 
 ## Next Steps
 
@@ -848,4 +848,4 @@ In this tutorial, you learned how to:
 ✅ **Organize Column Layout** - Order and structure your panel display  
 ✅ **Use Advanced Features** - Links, formatting, and conditional logic
 
-Your panel now has structured, meaningful columns that transform raw data into actionable information! 
+Your panel now has structured, meaningful columns that transform raw data into actionable information!

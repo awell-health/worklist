@@ -4,7 +4,7 @@ This directory contains the API modules for panels and views, along with compreh
 
 ## Structure
 
-```
+\`\`\`
 src/api/
 ├── config/
 │   └── apiConfig.ts          # API configuration with environment-based base URL
@@ -14,7 +14,7 @@ src/api/
 ├── viewsAPI.ts               # Views API functions
 ├── viewsAPI.test.ts          # Views API tests
 └── README.md                 # This file
-```
+\`\`\`
 
 ## Configuration
 
@@ -27,7 +27,7 @@ The API base URL is configured through environment variables:
 - **Default**: Empty string (uses relative URLs)
 
 Example `.env` file:
-```bash
+\`\`\`bash
 # Development
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
 
@@ -36,7 +36,7 @@ NEXT_PUBLIC_API_BASE_URL=https://api.yourapp.com
 
 # Testing
 NEXT_PUBLIC_API_BASE_URL=https://api.test.com
-```
+\`\`\`
 
 ### API Configuration
 
@@ -46,12 +46,12 @@ The `apiConfig` object in `config/apiConfig.ts` provides:
 - **`buildUrl(path)`**: Helper function to build complete URLs
 - **`defaultOptions`**: Default fetch options with common headers
 
-```typescript
+\`\`\`typescript
 import { apiConfig } from './config/apiConfig'
 
 // Builds: https://api.yourapp.com/api/panels/123
 const url = apiConfig.buildUrl('/api/panels/123')
-```
+\`\`\`
 
 ## Testing
 
@@ -66,7 +66,7 @@ Tests use Vitest with the following features:
 
 ### Running Tests
 
-```bash
+\`\`\`bash
 # Run all tests
 npm test
 
@@ -78,7 +78,7 @@ npm test -- --coverage
 
 # Run specific test file
 npm test panelsAPI.test.ts
-```
+\`\`\`
 
 ### Test Structure
 
@@ -103,7 +103,7 @@ Each API module has a corresponding test file with:
 
 ### Example Test
 
-```typescript
+\`\`\`typescript
 describe('panelsAPI', () => {
   it('should create a panel with correct API call', async () => {
     const panelData = mockData.panel()
@@ -129,7 +129,7 @@ describe('panelsAPI', () => {
     expect(result).toEqual(expectedResponse)
   })
 })
-```
+\`\`\`
 
 ## Mock Data
 
@@ -189,7 +189,7 @@ The `testUtils.ts` file provides comprehensive mock data generators:
 3. **Handle errors appropriately** in your application code
 4. **Use TypeScript types** for type safety
 
-```typescript
+\`\`\`typescript
 // Good
 const panels = await panelsAPI.all('tenant-123', 'user-123')
 
@@ -198,7 +198,7 @@ const panels = await panelsAPI.all('tenant-123', 'user-123', {
   signal: abortController.signal,
   cache: 'no-cache'
 })
-```
+\`\`\`
 
 ### Testing
 
@@ -236,4 +236,4 @@ const panels = await panelsAPI.all('tenant-123', 'user-123', {
 **Network errors in tests:**
 - Verify that fetch is properly mocked in your test setup
 - Check that `setupTest()` is called in your `beforeEach` block
-- Ensure `cleanupTest()` is called in your `afterEach` block 
+- Ensure `cleanupTest()` is called in your `afterEach` block

@@ -58,7 +58,7 @@ Track panel modifications and notify affected users automatically.
 
 ## Quick Start
 
-```typescript
+\`\`\`typescript
 import { panelsAPI, viewsAPI } from '@panels/app/api'
 
 // Create a panel
@@ -80,7 +80,7 @@ const view = await viewsAPI.create({
   panelId: panel.id,
   config: { columns: ["email", "status"] }
 })
-```
+\`\`\`
 
 [Get started with the tutorial →](/getting-started/)
 
@@ -89,4 +89,3 @@ const view = await viewsAPI.create({
 - 🐛 **Found a bug?** Check our [troubleshooting guide](/guides/api-client/handling-errors)
 - 🤔 **Have a question?** Browse our [how-to guides](/guides/)
 - 📚 **Want to contribute?** See our [contributing guide](/projects/docs/contributing)
-

@@ -194,7 +194,7 @@ Each example follows this consistent structure:
 
 All examples are designed to be runnable:
 
-```bash
+\`\`\`bash
 # Clone the examples repository
 git clone <examples-repo-url>
 
@@ -202,7 +202,7 @@ git clone <examples-repo-url>
 cd examples/basic-usage/create-panel
 pnpm install
 pnpm dev
-```
+\`\`\`
 
 ## Contributing Examples
 
@@ -230,4 +230,4 @@ Need help with an example?
 - **Check Prerequisites** - Ensure you have all requirements
 - **Read Troubleshooting** - Common issues and solutions
 - **Ask Questions** - Use our community forums
-- **Report Issues** - Submit bug reports for broken examples 
+- **Report Issues** - Submit bug reports for broken examples

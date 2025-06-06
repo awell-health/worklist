@@ -115,4 +115,4 @@ export const usePanelStore = () => {
     deleteView,
     getView,
   };
-}; 
+};

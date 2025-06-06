@@ -73,4 +73,4 @@ export function useSearch<T extends Record<string, any>>(data: T[]) {
         setSearchMode,
         filteredData: filteredData(),
     };
-} 
+}

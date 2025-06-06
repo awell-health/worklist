@@ -13,7 +13,7 @@ We'll create a **User Management Panel** that demonstrates all key features:
 
 ## Step 1: Create the Panel
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 // Create the main panel
@@ -25,11 +25,11 @@ const panel = await panelsAPI.create({
 })
 
 console.log(`Panel created with ID: ${panel.id}`)
-```
+\`\`\`
 
 ## Step 2: Add a Data Source
 
-```typescript
+\`\`\`typescript
 // Connect to the users database
 const dataSource = await panelsAPI.dataSources.create(panel.id.toString(), {
   type: "database",
@@ -43,11 +43,11 @@ const dataSource = await panelsAPI.dataSources.create(panel.id.toString(), {
 })
 
 console.log(`Data source created with ID: ${dataSource.id}`)
-```
+\`\`\`
 
 ## Step 3: Create Base Columns
 
-```typescript
+\`\`\`typescript
 // Email column with validation
 const emailColumn = await panelsAPI.columns.createBase(panel.id.toString(), {
   name: "Email Address",
@@ -129,11 +129,11 @@ const createdAtColumn = await panelsAPI.columns.createBase(panel.id.toString(), 
   tenantId: "tenant-123",
   userId: "admin-456"
 })
-```
+\`\`\`
 
 ## Step 4: Create Calculated Columns
 
-```typescript
+\`\`\`typescript
 // Full name calculated column
 const fullNameColumn = await panelsAPI.columns.createCalculated(panel.id.toString(), {
   name: "Full Name",
@@ -186,13 +186,13 @@ const statusBadgeColumn = await panelsAPI.columns.createCalculated(panel.id.toSt
   tenantId: "tenant-123",
   userId: "admin-456"
 })
-```
+\`\`\`
 
 ## Step 5: Create Views
 
 ### Admin View (All Columns)
 
-```typescript
+\`\`\`typescript
 import { viewsAPI } from '@panels/app/api'
 
 const adminView = await viewsAPI.create({
@@ -229,11 +229,11 @@ await viewsAPI.sorts.update(
     userId: "admin-456"
   }
 )
-```
+\`\`\`
 
 ### User Directory View (Public Information)
 
-```typescript
+\`\`\`typescript
 const directoryView = await viewsAPI.create({
   name: "User Directory",
   description: "Public directory of active users",
@@ -260,11 +260,11 @@ const publishResult = await viewsAPI.publishing.publish(
 )
 
 console.log(`Directory view published at: ${publishResult.publishedAt}`)
-```
+\`\`\`
 
 ### Active Users View (Filtered)
 
-```typescript
+\`\`\`typescript
 const activeUsersView = await viewsAPI.create({
   name: "Active Users Only",
   description: "View showing only users with active status",
@@ -303,11 +303,11 @@ await viewsAPI.publishing.publish(
     userId: "admin-456"
   }
 )
-```
+\`\`\`
 
 ## Step 6: Verify the Setup
 
-```typescript
+\`\`\`typescript
 // List all panel columns to verify
 const { baseColumns, calculatedColumns } = await panelsAPI.columns.list(
   panel.id.toString(),
@@ -328,13 +328,13 @@ views.forEach(view => {
   const publishStatus = view.isPublished ? "📤 Published" : "🔒 Private"
   console.log(`  - ${view.name} (${publishStatus})`)
 })
-```
+\`\`\`
 
 ## Complete Workflow Function
 
 Here's the complete workflow wrapped in a reusable function:
 
-```typescript
+\`\`\`typescript
 async function createUserManagementPanel(tenantId: string, userId: string) {
   try {
     // 1. Create panel
@@ -412,11 +412,11 @@ async function createUserManagementPanel(tenantId: string, userId: string) {
 // Usage
 const result = await createUserManagementPanel("tenant-123", "admin-456")
 console.log("Panel setup complete!", result.panel.id)
-```
+\`\`\`
 
 ## Next Steps
 
 - 📊 [Learn about advanced formulas](../advanced-patterns/formula-examples.md)
 - 🔍 [Set up complex filters](../advanced-patterns/filter-combinations.md)
 - ⚡ [Optimize performance](../../guides/panels/performance-tips.md)
-- 🧪 [Test your implementation](../code-samples/testing.md) 
+- 🧪 [Test your implementation](../code-samples/testing.md)

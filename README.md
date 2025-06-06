@@ -128,7 +128,7 @@ The Panels system allows organizations to:
 
 ## <a name='ProjectStructure'></a>Project Structure
 
-```
+\`\`\`
 .
 ├── apps/
 │   ├── app/                    # Next.js frontend application
@@ -157,7 +157,7 @@ The Panels system allows organizations to:
 │   ├── scripts/               # Development scripts (env generation)
 │   └── datastore/             # Local database storage
 └── compose.yaml               # Docker Compose configuration
-```
+\`\`\`
 
 ## <a name='APIModules'></a>API Modules
 
@@ -198,42 +198,42 @@ The Panels system allows organizations to:
 
 1. **Install Dependencies**
 
-   ```bash
+   \`\`\`bash
    pnpm bootstrap
-   ```
+   \`\`\`
 
 2. **Generate Environment Files**
 
-   ```bash
+   \`\`\`bash
    # Generate .env files from compose.yaml configuration
    pnpm generate:env
-   ```
+   \`\`\`
 
 3. **Start Development Environment**
 
-   ```bash
+   \`\`\`bash
    # Start the infrastructure (PostgreSQL, Redis)
    pnpm run:infra
 
    # Start the development servers
    pnpm dev
-   ```
+   \`\`\`
 
 4. **Access the Applications**
    - **Frontend App**: http://localhost:3003 - Main application interface
    - **Backend API**: http://localhost:3001 - RESTful API server
    - **API Documentation**: http://localhost:3001/docs - Interactive API docs (Swagger)
    - **Project Documentation**: http://localhost:3004 - Comprehensive guides and references
-     ```bash
+     \`\`\`bash
      pnpm --filter @panels/docs docs:dev
-     ```
+     \`\`\`
    - **Database UI**: http://localhost:8081 - pgweb interface for PostgreSQL
 
 ## <a name='DatabaseSetup'></a>Database Setup
 
 The services use MikroORM for database management:
 
-```bash
+\`\`\`bash
 # Create a new migration
 pnpm --filter @panels/services migration:create
 
@@ -242,7 +242,7 @@ pnpm --filter @panels/services migration:apply
 
 # Reset database with fresh schema
 pnpm --filter @panels/services schema:fresh
-```
+\`\`\`
 
 ## <a name='APITesting'></a>API Testing
 
@@ -269,11 +269,11 @@ The project includes comprehensive unit testing infrastructure for API functions
 #### <a name='KeyFeatures-1'></a>Key Features
 
 - **Configurable Base URL**: APIs support environment-based URL configuration
-  ```typescript
+  \`\`\`typescript
   // Environment variable: NEXT_PUBLIC_API_BASE_URL
   // Development: http://localhost:3001
   // Testing: https://api.test.com (or custom)
-  ```
+  \`\`\`
 
 - **Advanced Mocking**: Comprehensive mock data generators and response builders
 - **Error Testing**: Network failures, HTTP errors, and validation testing
@@ -289,7 +289,7 @@ The project includes comprehensive unit testing infrastructure for API functions
 
 #### <a name='RunningTests'></a>Running Tests
 
-```bash
+\`\`\`bash
 # Run frontend API tests
 pnpm --filter @panels/app test
 
@@ -301,26 +301,26 @@ pnpm --filter @panels/app test:watch
 
 # Run specific test file
 pnpm --filter @panels/app test panelsAPI.test.ts
-```
+\`\`\`
 
 ### <a name='BackendTesting'></a>Backend Testing
 
 - **Framework**: Vitest 3.2.1
 - **Location**: `apps/services/src/`
 
-```bash
+\`\`\`bash
 # Run backend tests
 pnpm --filter @panels/services test
 
 # Run with coverage
 pnpm --filter @panels/services test:coverage
-```
+\`\`\`
 
 ### <a name='APIConfiguration'></a>API Configuration
 
 The API functions now support configurable base URLs through environment variables:
 
-```typescript
+\`\`\`typescript
 // apps/app/src/api/config/apiConfig.ts
 export const apiConfig = {
   get baseUrl(): string {
@@ -328,7 +328,7 @@ export const apiConfig = {
   },
   buildUrl: (path: string): string => `${apiConfig.baseUrl}${path}`
 }
-```
+\`\`\`
 
 This enables seamless switching between development, testing, and production environments.
 
@@ -336,21 +336,21 @@ This enables seamless switching between development, testing, and production env
 
 - **Biome**: Used for code formatting and linting
 
-  ```bash
+  \`\`\`bash
   pnpm format     # Check formatting
   pnpm format:fix # Fix formatting issues
   pnpm lint       # Run linter
   pnpm lint:fix   # Fix linting issues
-  ```
+  \`\`\`
 
 - **TypeScript**: Type checking
 
-  ```bash
+  \`\`\`bash
   pnpm typecheck
-  ```
+  \`\`\`
 
 - **Testing**:
-  ```bash
+  \`\`\`bash
   # Run all tests (frontend + backend)
   pnpm test
 
@@ -366,7 +366,7 @@ This enables seamless switching between development, testing, and production env
   
   # Watch mode for development
   pnpm --filter @panels/app test:watch
-  ```
+  \`\`\`
 
 ## <a name='AvailableScripts'></a>Available Scripts
 
@@ -420,14 +420,14 @@ The project uses Docker Compose to manage the following services:
 
 1. Install pre-commit hooks:
 
-   ```bash
+   \`\`\`bash
    pnpm prepare
-   ```
+   \`\`\`
 
 2. Use conventional commits:
-   ```bash
+   \`\`\`bash
    pnpm commit
-   ```
+   \`\`\`
 
 ## <a name='License'></a>License
 

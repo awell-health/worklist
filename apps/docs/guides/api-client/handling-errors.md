@@ -10,7 +10,7 @@ The Panels API client provides TypeScript-safe error handling with proper HTTP s
 
 ### Simple Try-Catch
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 async function createPanelSafely() {
@@ -27,11 +27,11 @@ async function createPanelSafely() {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Comprehensive Error Handler
 
-```typescript
+\`\`\`typescript
 async function handlePanelCreation() {
   try {
     const panel = await panelsAPI.create({
@@ -55,13 +55,13 @@ if (result.success) {
 } else {
   console.error("Error:", result.error)
 }
-```
+\`\`\`
 
 ## Common Error Types
 
 ### Network Errors
 
-```typescript
+\`\`\`typescript
 async function handleNetworkErrors() {
   try {
     const panels = await panelsAPI.all("tenant-123", "user-456")
@@ -74,11 +74,11 @@ async function handleNetworkErrors() {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Authentication Errors
 
-```typescript
+\`\`\`typescript
 async function handleAuthErrors() {
   try {
     const view = await viewsAPI.create({
@@ -103,11 +103,11 @@ async function handleAuthErrors() {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Validation Errors
 
-```typescript
+\`\`\`typescript
 async function handleValidationErrors() {
   try {
     const column = await panelsAPI.columns.createBase("123", {
@@ -134,11 +134,11 @@ async function handleValidationErrors() {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Resource Not Found
 
-```typescript
+\`\`\`typescript
 async function handleNotFoundErrors() {
   try {
     const panel = await panelsAPI.get({ id: 999999 })
@@ -151,13 +151,13 @@ async function handleNotFoundErrors() {
     throw error
   }
 }
-```
+\`\`\`
 
 ## Error Recovery Strategies
 
 ### Retry with Exponential Backoff
 
-```typescript
+\`\`\`typescript
 async function retryWithBackoff<T>(
   operation: () => Promise<T>,
   maxRetries: number = 3,
@@ -187,11 +187,11 @@ async function retryWithBackoff<T>(
 const panels = await retryWithBackoff(() => 
   panelsAPI.all("tenant-123", "user-456")
 )
-```
+\`\`\`
 
 ### Graceful Degradation
 
-```typescript
+\`\`\`typescript
 async function loadPanelWithFallback(panelId: number) {
   try {
     // Try to load full panel data
@@ -216,11 +216,11 @@ async function loadPanelWithFallback(panelId: number) {
     }
   }
 }
-```
+\`\`\`
 
 ## Error Boundaries for React
 
-```typescript
+\`\`\`typescript
 import { Component, ReactNode } from 'react'
 
 interface ErrorBoundaryState {
@@ -269,11 +269,11 @@ function App() {
     </PanelsErrorBoundary>
   )
 }
-```
+\`\`\`
 
 ## Custom Error Classes
 
-```typescript
+\`\`\`typescript
 class PanelsAPIError extends Error {
   constructor(
     message: string,
@@ -313,11 +313,11 @@ async function safeAPICall<T>(apiCall: () => Promise<T>): Promise<T> {
     throw new PanelsAPIError(error.message, error.status, error.details)
   }
 }
-```
+\`\`\`
 
 ## Logging and Monitoring
 
-```typescript
+\`\`\`typescript
 interface ErrorLogger {
   logError(error: Error, context: any): void
 }
@@ -360,13 +360,13 @@ const panel = await errorHandler.handleOperation(
   }),
   { operation: 'createPanel', userId: 'user-456' }
 )
-```
+\`\`\`
 
 ## Best Practices
 
 ### 1. Always Handle Errors
 
-```typescript
+\`\`\`typescript
 // ❌ Bad: No error handling
 const panel = await panelsAPI.create(panelData)
 
@@ -377,11 +377,11 @@ try {
 } catch (error) {
   // Handle error
 }
-```
+\`\`\`
 
 ### 2. Provide User-Friendly Messages
 
-```typescript
+\`\`\`typescript
 function getErrorMessage(error: any): string {
   switch (error.status) {
     case 400:
@@ -398,11 +398,11 @@ function getErrorMessage(error: any): string {
       return "An unexpected error occurred. Please try again."
   }
 }
-```
+\`\`\`
 
 ### 3. Log Context Information
 
-```typescript
+\`\`\`typescript
 try {
   await panelsAPI.create(panelData)
 } catch (error) {
@@ -413,11 +413,11 @@ try {
     timestamp: new Date().toISOString()
   })
 }
-```
+\`\`\`
 
 ### 4. Don't Swallow Errors
 
-```typescript
+\`\`\`typescript
 // ❌ Bad: Silently ignoring errors
 try {
   await panelsAPI.create(panelData)
@@ -432,11 +432,11 @@ try {
   console.error("Failed to create panel:", error)
   throw new Error("Panel creation failed")
 }
-```
+\`\`\`
 
 ## Testing Error Handling
 
-```typescript
+\`\`\`typescript
 import { describe, it, expect, vi } from 'vitest'
 
 describe('Panel API Error Handling', () => {
@@ -465,10 +465,10 @@ describe('Panel API Error Handling', () => {
     await expect(panelsAPI.create(invalidData)).rejects.toThrow('Validation failed')
   })
 })
-```
+\`\`\`
 
 ## Related
 
 - [Authentication Guide](./authentication.md)
 - [Testing APIs](./testing-apis.md)
-- [Performance Optimization](./caching-responses.md) 
+- [Performance Optimization](./caching-responses.md)

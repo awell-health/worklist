@@ -119,7 +119,7 @@ Welcome to the comprehensive developer guide for the Panels project. This sectio
 
 ## Quick Start for Developers
 
-```bash
+\`\`\`bash
 # 1. Clone and setup
 git clone <repository-url>
 cd worklist
@@ -136,7 +136,7 @@ pnpm dev
 
 # 5. Run tests
 pnpm test
-```
+\`\`\`
 
 ## Common Developer Tasks
 
@@ -152,4 +152,4 @@ pnpm test
 
 - **[Troubleshooting](./troubleshooting/)** - Common issues and solutions
 - **[FAQ](./faq.md)** - Frequently asked questions
-- **[Community Support](./support.md)** - Getting help from the community 
+- **[Community Support](./support.md)** - Getting help from the community

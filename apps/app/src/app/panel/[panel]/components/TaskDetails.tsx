@@ -201,4 +201,4 @@ export function TaskDetails({ taskData }: TaskContentProps) {
       </div>
     </div>
   )
-} 
+}

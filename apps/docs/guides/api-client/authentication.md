@@ -12,7 +12,7 @@ The Panels API uses multi-layered authentication to ensure secure access to tena
 
 The primary authentication method using JSON Web Tokens:
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 // Configure API client with JWT token
@@ -26,13 +26,13 @@ panelsAPI.configure({
 
 // All subsequent API calls will include the JWT token
 const panels = await panelsAPI.panels.list(tenantId, userId)
-```
+\`\`\`
 
 ### 2. API Key Authentication
 
 For server-to-server communication:
 
-```typescript
+\`\`\`typescript
 panelsAPI.configure({
   baseURL: process.env.PANELS_API_URL,
   authentication: {
@@ -41,13 +41,13 @@ panelsAPI.configure({
     tenantId: process.env.TENANT_ID
   }
 })
-```
+\`\`\`
 
 ### 3. Session-based Authentication
 
 For traditional web applications:
 
-```typescript
+\`\`\`typescript
 panelsAPI.configure({
   baseURL: process.env.PANELS_API_URL,
   authentication: {
@@ -56,13 +56,13 @@ panelsAPI.configure({
   },
   credentials: 'include' // Include cookies
 })
-```
+\`\`\`
 
 ## Multi-tenant Context
 
 Every API call requires tenant and user context:
 
-```typescript
+\`\`\`typescript
 // Required parameters for all operations
 const context = {
   tenantId: "tenant-123",  // Organization/workspace identifier
@@ -72,13 +72,13 @@ const context = {
 // Usage pattern
 const panels = await panelsAPI.panels.list(context.tenantId, context.userId)
 const panel = await panelsAPI.panels.create(panelData, context.tenantId, context.userId)
-```
+\`\`\`
 
 ## Authentication Patterns
 
 ### React Application Setup
 
-```typescript
+\`\`\`typescript
 // contexts/auth.tsx
 import { createContext, useContext, useEffect, useState } from 'react'
 import { panelsAPI } from '@panels/app/api'
@@ -168,11 +168,11 @@ export const useAuth = () => {
   }
   return context
 }
-```
+\`\`\`
 
 ### Using Authentication in Components
 
-```typescript
+\`\`\`typescript
 // components/PanelsList.tsx
 import { useAuth } from '../contexts/auth'
 import { panelsAPI } from '@panels/app/api'
@@ -221,13 +221,13 @@ export function PanelsList() {
     </div>
   )
 }
-```
+\`\`\`
 
 ## Server-side Authentication
 
 ### Next.js API Routes
 
-```typescript
+\`\`\`typescript
 // pages/api/panels/index.ts
 import { NextApiRequest, NextApiResponse } from 'next'
 import { panelsAPI } from '@panels/app/api'
@@ -275,11 +275,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Internal server error' })
   }
 }
-```
+\`\`\`
 
 ### Express.js Middleware
 
-```typescript
+\`\`\`typescript
 // middleware/auth.ts
 import { Request, Response, NextFunction } from 'express'
 import { panelsAPI } from '@panels/app/api'
@@ -344,14 +344,14 @@ router.get('/panels', authenticateToken, async (req: AuthenticatedRequest, res) 
     res.status(500).json({ error: 'Failed to fetch panels' })
   }
 })
-```
+\`\`\`
 
 ## Security Best Practices
 
 ### Token Storage
 
 **Client-side Security:**
-```typescript
+\`\`\`typescript
 // ✅ Good: Use httpOnly cookies for sensitive tokens
 // Set via server-side response
 res.cookie('auth_token', token, {
@@ -373,11 +373,11 @@ localStorage.setItem('auth_data', JSON.stringify(tokenData))
 
 // ❌ Bad: Plain localStorage without expiration
 localStorage.setItem('token', token)
-```
+\`\`\`
 
 ### Token Validation
 
-```typescript
+\`\`\`typescript
 // lib/auth.ts
 import jwt from 'jsonwebtoken'
 
@@ -412,11 +412,11 @@ export const isTokenExpired = (token: string): boolean => {
     return true
   }
 }
-```
+\`\`\`
 
 ### Automatic Token Refresh
 
-```typescript
+\`\`\`typescript
 // hooks/useAuthToken.ts
 import { useEffect, useRef } from 'react'
 import { useAuth } from '../contexts/auth'
@@ -460,13 +460,13 @@ export const useAuthToken = () => {
     }
   }, [token, refreshToken, logout])
 }
-```
+\`\`\`
 
 ## Error Handling
 
 ### Authentication Errors
 
-```typescript
+\`\`\`typescript
 // lib/apiClient.ts
 import { panelsAPI } from '@panels/app/api'
 
@@ -510,11 +510,11 @@ export const authenticatedAPI = {
     }
   }
 }
-```
+\`\`\`
 
 ### React Error Boundary
 
-```typescript
+\`\`\`typescript
 // components/AuthErrorBoundary.tsx
 import React, { Component, ErrorInfo, ReactNode } from 'react'
 import { AuthenticationError } from '../lib/apiClient'
@@ -576,13 +576,13 @@ export class AuthErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
-```
+\`\`\`
 
 ## Testing Authentication
 
 ### Mock Authentication for Tests
 
-```typescript
+\`\`\`typescript
 // __tests__/utils/mockAuth.ts
 import { panelsAPI } from '@panels/app/api'
 
@@ -602,11 +602,11 @@ export const mockUserContext = {
   tenantId: 'test-tenant',
   userId: 'test-user'
 }
-```
+\`\`\`
 
 ### Integration Tests
 
-```typescript
+\`\`\`typescript
 // __tests__/auth.test.ts
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -638,11 +638,11 @@ test('shows panels after authentication', async () => {
     expect(screen.getByText('Your Panels')).toBeInTheDocument()
   })
 })
-```
+\`\`\`
 
 ## Environment Configuration
 
-```typescript
+\`\`\`typescript
 // .env.local
 NEXT_PUBLIC_API_URL=http://localhost:3001
 PANELS_API_KEY=your-api-key-here
@@ -653,7 +653,7 @@ TENANT_ID=default-tenant
 NEXT_PUBLIC_API_URL=https://api.panels.company.com
 PANELS_API_KEY=prod-api-key
 JWT_SECRET=strong-production-secret
-```
+\`\`\`
 
 ## Summary
 
@@ -664,4 +664,4 @@ Authentication in the Panels API system requires:
 3. **Error handling** for authentication failures
 4. **Security best practices** for production deployment
 
-The authentication system supports multiple methods and provides the flexibility needed for various application architectures while maintaining security and multi-tenant isolation. 
+The authentication system supports multiple methods and provides the flexibility needed for various application architectures while maintaining security and multi-tenant isolation.

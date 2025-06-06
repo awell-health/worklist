@@ -121,4 +121,4 @@ Found a gap in our guides? We welcome contributions:
 2. **Follow the Template** - Use our guide template
 3. **Include Examples** - Provide working code
 4. **Test Instructions** - Verify steps work correctly
-5. **Submit PR** - Follow our contribution guidelines 
+5. **Submit PR** - Follow our contribution guidelines

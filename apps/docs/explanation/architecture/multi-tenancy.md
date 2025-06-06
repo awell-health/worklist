@@ -16,7 +16,7 @@ Multi-tenancy in the Panels system provides complete data isolation between diff
 
 ### Tenant Hierarchy
 
-```
+\`\`\`
 Organization (Tenant)
 ├── Users
 ├── Panels
@@ -27,11 +27,11 @@ Organization (Tenant)
     ├── Authentication Settings
     ├── Feature Flags
     └── Customizations
-```
+\`\`\`
 
 ### Tenant Entity
 
-```typescript
+\`\`\`typescript
 interface Tenant {
   id: string                    // Unique tenant identifier
   name: string                  // Organization name
@@ -52,7 +52,7 @@ interface TenantSettings {
   branding: BrandingConfig
   limits: ResourceLimits
 }
-```
+\`\`\`
 
 ## Data Isolation Strategy
 
@@ -60,7 +60,7 @@ interface TenantSettings {
 
 Every data entity includes a `tenantId` field that enforces complete data separation:
 
-```typescript
+\`\`\`typescript
 // Example entity with tenant isolation
 @Entity()
 export class Panel {
@@ -75,13 +75,13 @@ export class Panel {
 
   // ... other properties
 }
-```
+\`\`\`
 
 ### Query-Level Isolation
 
 All database queries automatically include tenant filtering:
 
-```typescript
+\`\`\`typescript
 // Service layer automatically enforces tenant isolation
 export class PanelService {
   async findAll(tenantId: string, userId: string): Promise<Panel[]> {
@@ -99,13 +99,13 @@ export class PanelService {
     return panel
   }
 }
-```
+\`\`\`
 
 ### Database-Level Isolation
 
 PostgreSQL Row-Level Security (RLS) provides additional protection:
 
-```sql
+\`\`\`sql
 -- Enable RLS on all tenant-aware tables
 ALTER TABLE panels ENABLE ROW LEVEL SECURITY;
 
@@ -117,7 +117,7 @@ CREATE POLICY tenant_isolation_policy ON panels
 
 -- Set tenant context for all queries
 SET app.current_tenant_id = 'tenant-123';
-```
+\`\`\`
 
 ## Authentication & Authorization
 
@@ -125,7 +125,7 @@ SET app.current_tenant_id = 'tenant-123';
 
 Users belong to specific tenants and can only access their tenant's data:
 
-```typescript
+\`\`\`typescript
 interface User {
   id: string
   email: string
@@ -141,13 +141,13 @@ interface TenantMembership {
   joinedAt: Date
   status: 'active' | 'invited' | 'suspended'
 }
-```
+\`\`\`
 
 ### JWT Token Structure
 
 JWTs include tenant context for request-level isolation:
 
-```typescript
+\`\`\`typescript
 interface JWTPayload {
   userId: string
   email: string
@@ -158,13 +158,13 @@ interface JWTPayload {
   iat: number
   exp: number
 }
-```
+\`\`\`
 
 ### Request Context
 
 Every API request includes tenant context:
 
-```typescript
+\`\`\`typescript
 // Middleware to extract and validate tenant context
 export async function tenantMiddleware(
   request: FastifyRequest, 
@@ -183,7 +183,7 @@ export async function tenantMiddleware(
   request.tenantId = requestedTenant
   request.userId = decoded.userId
 }
-```
+\`\`\`
 
 ## API Isolation
 
@@ -191,7 +191,7 @@ export async function tenantMiddleware(
 
 All API endpoints validate tenant access:
 
-```typescript
+\`\`\`typescript
 // Panel routes with tenant validation
 export async function panelRoutes(fastify: FastifyInstance) {
   // Apply tenant middleware to all routes
@@ -213,13 +213,13 @@ export async function panelRoutes(fastify: FastifyInstance) {
     return reply.send(panel)
   })
 }
-```
+\`\`\`
 
 ### Cross-Tenant Data Prevention
 
 Additional safeguards prevent accidental cross-tenant data access:
 
-```typescript
+\`\`\`typescript
 // Service layer validation
 export class PanelService {
   async update(
@@ -245,7 +245,7 @@ export class PanelService {
     return existingPanel
   }
 }
-```
+\`\`\`
 
 ## Database Design for Multi-tenancy
 
@@ -253,7 +253,7 @@ export class PanelService {
 
 All entities follow consistent tenant isolation patterns:
 
-```typescript
+\`\`\`typescript
 // Base entity with tenant isolation
 @Entity()
 export abstract class TenantEntity {
@@ -281,13 +281,13 @@ export class Panel extends TenantEntity {
 
   // ... other properties
 }
-```
+\`\`\`
 
 ### Indexing Strategy
 
 Database indexes support efficient tenant-aware queries:
 
-```sql
+\`\`\`sql
 -- Composite indexes for tenant + user queries
 CREATE INDEX idx_panels_tenant_user ON panels(tenant_id, user_id);
 CREATE INDEX idx_panels_tenant_created ON panels(tenant_id, created_at);
@@ -295,13 +295,13 @@ CREATE INDEX idx_panels_tenant_created ON panels(tenant_id, created_at);
 -- Tenant-only indexes for cross-user queries (admin operations)
 CREATE INDEX idx_panels_tenant ON panels(tenant_id);
 CREATE INDEX idx_datasources_tenant ON datasources(tenant_id);
-```
+\`\`\`
 
 ### Query Performance
 
 Tenant isolation maintains query performance through proper indexing:
 
-```typescript
+\`\`\`typescript
 // Optimized tenant-aware queries
 export class PanelRepository {
   // User panels within tenant (most common)
@@ -321,7 +321,7 @@ export class PanelRepository {
     // Uses idx_panels_tenant index
   }
 }
-```
+\`\`\`
 
 ## Tenant Configuration
 
@@ -329,7 +329,7 @@ export class PanelRepository {
 
 Different tenants can have different feature sets:
 
-```typescript
+\`\`\`typescript
 interface FeatureFlags {
   calculatedColumns: boolean    // Pro feature
   publicViews: boolean         // Enterprise feature
@@ -355,13 +355,13 @@ export class PanelService {
     return this.createPanel(data)
   }
 }
-```
+\`\`\`
 
 ### Custom Branding
 
 Tenants can customize the application appearance:
 
-```typescript
+\`\`\`typescript
 interface BrandingConfig {
   logo?: string                // Custom logo URL
   primaryColor?: string        // Brand color
@@ -382,7 +382,7 @@ export function useTenantBranding(tenantId: string) {
   
   return branding
 }
-```
+\`\`\`
 
 ## Scaling Considerations
 
@@ -409,7 +409,7 @@ The multi-tenant architecture supports various scaling strategies:
 
 For very large deployments, tenants can be distributed across multiple database instances:
 
-```typescript
+\`\`\`typescript
 // Tenant router for sharded deployments
 export class TenantRouter {
   private shards: Map<string, DatabaseConnection>
@@ -428,7 +428,7 @@ export class TenantRouter {
     return shard.execute(query)
   }
 }
-```
+\`\`\`
 
 ## Tenant Lifecycle Management
 
@@ -436,7 +436,7 @@ export class TenantRouter {
 
 New tenant setup includes:
 
-```typescript
+\`\`\`typescript
 export class TenantService {
   async createTenant(data: CreateTenantRequest): Promise<Tenant> {
     return this.em.transactional(async (em) => {
@@ -468,13 +468,13 @@ export class TenantService {
     })
   }
 }
-```
+\`\`\`
 
 ### Tenant Migration
 
 Moving tenants between shards or upgrading plans:
 
-```typescript
+\`\`\`typescript
 export class TenantMigrationService {
   async migrateTenant(
     tenantId: string, 
@@ -496,7 +496,7 @@ export class TenantMigrationService {
     await this.cleanupSourceTenant(tenantId)
   }
 }
-```
+\`\`\`
 
 ## Security Considerations
 
@@ -513,7 +513,7 @@ Multiple layers prevent cross-tenant data access:
 
 All tenant operations are logged for compliance:
 
-```typescript
+\`\`\`typescript
 // Tenant-aware audit logging
 export class AuditService {
   async logAction(
@@ -536,13 +536,13 @@ export class AuditService {
     await this.em.persistAndFlush(auditLog)
   }
 }
-```
+\`\`\`
 
 ### Data Residency
 
 For compliance requirements, tenant data can be geo-located:
 
-```typescript
+\`\`\`typescript
 interface TenantSettings {
   dataResidency: {
     region: string              // e.g., 'eu-west-1', 'us-east-1'
@@ -550,7 +550,7 @@ interface TenantSettings {
     retentionPolicy: number     // Days
   }
 }
-```
+\`\`\`
 
 ## Monitoring & Observability
 
@@ -558,7 +558,7 @@ interface TenantSettings {
 
 Monitoring includes tenant-level breakdown:
 
-```typescript
+\`\`\`typescript
 // Tenant performance metrics
 export class TenantMetrics {
   async recordApiCall(tenantId: string, endpoint: string, duration: number) {
@@ -575,13 +575,13 @@ export class TenantMetrics {
     })
   }
 }
-```
+\`\`\`
 
 ### Tenant Health Monitoring
 
 Automated monitoring for tenant-specific issues:
 
-```typescript
+\`\`\`typescript
 // Tenant health checks
 export class TenantHealthService {
   async checkTenantHealth(tenantId: string): Promise<HealthStatus> {
@@ -599,7 +599,7 @@ export class TenantHealthService {
     }
   }
 }
-```
+\`\`\`
 
 ## Future Considerations
 
@@ -627,4 +627,4 @@ Advanced techniques for scale:
 - [System Overview](./system-overview.md) - Overall architecture
 - [Security Model](./security-model.md) - Security implementation
 - [Data Model](./data-model.md) - Entity relationships
-- [Authentication Guide](/guides/api-client/authentication.md) - API authentication 
+- [Authentication Guide](/guides/api-client/authentication.md) - API authentication

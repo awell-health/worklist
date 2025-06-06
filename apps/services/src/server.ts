@@ -28,4 +28,4 @@ closeWithGrace(
     app.log.info(`${app.configuration.APPLICATION_NAME} started listening on: ${app.configuration.APPLICATION_PORT}.`)
     console.log(app.printRoutes())
     figlet('Worklist', { font: "Ghost"}, (err, result) => console.log(result))
-  });  
+  });

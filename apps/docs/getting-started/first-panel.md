@@ -21,7 +21,7 @@ A **Panel** is the foundation of the Panels system. Think of it as:
 
 First, let's set up our imports and basic configuration:
 
-```typescript
+\`\`\`typescript
 // panel-demo.ts
 import { panelsAPI } from '@panels/app/api'
 
@@ -30,11 +30,11 @@ const TENANT_ID = "tenant-123"
 const USER_ID = "user-456"
 
 console.log("Starting panel creation demo...")
-```
+\`\`\`
 
 ## Step 2: Create Your First Panel
 
-```typescript
+\`\`\`typescript
 async function createTeamDirectoryPanel() {
   try {
     // Create the panel with descriptive metadata
@@ -60,13 +60,13 @@ async function createTeamDirectoryPanel() {
 
 // Run the function
 const myPanel = await createTeamDirectoryPanel()
-```
+\`\`\`
 
 ## Step 3: Verify Panel Creation
 
 Let's verify the panel was created and explore its properties:
 
-```typescript
+\`\`\`typescript
 async function verifyPanel(panelId: number) {
   try {
     // Retrieve the panel by ID
@@ -95,13 +95,13 @@ async function verifyPanel(panelId: number) {
 
 // Verify our panel
 await verifyPanel(myPanel.id)
-```
+\`\`\`
 
 ## Step 4: List User Panels
 
 Let's see all panels for our user:
 
-```typescript
+\`\`\`typescript
 async function listUserPanels() {
   try {
     const panels = await panelsAPI.all(TENANT_ID, USER_ID)
@@ -122,13 +122,13 @@ async function listUserPanels() {
 
 // List all panels
 const allPanels = await listUserPanels()
-```
+\`\`\`
 
 ## Step 5: Update Panel Metadata
 
 You can update panel information after creation:
 
-```typescript
+\`\`\`typescript
 async function updatePanelInfo(panelId: number) {
   try {
     const updatedPanel = await panelsAPI.update({
@@ -153,13 +153,13 @@ async function updatePanelInfo(panelId: number) {
 
 // Update our panel
 const updatedPanel = await updatePanelInfo(myPanel.id)
-```
+\`\`\`
 
 ## Complete Example
 
 Here's the complete code for creating and managing your first panel:
 
-```typescript
+\`\`\`typescript
 import { panelsAPI } from '@panels/app/api'
 
 const TENANT_ID = "tenant-123"
@@ -220,13 +220,13 @@ firstPanelDemo()
   .catch(error => {
     console.error("\n💥 Demo failed:", error.message)
   })
-```
+\`\`\`
 
 ## Understanding the Response
 
 When you create a panel, you get back a `CreatePanelResponse` object with:
 
-```typescript
+\`\`\`typescript
 {
   id: number              // Unique panel identifier
   name: string           // Panel display name
@@ -240,7 +240,7 @@ When you create a panel, you get back a `CreatePanelResponse` object with:
   createdAt: Date       // Creation timestamp
   updatedAt: Date       // Last modification timestamp
 }
-```
+\`\`\`
 
 ## Panel Naming Best Practices
 
@@ -278,7 +278,7 @@ Now that you have a panel, you're ready to add data sources!
 ## Troubleshooting
 
 **Panel creation fails:**
-```typescript
+\`\`\`typescript
 // Check your tenant and user IDs
 console.log("Tenant ID:", TENANT_ID)
 console.log("User ID:", USER_ID)
@@ -290,7 +290,7 @@ try {
 } catch (error) {
   console.error("API connectivity: FAILED", error)
 }
-```
+\`\`\`
 
 **Common Issues:**
 - Invalid tenant/user IDs
@@ -298,4 +298,4 @@ try {
 - Missing environment variables
 - Database connection issues
 
-If you encounter problems, check the [troubleshooting guide](/guides/api-client/handling-errors). 
+If you encounter problems, check the [troubleshooting guide](/guides/api-client/handling-errors).

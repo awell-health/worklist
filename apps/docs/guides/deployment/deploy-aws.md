@@ -17,7 +17,7 @@ This guide walks you through deploying the Panels application to Amazon Web Serv
 ### Option A: Manual Setup (Quick Start)
 
 #### Create VPC and Subnets
-```bash
+\`\`\`bash
 # Create VPC
 aws ec2 create-vpc --cidr-block 10.0.0.0/16 --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=panels-vpc}]'
 
@@ -28,10 +28,10 @@ aws ec2 create-subnet --vpc-id vpc-xxxxxx --cidr-block 10.0.2.0/24 --availabilit
 # Create private subnets (for application)
 aws ec2 create-subnet --vpc-id vpc-xxxxxx --cidr-block 10.0.3.0/24 --availability-zone us-west-2a
 aws ec2 create-subnet --vpc-id vpc-xxxxxx --cidr-block 10.0.4.0/24 --availability-zone us-west-2b
-```
+\`\`\`
 
 #### Create Security Groups
-```bash
+\`\`\`bash
 # Security group for load balancer
 aws ec2 create-security-group \
   --group-name panels-alb-sg \
@@ -50,13 +50,13 @@ aws ec2 authorize-security-group-ingress \
   --protocol tcp \
   --port 443 \
   --cidr 0.0.0.0/0
-```
+\`\`\`
 
 ### Option B: Infrastructure as Code (Recommended)
 
 Create a Terraform configuration:
 
-```hcl
+\`\`\`hcl
 # infrastructure/main.tf
 terraform {
   required_providers {
@@ -149,20 +149,20 @@ resource "aws_elasticache_replication_group" "redis" {
     Project     = "panels"
   }
 }
-```
+\`\`\`
 
 Apply the infrastructure:
-```bash
+\`\`\`bash
 cd infrastructure
 terraform init
 terraform plan -var-file="environments/${ENVIRONMENT}.tfvars"
 terraform apply -var-file="environments/${ENVIRONMENT}.tfvars"
-```
+\`\`\`
 
 ## Step 2: Build and Push Docker Images
 
 ### Build Application Images
-```bash
+\`\`\`bash
 # Build API image
 docker build -t panels-api:latest -f apps/services/Dockerfile .
 
@@ -172,10 +172,10 @@ docker build -t panels-app:latest -f apps/app/Dockerfile .
 # Tag images for ECR
 docker tag panels-api:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/panels-api:latest
 docker tag panels-app:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/panels-app:latest
-```
+\`\`\`
 
 ### Create ECR Repositories
-```bash
+\`\`\`bash
 # Create ECR repositories
 aws ecr create-repository --repository-name panels-api
 aws ecr create-repository --repository-name panels-app
@@ -183,25 +183,25 @@ aws ecr create-repository --repository-name panels-app
 # Get login token and authenticate Docker
 aws ecr get-login-password --region $AWS_REGION | \
   docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-```
+\`\`\`
 
 ### Push Images to ECR
-```bash
+\`\`\`bash
 # Push images
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/panels-api:latest
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/panels-app:latest
-```
+\`\`\`
 
 ## Step 3: Set Up ECS Cluster
 
 ### Create ECS Cluster
-```bash
+\`\`\`bash
 # Create ECS cluster
 aws ecs create-cluster --cluster-name panels-cluster --capacity-providers FARGATE
-```
+\`\`\`
 
 ### Create Task Definitions
-```json
+\`\`\`json
 // ecs/api-task-definition.json
 {
   "family": "panels-api",
@@ -262,19 +262,19 @@ aws ecs create-cluster --cluster-name panels-cluster --capacity-providers FARGAT
     }
   ]
 }
-```
+\`\`\`
 
 ### Register Task Definitions
-```bash
+\`\`\`bash
 # Register task definitions
 aws ecs register-task-definition --cli-input-json file://ecs/api-task-definition.json
 aws ecs register-task-definition --cli-input-json file://ecs/app-task-definition.json
-```
+\`\`\`
 
 ## Step 4: Set Up Application Load Balancer
 
 ### Create Application Load Balancer
-```bash
+\`\`\`bash
 # Create ALB
 aws elbv2 create-load-balancer \
   --name panels-alb \
@@ -282,10 +282,10 @@ aws elbv2 create-load-balancer \
   --security-groups sg-xxxxxx \
   --scheme internet-facing \
   --type application
-```
+\`\`\`
 
 ### Create Target Groups
-```bash
+\`\`\`bash
 # API target group
 aws elbv2 create-target-group \
   --name panels-api-tg \
@@ -304,10 +304,10 @@ aws elbv2 create-target-group \
   --vpc-id vpc-xxxxxx \
   --target-type ip \
   --health-check-path /health
-```
+\`\`\`
 
 ### Configure Listeners
-```bash
+\`\`\`bash
 # HTTPS listener (requires SSL certificate)
 aws elbv2 create-listener \
   --load-balancer-arn arn:aws:elasticloadbalancing:us-west-2:ACCOUNT:loadbalancer/app/panels-alb/xxxxxx \
@@ -322,12 +322,12 @@ aws elbv2 create-rule \
   --conditions Field=path-pattern,Values='/api/*' \
   --priority 100 \
   --actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:us-west-2:ACCOUNT:targetgroup/panels-api-tg/xxxxxx
-```
+\`\`\`
 
 ## Step 5: Create ECS Services
 
 ### API Service
-```bash
+\`\`\`bash
 aws ecs create-service \
   --cluster panels-cluster \
   --service-name panels-api \
@@ -336,10 +336,10 @@ aws ecs create-service \
   --launch-type FARGATE \
   --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxxxx,subnet-yyyyyy],securityGroups=[sg-xxxxxx],assignPublicIp=DISABLED}" \
   --load-balancers targetGroupArn=arn:aws:elasticloadbalancing:us-west-2:ACCOUNT:targetgroup/panels-api-tg/xxxxxx,containerName=panels-api,containerPort=3001
-```
+\`\`\`
 
 ### Frontend Service
-```bash
+\`\`\`bash
 aws ecs create-service \
   --cluster panels-cluster \
   --service-name panels-app \
@@ -348,12 +348,12 @@ aws ecs create-service \
   --launch-type FARGATE \
   --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxxxx,subnet-yyyyyy],securityGroups=[sg-xxxxxx],assignPublicIp=DISABLED}" \
   --load-balancers targetGroupArn=arn:aws:elasticloadbalancing:us-west-2:ACCOUNT:targetgroup/panels-app-tg/xxxxxx,containerName=panels-app,containerPort=3000
-```
+\`\`\`
 
 ## Step 6: Configure Secrets Management
 
 ### Store Secrets in AWS Secrets Manager
-```bash
+\`\`\`bash
 # Database password
 aws secretsmanager create-secret \
   --name "panels/database" \
@@ -371,20 +371,20 @@ aws secretsmanager create-secret \
   --name "panels/api-keys" \
   --description "External API keys for Panels" \
   --secret-string '{"medplum_client_secret":"your-medplum-secret"}'
-```
+\`\`\`
 
 ## Step 7: Set Up Monitoring and Logging
 
 ### CloudWatch Log Groups
-```bash
+\`\`\`bash
 # Create log groups
 aws logs create-log-group --log-group-name /ecs/panels-api
 aws logs create-log-group --log-group-name /ecs/panels-app
 aws logs create-log-group --log-group-name /aws/ecs/panels-cluster
-```
+\`\`\`
 
 ### CloudWatch Alarms
-```bash
+\`\`\`bash
 # High CPU alarm
 aws cloudwatch put-metric-alarm \
   --alarm-name "panels-api-high-cpu" \
@@ -410,12 +410,12 @@ aws cloudwatch put-metric-alarm \
   --comparison-operator GreaterThanThreshold \
   --dimensions Name=DBInstanceIdentifier,Value=panels-production \
   --evaluation-periods 2
-```
+\`\`\`
 
 ## Step 8: Configure Auto Scaling
 
 ### ECS Service Auto Scaling
-```bash
+\`\`\`bash
 # Register scalable target
 aws application-autoscaling register-scalable-target \
   --service-namespace ecs \
@@ -439,22 +439,22 @@ aws application-autoscaling put-scaling-policy \
     "ScaleOutCooldown": 300,
     "ScaleInCooldown": 300
   }'
-```
+\`\`\`
 
 ## Step 9: Set Up SSL/TLS
 
 ### Request SSL Certificate
-```bash
+\`\`\`bash
 # Request certificate from ACM
 aws acm request-certificate \
   --domain-name panels.yourdomain.com \
   --domain-name *.panels.yourdomain.com \
   --validation-method DNS \
   --subject-alternative-names api.panels.yourdomain.com
-```
+\`\`\`
 
 ### Configure Route 53 (if using)
-```bash
+\`\`\`bash
 # Create hosted zone
 aws route53 create-hosted-zone \
   --name panels.yourdomain.com \
@@ -477,12 +477,12 @@ aws route53 change-resource-record-sets \
       }
     }]
   }'
-```
+\`\`\`
 
 ## Step 10: Deploy and Verify
 
 ### Run Database Migrations
-```bash
+\`\`\`bash
 # Connect to ECS task to run migrations
 aws ecs run-task \
   --cluster panels-cluster \
@@ -495,10 +495,10 @@ aws ecs run-task \
       "command": ["npm", "run", "migration:run"]
     }]
   }'
-```
+\`\`\`
 
 ### Verify Deployment
-```bash
+\`\`\`bash
 # Check service status
 aws ecs describe-services --cluster panels-cluster --services panels-api panels-app
 
@@ -508,7 +508,7 @@ aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing
 # Test endpoints
 curl https://panels.yourdomain.com/health
 curl https://panels.yourdomain.com/api/health
-```
+\`\`\`
 
 ## Best Practices
 
@@ -572,4 +572,4 @@ curl https://panels.yourdomain.com/api/health
 
 - **[AWS deployment architecture](../../explanation/decisions/cloud-architecture.md)** - Understand the design decisions
 - **[Security best practices](../../guides/troubleshooting/security.md)** - Secure your deployment
-- **[Monitoring setup](../../guides/deployment/setup-monitoring.md)** - Monitor your application 
+- **[Monitoring setup](../../guides/deployment/setup-monitoring.md)** - Monitor your application

@@ -6,7 +6,7 @@ This document explains the data model and entity relationships that form the fou
 
 The Panels system is built around several core entities that work together to provide flexible data management:
 
-```
+\`\`\`
 Panel (Core Entity)
 ├── CohortRule (1:1)
 ├── DataSources (1:N)
@@ -19,7 +19,7 @@ View (Presentation Entity)
 ├── ViewSorts (1:N)
 ├── ViewFilters (1:N)
 └── ViewNotifications (1:N)
-```
+\`\`\`
 
 ## Core Entities
 
@@ -27,7 +27,7 @@ View (Presentation Entity)
 
 The **Panel** is the central organizing entity that represents a collection of related data and configuration.
 
-```typescript
+\`\`\`typescript
 interface Panel {
   id: number                    // Unique identifier
   name: string                  // Human-readable name
@@ -38,7 +38,7 @@ interface Panel {
   createdAt: Date              // Creation timestamp
   updatedAt: Date              // Last modification
 }
-```
+\`\`\`
 
 **Purpose**: Panels serve as containers that organize related data sources, columns, and views. They define the scope and context for data management operations.
 
@@ -52,7 +52,7 @@ interface Panel {
 
 The **CohortRule** defines the population or subset of data that a panel operates on.
 
-```typescript
+\`\`\`typescript
 interface CohortRule {
   id: number                    // Unique identifier
   conditions: Condition[]       // Filter conditions
@@ -65,7 +65,7 @@ interface Condition {
   operator: string             // Comparison operator
   value: any                   // Filter value
 }
-```
+\`\`\`
 
 **Purpose**: CohortRules allow panels to operate on specific subsets of data rather than entire datasets.
 
@@ -79,7 +79,7 @@ interface Condition {
 
 **DataSources** connect panels to external data systems and define how data flows into the panel.
 
-```typescript
+\`\`\`typescript
 interface DataSource {
   id: number                    // Unique identifier
   type: DataSourceType         // Source type (database, api, file)
@@ -100,7 +100,7 @@ interface DataSourceConfig {
   headers?: Record<string, string> // For API authentication
   schedule?: string            // Sync schedule (cron format)
 }
-```
+\`\`\`
 
 **Purpose**: DataSources abstract the complexity of connecting to different data systems and provide a uniform interface for data access.
 
@@ -118,7 +118,7 @@ The column system provides flexible data structure definition with two distinct 
 
 **BaseColumns** represent direct mappings to fields in data sources.
 
-```typescript
+\`\`\`typescript
 interface BaseColumn {
   id: number                    // Unique identifier
   name: string                  // Display name
@@ -139,7 +139,7 @@ interface ColumnProperties {
   defaultValue?: any          // Default value
   validation?: ValidationRule[] // Custom validation
 }
-```
+\`\`\`
 
 **Purpose**: BaseColumns provide the foundational data structure by mapping to actual fields in connected data sources.
 
@@ -153,7 +153,7 @@ interface ColumnProperties {
 
 **CalculatedColumns** represent computed fields based on formulas and dependencies.
 
-```typescript
+\`\`\`typescript
 interface CalculatedColumn {
   id: number                    // Unique identifier
   name: string                  // Display name
@@ -164,12 +164,12 @@ interface CalculatedColumn {
   tenantId: string             // Tenant isolation
   userId: string               // Owner
 }
-```
+\`\`\`
 
 **Purpose**: CalculatedColumns enable complex data transformations and computations without modifying source data.
 
 **Formula Examples**:
-```javascript
+\`\`\`javascript
 // Simple arithmetic
 "baseColumn1 + baseColumn2"
 
@@ -181,7 +181,7 @@ interface CalculatedColumn {
 
 // Aggregations (within panel context)
 "sum(revenue) / count(customers)"
-```
+\`\`\`
 
 **Dependencies**: The system automatically tracks dependencies and updates calculated columns when their dependent columns change.
 
@@ -193,7 +193,7 @@ Views provide customized presentations of panel data for different users and use
 
 **Views** define how data is presented, filtered, and sorted for specific purposes.
 
-```typescript
+\`\`\`typescript
 interface View {
   id: number                    // Unique identifier
   name: string                  // Display name
@@ -212,7 +212,7 @@ interface ViewConfig {
   pagination: PaginationConfig // Page size, etc.
   grouping?: GroupingConfig    // Grouping rules
 }
-```
+\`\`\`
 
 **Purpose**: Views allow multiple users to have different perspectives on the same underlying data without duplicating or modifying the source.
 
@@ -220,7 +220,7 @@ interface ViewConfig {
 
 **ViewSorts** define how data is ordered within views.
 
-```typescript
+\`\`\`typescript
 interface ViewSort {
   id: number                    // Unique identifier
   columnName: string           // Column to sort by
@@ -228,7 +228,7 @@ interface ViewSort {
   priority: number             // Sort order (for multi-column sorts)
   view: View                   // Parent view
 }
-```
+\`\`\`
 
 **Multi-level Sorting**: Views support multiple sort criteria with explicit priority ordering.
 
@@ -236,7 +236,7 @@ interface ViewSort {
 
 **ViewFilters** define how data is filtered within views.
 
-```typescript
+\`\`\`typescript
 interface ViewFilter {
   id: number                    // Unique identifier
   columnName: string           // Column to filter
@@ -252,7 +252,7 @@ type FilterOperator =
   | 'contains' | 'starts_with' | 'ends_with'
   | 'in' | 'not_in'
   | 'is_null' | 'is_not_null'
-```
+\`\`\`
 
 **Advanced Filtering**: Supports complex filter combinations with nested logical operators.
 
@@ -264,7 +264,7 @@ The system maintains comprehensive audit trails for all modifications.
 
 **PanelChanges** track all modifications to panel-level entities.
 
-```typescript
+\`\`\`typescript
 interface PanelChange {
   id: number                    // Unique identifier
   entityType: string           // Changed entity type
@@ -286,7 +286,7 @@ interface ChangeMetadata {
   reason?: string              // Optional reason
   impactedUsers?: string[]     // Users affected by change
 }
-```
+\`\`\`
 
 **Purpose**: Change tracking enables auditing, rollback capabilities, and impact analysis.
 
@@ -294,7 +294,7 @@ interface ChangeMetadata {
 
 **ViewNotifications** manage alerts for view-related changes.
 
-```typescript
+\`\`\`typescript
 interface ViewNotification {
   id: number                    // Unique identifier
   type: NotificationType       // Notification type
@@ -306,13 +306,13 @@ interface ViewNotification {
 }
 
 type NotificationType = 'VIEW_PUBLISHED' | 'VIEW_UPDATED' | 'DATA_CHANGED'
-```
+\`\`\`
 
 ## Data Relationships
 
 ### Primary Relationships
 
-```
+\`\`\`
 Panel (1) ←→ (1) CohortRule
 Panel (1) ←→ (N) DataSource
 Panel (1) ←→ (N) BaseColumn
@@ -325,11 +325,11 @@ DataSource (1) ←→ (N) BaseColumn
 View (1) ←→ (N) ViewSort
 View (1) ←→ (N) ViewFilter
 View (1) ←→ (N) ViewNotification
-```
+\`\`\`
 
 ### Dependency Graph
 
-```mermaid
+\`\`\`mermaid
 graph TD
     Panel --> CohortRule
     Panel --> DataSource
@@ -347,7 +347,7 @@ graph TD
     
     CalculatedColumn -.-> BaseColumn
     CalculatedColumn -.-> CalculatedColumn
-```
+\`\`\`
 
 ## Multi-tenant Data Isolation
 
@@ -355,13 +355,13 @@ graph TD
 
 Every entity includes `tenantId` for complete data isolation:
 
-```typescript
+\`\`\`typescript
 // Example query with tenant isolation
 const panels = await em.find(Panel, {
   tenantId: currentTenant.id,
   userId: currentUser.id
 })
-```
+\`\`\`
 
 ### Access Control Matrix
 
@@ -398,7 +398,7 @@ const panels = await em.find(Panel, {
 
 All multi-entity operations use database transactions:
 
-```typescript
+\`\`\`typescript
 // Example: Creating panel with default entities
 await em.transactional(async (em) => {
   const panel = new Panel(...)
@@ -407,7 +407,7 @@ await em.transactional(async (em) => {
   
   await em.persistAndFlush([panel, cohortRule, change])
 })
-```
+\`\`\`
 
 ## Performance Considerations
 
@@ -442,4 +442,4 @@ await em.transactional(async (em) => {
 - [System Overview](./system-overview.md) - High-level architecture
 - [Multi-tenancy](./multi-tenancy.md) - Tenant isolation details
 - [Security Model](./security-model.md) - Security considerations
-- [Database Schema](/reference/database/schema.md) - Technical schema reference 
+- [Database Schema](/reference/database/schema.md) - Technical schema reference

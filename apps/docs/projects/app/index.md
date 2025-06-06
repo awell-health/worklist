@@ -34,7 +34,7 @@ The frontend application is a Next.js-based web application that provides the us
 
 ## Project Structure
 
-```
+\`\`\`
 apps/app/
 ├── src/
 │   ├── api/                    # API client modules
@@ -57,7 +57,7 @@ apps/app/
 ├── tailwind.config.js       # Tailwind configuration
 ├── tsconfig.json           # TypeScript configuration
 └── package.json            # Package configuration
-```
+\`\`\`
 
 ## Key Features
 
@@ -90,7 +90,7 @@ apps/app/
 The frontend uses a custom API client that provides type-safe communication with the backend:
 
 ### panelsAPI Module
-```typescript
+\`\`\`typescript
 // Core panel operations
 await panelsAPI.create(panelData)
 await panelsAPI.all(tenantId, userId)
@@ -107,10 +107,10 @@ await panelsAPI.dataSources.sync(panelId, dataSourceId, tenantId, userId)
 await panelsAPI.columns.createBase(panelId, columnData)
 await panelsAPI.columns.createCalculated(panelId, columnData)
 await panelsAPI.columns.list(panelId, tenantId, userId)
-```
+\`\`\`
 
 ### viewsAPI Module
-```typescript
+\`\`\`typescript
 // View operations
 await viewsAPI.create(viewData)
 await viewsAPI.all(panelId, tenantId, userId)
@@ -123,12 +123,12 @@ await viewsAPI.publish({ view: { id: viewId }, tenantId, userId })
 // Sorting operations
 await viewsAPI.sort.update({ view: { id: viewId }, sortData, tenantId, userId })
 await viewsAPI.sort.get({ view: { id: viewId }, tenantId, userId })
-```
+\`\`\`
 
 ## Component Architecture
 
 ### Component Hierarchy
-```
+\`\`\`
 App
 ├── Layout
 │   ├── Header
@@ -152,7 +152,7 @@ App
     ├── DataTable
     ├── FormControls
     └── LoadingStates
-```
+\`\`\`
 
 ### Reusable Components
 - **DataTable**: Advanced table with sorting, filtering, pagination
@@ -164,7 +164,7 @@ App
 ## State Management
 
 ### Context Providers
-```typescript
+\`\`\`typescript
 // Authentication context
 const AuthProvider: React.FC<{ children: ReactNode }>
 
@@ -176,10 +176,10 @@ const PanelProvider: React.FC<{ children: ReactNode }>
 
 // Theme context
 const ThemeProvider: React.FC<{ children: ReactNode }>
-```
+\`\`\`
 
 ### Custom Hooks
-```typescript
+\`\`\`typescript
 // API hooks
 const usePanel = (panelId: string) => { ... }
 const usePanels = (tenantId: string, userId: string) => { ... }
@@ -194,12 +194,12 @@ const useLocalStorage = (key: string) => { ... }
 const useModal = () => { ... }
 const useToast = () => { ... }
 const useDebounce = (value: any, delay: number) => { ... }
-```
+\`\`\`
 
 ## Styling System
 
 ### Tailwind Configuration
-```javascript
+\`\`\`javascript
 // tailwind.config.js
 module.exports = {
   content: ['./src/**/*.{js,ts,jsx,tsx}'],
@@ -214,7 +214,7 @@ module.exports = {
   },
   plugins: [require('daisyui')]
 }
-```
+\`\`\`
 
 ### Design System
 - **Typography**: Consistent text styles and sizes
@@ -226,7 +226,7 @@ module.exports = {
 ## Development Workflow
 
 ### Available Scripts
-```bash
+\`\`\`bash
 # Development
 pnpm dev                 # Start development server
 pnpm build              # Build for production
@@ -242,10 +242,10 @@ pnpm format             # Format code with Prettier
 pnpm test               # Run tests
 pnpm test:watch         # Run tests in watch mode
 pnpm test:coverage      # Run tests with coverage
-```
+\`\`\`
 
 ### Development Server
-```bash
+\`\`\`bash
 # Start development server
 cd apps/app
 pnpm dev
@@ -253,21 +253,21 @@ pnpm dev
 # Server will start on http://localhost:3003
 # Hot reload enabled for instant feedback
 # API proxy configured for backend integration
-```
+\`\`\`
 
 ## Environment Configuration
 
 ### Environment Variables
-```bash
+\`\`\`bash
 # .env.local
 NEXTAUTH_URL=http://localhost:3003
 NEXTAUTH_SECRET=your-secret-key
 NEXT_PUBLIC_API_URL=http://localhost:3001
 NEXT_PUBLIC_APP_ENV=development
-```
+\`\`\`
 
 ### Next.js Configuration
-```javascript
+\`\`\`javascript
 // next.config.js
 const nextConfig = {
   reactStrictMode: true,
@@ -284,7 +284,7 @@ const nextConfig = {
     ]
   }
 }
-```
+\`\`\`
 
 ## Performance Optimization
 
@@ -309,7 +309,7 @@ const nextConfig = {
 - **Playwright**: End-to-end testing
 
 ### Test Structure
-```
+\`\`\`
 src/
 ├── __tests__/          # Global tests
 ├── components/
@@ -318,19 +318,19 @@ src/
 │   └── __tests__/      # Hook tests
 └── utils/
     └── __tests__/      # Utility tests
-```
+\`\`\`
 
 ## Building and Deployment
 
 ### Build Process
-```bash
+\`\`\`bash
 # Production build
 pnpm build
 
 # Output directory: .next/
 # Static files: .next/static/
 # Server files: .next/server/
-```
+\`\`\`
 
 ### Deployment Options
 - **Vercel**: Native Next.js deployment
@@ -385,4 +385,4 @@ pnpm build
 - [API Client Reference](/reference/api-client/panels-api.md)
 - [Component Library](/reference/frontend/panel-components.md)
 - [Testing Guide](/guides/development/testing-strategies.md)
-- [Deployment Guide](/guides/deployment/production-setup.md) 
+- [Deployment Guide](/guides/deployment/production-setup.md)

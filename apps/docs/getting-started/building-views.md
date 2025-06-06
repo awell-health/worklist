@@ -38,7 +38,7 @@ By the end of this tutorial, you'll know how to:
 
 Let's start by creating a view for active users only:
 
-```typescript
+\`\`\`typescript
 // views-demo.ts
 import { viewsAPI } from '@panels/app/api'
 
@@ -48,11 +48,11 @@ const TENANT_ID = "tenant-123"
 const USER_ID = "user-456"
 
 console.log("Starting views tutorial...")
-```
+\`\`\`
 
 ### Create a Filtered View
 
-```typescript
+\`\`\`typescript
 async function createActiveUsersView() {
   try {
     console.log("🎯 Creating active users view...")
@@ -103,13 +103,13 @@ async function createActiveUsersView() {
 
 // Create the view
 const activeUsersView = await createActiveUsersView()
-```
+\`\`\`
 
 ### Create a New Users View
 
 Let's create another view for recently created accounts:
 
-```typescript
+\`\`\`typescript
 async function createNewUsersView() {
   try {
     console.log("🆕 Creating new users view...")
@@ -163,7 +163,7 @@ async function createNewUsersView() {
 
 // Create new users view
 const newUsersView = await createNewUsersView()
-```
+\`\`\`
 
 ## Step 2: Advanced View Configuration
 
@@ -171,7 +171,7 @@ Let's create more sophisticated views with multiple filters and complex sorting:
 
 ### High-Value Users View
 
-```typescript
+\`\`\`typescript
 async function createHighValueUsersView() {
   try {
     console.log("💎 Creating high-value users view...")
@@ -234,11 +234,11 @@ async function createHighValueUsersView() {
 
 // Create high-value view
 const highValueView = await createHighValueUsersView()
-```
+\`\`\`
 
 ### Problem Users View
 
-```typescript
+\`\`\`typescript
 async function createProblemUsersView() {
   try {
     console.log("⚠️ Creating problem users view...")
@@ -311,7 +311,7 @@ async function createProblemUsersView() {
 
 // Create problem users view
 const problemUsersView = await createProblemUsersView()
-```
+\`\`\`
 
 ## Step 3: View Management
 
@@ -319,7 +319,7 @@ Let's learn how to list, update, and organize our views:
 
 ### List All Views
 
-```typescript
+\`\`\`typescript
 async function listAllViews() {
   try {
     console.log("📋 Listing all panel views...")
@@ -353,11 +353,11 @@ async function listAllViews() {
 
 // List all views
 const allViews = await listAllViews()
-```
+\`\`\`
 
 ### Update View Configuration
 
-```typescript
+\`\`\`typescript
 async function updateViewConfig() {
   try {
     console.log("⚙️ Updating view configuration...")
@@ -399,7 +399,7 @@ async function updateViewConfig() {
 
 // Update view
 const updatedActiveView = await updateViewConfig()
-```
+\`\`\`
 
 ## Step 4: Publishing Views
 
@@ -407,7 +407,7 @@ Now let's publish our views to make them available to users:
 
 ### Publish Individual Views
 
-```typescript
+\`\`\`typescript
 async function publishViews() {
   try {
     console.log("📢 Publishing views...")
@@ -475,11 +475,11 @@ async function publishViews() {
 
 // Publish views
 await publishViews()
-```
+\`\`\`
 
 ### Set Default View
 
-```typescript
+\`\`\`typescript
 async function setDefaultView() {
   try {
     console.log("🏠 Setting default view...")
@@ -511,7 +511,7 @@ async function setDefaultView() {
 
 // Set default view
 await setDefaultView()
-```
+\`\`\`
 
 ## Step 5: Advanced View Features
 
@@ -519,7 +519,7 @@ Let's explore some advanced view capabilities:
 
 ### View with Custom Sorting
 
-```typescript
+\`\`\`typescript
 async function createCustomSortingView() {
   try {
     console.log("📊 Creating view with advanced sorting...")
@@ -569,13 +569,13 @@ async function createCustomSortingView() {
 
 // Create custom sorting view
 const sortedView = await createCustomSortingView()
-```
+\`\`\`
 
 ## Complete Views Workflow
 
 Here's a complete example that creates a full set of views:
 
-```typescript
+\`\`\`typescript
 import { viewsAPI } from '@panels/app/api'
 
 const PANEL_ID = "123" // Your panel ID
@@ -727,7 +727,7 @@ createCompleteViewSet()
   .catch(error => {
     console.error("\n💥 Setup failed:", error.message)
   })
-```
+\`\`\`
 
 ## View Configuration Reference
 
@@ -750,14 +750,14 @@ createCompleteViewSet()
 
 ### Sorting Options
 
-```typescript
+\`\`\`typescript
 interface SortingCriteria {
   columnTitle: string         // Column to sort by
   direction: 'asc' | 'desc'   // Sort direction
   customOrder?: string[]      // Custom ordering for select fields
   nullsFirst?: boolean        // Where to put null values
 }
-```
+\`\`\`
 
 ### Permission Levels
 
@@ -774,7 +774,7 @@ interface SortingCriteria {
 ### Common Issues
 
 **View Not Showing Data:**
-```typescript
+\`\`\`typescript
 // Check if filters are too restrictive
 const view = await viewsAPI.get(panelId, viewId, tenantId, userId)
 console.log("Filters:", view.filters)
@@ -783,10 +783,10 @@ console.log("Filters:", view.filters)
 console.log("Visible columns:", Object.entries(view.columnVisibility)
   .filter(([col, visible]) => visible)
   .map(([col]) => col))
-```
+\`\`\`
 
 **Sorting Not Working:**
-```typescript
+\`\`\`typescript
 // Verify column titles in sorting match actual column titles
 const columns = await panelsAPI.columns.list(panelId, tenantId, userId)
 const columnTitles = columns.map(col => col.title)
@@ -797,15 +797,15 @@ view.sorting.forEach(sort => {
   const isVisible = view.columnVisibility[sort.columnTitle]
   console.log(`${sort.columnTitle}: ${isVisible ? "Visible" : "Hidden"}`)
 })
-```
+\`\`\`
 
 **Permission Errors:**
-```typescript
+\`\`\`typescript
 // Verify user groups and permissions
 console.log("User groups:", userGroups)
 console.log("View permissions:", view.permissions)
 console.log("Published for:", view.userGroups)
-```
+\`\`\`
 
 ## Next Steps
 
@@ -835,4 +835,4 @@ In this tutorial, you learned how to:
 ✅ **Set Permissions** - Control who can view and edit data  
 ✅ **Organize Access** - Role-based view distribution
 
-Your panel is now a fully functional data management system that serves different user needs with tailored views! 
+Your panel is now a fully functional data management system that serves different user needs with tailored views!

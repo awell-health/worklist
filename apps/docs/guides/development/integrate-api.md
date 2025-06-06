@@ -19,27 +19,27 @@ This guide shows you how to integrate with the Panels API to build custom applic
 3. **Store credentials securely** (never in code)
 
 ### Environment Configuration
-```bash
+\`\`\`bash
 # .env file
 PANELS_API_URL=https://api.panels.yourorg.com
 PANELS_API_KEY=your-api-key-here
 PANELS_CLIENT_ID=your-client-id
 PANELS_CLIENT_SECRET=your-client-secret
-```
+\`\`\`
 
 ### Authentication Methods
 
 #### Option 1: API Key Authentication
-```typescript
+\`\`\`typescript
 // Simple API key authentication
 const headers = {
   'Authorization': `Bearer ${process.env.PANELS_API_KEY}`,
   'Content-Type': 'application/json'
 }
-```
+\`\`\`
 
 #### Option 2: OAuth 2.0 Flow
-```typescript
+\`\`\`typescript
 // OAuth 2.0 authentication
 import { AuthenticationProvider } from '@panels/api-client'
 
@@ -50,22 +50,22 @@ const auth = new AuthenticationProvider({
 })
 
 const token = await auth.getAccessToken()
-```
+\`\`\`
 
 ## Step 2: Install API Client
 
 ### Using npm
-```bash
+\`\`\`bash
 npm install @panels/api-client
-```
+\`\`\`
 
 ### Using yarn
-```bash
+\`\`\`bash
 yarn add @panels/api-client
-```
+\`\`\`
 
 ### Basic Client Setup
-```typescript
+\`\`\`typescript
 import { PanelsClient } from '@panels/api-client'
 
 const client = new PanelsClient({
@@ -73,12 +73,12 @@ const client = new PanelsClient({
   apiKey: process.env.PANELS_API_KEY,
   timeout: 30000
 })
-```
+\`\`\`
 
 ## Step 3: Basic API Operations
 
 ### Fetch Panels List
-```typescript
+\`\`\`typescript
 // Get all panels for current user
 async function getAllPanels() {
   try {
@@ -95,10 +95,10 @@ async function getAllPanels() {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Get Panel Data
-```typescript
+\`\`\`typescript
 // Fetch data from a specific panel
 async function getPanelData(panelId: string) {
   try {
@@ -121,10 +121,10 @@ async function getPanelData(panelId: string) {
     throw error
   }
 }
-```
+\`\`\`
 
 ### Create New Panel
-```typescript
+\`\`\`typescript
 // Create a new panel
 async function createPanel(panelConfig: PanelConfig) {
   try {
@@ -144,12 +144,12 @@ async function createPanel(panelConfig: PanelConfig) {
     throw error
   }
 }
-```
+\`\`\`
 
 ## Step 4: Working with Panel Data
 
 ### Data Filtering
-```typescript
+\`\`\`typescript
 // Apply complex filters to panel data
 async function getFilteredData(panelId: string) {
   const filters = {
@@ -177,10 +177,10 @@ async function getFilteredData(panelId: string) {
   const data = await client.panels.getData(panelId, { filters })
   return data
 }
-```
+\`\`\`
 
 ### Data Aggregation
-```typescript
+\`\`\`typescript
 // Get aggregated data from panel
 async function getPanelSummary(panelId: string) {
   const summary = await client.panels.getAggregation(panelId, {
@@ -194,12 +194,12 @@ async function getPanelSummary(panelId: string) {
   
   return summary
 }
-```
+\`\`\`
 
 ## Step 5: Real-Time Data Updates
 
 ### WebSocket Connection
-```typescript
+\`\`\`typescript
 // Subscribe to real-time panel updates
 import { PanelsWebSocketClient } from '@panels/api-client'
 
@@ -221,10 +221,10 @@ wsClient.subscribe('data:' + panelId, (dataUpdate) => {
   // Refresh UI with new data
   refreshPanelData(dataUpdate)
 })
-```
+\`\`\`
 
 ### Webhook Integration
-```typescript
+\`\`\`typescript
 // Set up webhook to receive panel updates
 async function setupWebhook() {
   const webhook = await client.webhooks.create({
@@ -251,12 +251,12 @@ app.post('/api/panels/webhook', (req, res) => {
   
   res.status(200).send('OK')
 })
-```
+\`\`\`
 
 ## Step 6: Error Handling and Retries
 
 ### Robust Error Handling
-```typescript
+\`\`\`typescript
 import { PanelsApiError, PanelsNetworkError } from '@panels/api-client'
 
 async function robustApiCall<T>(
@@ -297,10 +297,10 @@ async function robustApiCall<T>(
 
 // Usage
 const panels = await robustApiCall(() => client.panels.list())
-```
+\`\`\`
 
 ### Request Timeout and Cancellation
-```typescript
+\`\`\`typescript
 // Set up request timeout
 const client = new PanelsClient({
   baseUrl: process.env.PANELS_API_URL,
@@ -328,12 +328,12 @@ try {
     console.log('Request was cancelled')
   }
 }
-```
+\`\`\`
 
 ## Step 7: Caching and Performance
 
 ### Response Caching
-```typescript
+\`\`\`typescript
 import { LRUCache } from 'lru-cache'
 
 // Set up cache
@@ -360,10 +360,10 @@ async function getCachedPanelData(panelId: string) {
   
   return data
 }
-```
+\`\`\`
 
 ### Batch Operations
-```typescript
+\`\`\`typescript
 // Batch multiple API calls
 async function batchPanelOperations(panelIds: string[]) {
   const batchSize = 5
@@ -382,12 +382,12 @@ async function batchPanelOperations(panelIds: string[]) {
   
   return results
 }
-```
+\`\`\`
 
 ## Step 8: Testing Your Integration
 
 ### Unit Tests
-```typescript
+\`\`\`typescript
 // Mock the API client for testing
 import { jest } from '@jest/globals'
 import { PanelsClient } from '@panels/api-client'
@@ -421,10 +421,10 @@ describe('Panel Integration', () => {
     await expect(getPanelData('123')).rejects.toThrow('API Error')
   })
 })
-```
+\`\`\`
 
 ### Integration Tests
-```typescript
+\`\`\`typescript
 // Test against actual API (use test environment)
 describe('API Integration Tests', () => {
   let client: PanelsClient
@@ -449,12 +449,12 @@ describe('API Integration Tests', () => {
     await client.panels.delete(panel.id)
   })
 })
-```
+\`\`\`
 
 ## Step 9: Production Deployment
 
 ### Environment Configuration
-```typescript
+\`\`\`typescript
 // Production configuration
 const prodConfig = {
   baseUrl: process.env.PANELS_API_URL,
@@ -472,10 +472,10 @@ const prodConfig = {
 }
 
 const client = new PanelsClient(prodConfig)
-```
+\`\`\`
 
 ### Monitoring and Alerting
-```typescript
+\`\`\`typescript
 // Add monitoring to your integration
 import { metrics } from 'your-monitoring-library'
 
@@ -513,7 +513,7 @@ async function monitoredApiCall<T>(
 const data = await monitoredApiCall('getPanelData', () => 
   client.panels.getData(panelId)
 )
-```
+\`\`\`
 
 ## Best Practices
 
@@ -573,4 +573,4 @@ const data = await monitoredApiCall('getPanelData', () =>
 
 - **[Understanding the data model](../../explanation/architecture/data-model.md)** - Learn the data structure
 - **[API design principles](../../explanation/decisions/api-design.md)** - Understand the API design
-- **[Authentication guide](../admin/configure-permissions.md)** - Set up user permissions 
+- **[Authentication guide](../admin/configure-permissions.md)** - Set up user permissions

@@ -256,4 +256,4 @@ export class MedplumStore {
 }
 
 // Export a singleton instance
-export const medplumStore = new MedplumStore(); 
+export const medplumStore = new MedplumStore();
