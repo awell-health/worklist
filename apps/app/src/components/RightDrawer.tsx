@@ -1,6 +1,6 @@
 "use client";
 
-import type React from 'react'
+import type React from 'react';
 
 interface RightDrawerProps {
   open: boolean
@@ -19,7 +19,7 @@ export default function RightDrawer({
     <>
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-1/3 bg-white shadow-lg z-50 transition-transform duration-300 ${
+        className={`h-full w-1/3 bg-white shadow-lg transition-all duration-300 ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ willChange: 'transform' }}
