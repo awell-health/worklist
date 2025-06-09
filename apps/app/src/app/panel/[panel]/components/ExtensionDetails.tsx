@@ -11,12 +11,12 @@ const renderExtensionValue = (ext: Extension, parentIndex?: number): React.React
         <div className="space-y-2">
           {ext.extension.map((nestedExt: Extension, nestedIndex: number) => (
             <div key={nestedIndex} className="bg-gray-50 p-3 rounded">
-              <p className="text-xs font-medium text-gray-500" title={`FHIR Path: extension${parentIndex !== undefined ? `[${parentIndex}]` : ''}.extension[${nestedIndex}]`}>
+              <div className="text-xs font-medium text-gray-500" title={`FHIR Path: extension${parentIndex !== undefined ? `[${parentIndex}]` : ''}.extension[${nestedIndex}]`}>
                 {nestedExt.url}
-              </p>
-              <p className="text-sm">
+              </div>
+              <div className="text-sm">
                 {renderExtensionValue(nestedExt, nestedIndex)}
-              </p>
+              </div>
             </div>
           ))}
         </div>
@@ -48,16 +48,16 @@ export function ExtensionDetails({ extensions, title = "Additional Information" 
   
     return (
       <div>
-        <p className="text-xs font-medium text-gray-500">{title}</p>
+        <div className="text-xs font-medium text-gray-500">{title}</div>
         <div className="grid grid-cols-1">
           {extensions.map((ext: Extension, index: number) => (
             <div key={index} className="bg-gray-50 p-3 rounded">
-              <p className="text-xs font-medium text-gray-500 mb-1" title={ext.url}>
+              <div className="text-xs font-medium text-gray-500 mb-1" title={ext.url}>
                 {ext.url.split('/').pop()}
-              </p>
-              <p className="text-sm">
+              </div>
+              <div className="text-sm">
                 {renderExtensionValue(ext)}
-              </p>
+              </div>
             </div>
           ))}
         </div>
