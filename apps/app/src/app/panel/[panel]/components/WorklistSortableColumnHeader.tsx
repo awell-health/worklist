@@ -101,33 +101,6 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
     options: sampleOptions,
   }
 
-  // Handle filter input changes
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onFilter(e.target.value)
-  }
-
-  // Show filter input when clicking the filter icon
-  const handleFilterClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsFilterVisible(true)
-    // Focus the input after it's rendered
-    setTimeout(() => {
-      filterInputRef.current?.focus()
-    }, 0)
-  }
-
-  // Handle filter input blur
-  const handleFilterBlur = () => {
-    setIsFilterVisible(false)
-  }
-
-  // Handle filter input keydown
-  const handleFilterKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Escape') {
-      setIsFilterVisible(false)
-    }
-  }
-
   return (
     <TableHead
       ref={(node) => {
@@ -153,15 +126,8 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
             </div>
             <span className="ml-1 text-gray-500">{getSortIndicator()}</span>
           </div>
-          <div className="flex items-center">
-            {/* Filter button */}
-            <button
-              className={cn(
-                "h-5 w-5 p-0 mr-1 text-gray-500 hover:bg-gray-100 rounded-full",
-                filterValue && "text-blue-500"
-              )}
-              onClick={handleFilterClick}
-            >
+          <div className={cn("flex items-center", filterValue && "text-blue-500")}>
+            {/* Filter button */}           
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -172,10 +138,10 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                onClick={toggleMenu}
               >
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </button>
             {/* Menu button */}
             <button
               className="h-5 w-5 p-0 text-gray-500 hover:bg-gray-100 rounded-full"
@@ -187,20 +153,6 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
         </div>
         
         {/* Filter input */}
-        {isFilterVisible && (
-          <div className="mt-1">
-            <input
-              ref={filterInputRef}
-              type="text"
-              value={filterValue}
-              onChange={handleFilterChange}
-              onBlur={handleFilterBlur}
-              onKeyDown={handleFilterKeyDown}
-              className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Filter..."
-            />
-          </div>
-        )}
       </div>
 
       {/* Column menu */}

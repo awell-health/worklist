@@ -8,11 +8,17 @@ import { useColumnCreator } from "@/hooks/use-column-creator";
 import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
 import { usePanelStore } from "@/hooks/use-panel-store";
 import { useSearch } from "@/hooks/use-search";
-import { ColumnDefinition, PanelDefinition, WorklistDefinition } from "@/types/worklist";
+import { ColumnDefinition, Filter, PanelDefinition, WorklistDefinition } from "@/types/worklist";
 import { DEFAULT_WORKLIST } from "@/utils/constants";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AddIngestionModal } from "./components/AddIngestionModal";
+
+interface TableFilter {
+  key: string;
+  value: string;
+}
+
 
 export default function WorklistPage() {
   const params = useParams();
@@ -24,6 +30,7 @@ export default function WorklistPage() {
   const [columns, setColumns] = useState<ColumnDefinition[]>([]);
   const [tableData, setTableData] = useState<(WorklistPatient | WorklistTask)[]>([]);
   const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
+  const [tableFilters, setTableFilters] = useState<TableFilter[]>([]);
 
   const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const {  getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
@@ -134,6 +141,23 @@ export default function WorklistPage() {
     setPanelDefinition(newPanel);
   }
 
+  const onFiltersChange = (newTableFilters: TableFilter[]) => {
+    if (!panelDefinition) {
+      return;
+    }
+    // Convert table filters to view filters
+    const newFilters: Filter[] = newTableFilters.map(filter => ({
+      fhirPathFilter: [filter.key, filter.value]
+    }));
+    const newPanel = {
+      ...panelDefinition,
+      filters: newFilters,
+    }
+    updatePanel(panelId, newPanel);
+    setPanelDefinition(newPanel);
+    setTableFilters(newTableFilters);
+  }
+
 
   return (
     <>
@@ -156,8 +180,6 @@ export default function WorklistPage() {
             selectedRows={[]}
             toggleSelectAll={() => {}}
             worklistColumns={columns}
-            filters={[]}
-            onFiltersChange={() => {}}
             onAddColumn={onAddColumn}
             isBlank={false} 
             tableData={filteredData}
@@ -169,7 +191,10 @@ export default function WorklistPage() {
             setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
             currentView={currentView}
             handleDragEnd={() => {}}
-            onColumnUpdate={onColumnUpdate} />
+            onColumnUpdate={onColumnUpdate}
+            filters={tableFilters}
+            onFiltersChange={onFiltersChange} 
+          />
           {isAddingIngestionSource && (
             <AddIngestionModal 
               isOpen={isAddingIngestionSource} 

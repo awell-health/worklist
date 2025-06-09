@@ -124,7 +124,7 @@ export default function WorklistTableRow({
         ) : column.type === "assignee" ? (
             <div className="flex items-center">
                 {columnValue ? (
-                    <span className="text-sm text-gray-700">{columnValue}</span>
+                    <span className="text-xs text-gray-700">{columnValue}</span>
                 ) : (
                     <button
                         type="button"

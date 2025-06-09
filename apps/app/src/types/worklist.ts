@@ -23,6 +23,7 @@ export type ColumnDefinition = {
   description?: string
   source?: string
   options?: Array<{ value: string; color: string }>
+  filter?: Filter
 }
 
 // TODO remove it or make it private or refator it, should contain views as optional
