@@ -1,4 +1,5 @@
 "use client";
+
 import { isMatchingFhirPathCondition } from "@/lib/fhir-path";
 import type { ColumnDefinition } from "@/types/worklist";
 import { closestCenter, DndContext, type DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
@@ -71,10 +72,11 @@ export default function WorklistTable({
     // First apply filters
     let filteredData = tableData;
     if (filters && filters.length > 0) {
+      console.log("filters", filters);
       filteredData = tableData.filter(row => {
         return filters.every(filter => {
           // TODO this is very basic, we need to support more complex FHIRPath expressions
-          const fhirPath = `${filter.key} = '${filter.value}'`;
+          const fhirPath = `${filter.key}.lower() = '${filter.value.toLowerCase()}'`;
           return isMatchingFhirPathCondition(row, fhirPath);
         });
       });

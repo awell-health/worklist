@@ -84,12 +84,10 @@ export default function WorklistPage() {
   }, [panels]);
 
   const onColumnUpdate = (updates: Partial<ColumnDefinition>) => {
-    console.log("updates", updates);
 
     if (!viewDefinition) {
       return;
     }
-    console.log("updates", updates);
     const newView = {
       ...viewDefinition,
       taskViewColumns: viewDefinition.taskViewColumns.map(column => {

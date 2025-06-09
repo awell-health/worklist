@@ -25,6 +25,7 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
   const [localColumnName, setLocalColumnName] = useState(column.name)
   const [localColumnDescription, setLocalColumnDescription] = useState(column.description)
   const [localColumnType, setLocalColumnType] = useState(column.type)
+  const [localColumnSource, setLocalColumnSource] = useState(column.source)
   // Set mounted state after component mounts (for SSR compatibility)
   useEffect(() => {
     setMounted(true)
@@ -38,12 +39,18 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
     setLocalColumnName(column.name)
     setLocalColumnDescription(column.description)
     setLocalColumnType(column.type)
+    setLocalColumnSource(column.source)
   }, [filterValue, column])
 
   // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as HTMLElement;
+      // Don't close if clicking on any input element
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') {
+        return;
+      }
+      if (menuRef.current && !menuRef.current.contains(target)) {
         onClose()
       }
     }
@@ -156,6 +163,12 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
               type="text"
               value={localFilterValue}
               onChange={handleFilterChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleFilterApply()
+                }
+              }}
+              onClick={(e) => e.stopPropagation()}
               className="flex-1 px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Filter..."
             />
@@ -178,8 +191,13 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
                 type="text"
                 value={localColumnKey}
                 onChange={(e) => setLocalColumnKey(e.target.value)}
-                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === ' ') {
+                    e.stopPropagation()
+                  }
+                }}
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
@@ -188,6 +206,12 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
                 id="column-type"
                 value={localColumnType}
                 onChange={(e) => setLocalColumnType(e.target.value as ColumnDefinition['type'])}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === ' ') {
+                    e.stopPropagation()
+                  }
+                }}
                 className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="string">String</option>
@@ -207,8 +231,13 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
                 type="text"
                 value={localColumnName}
                 onChange={(e) => setLocalColumnName(e.target.value)}
-                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === ' ') {
+                    e.stopPropagation()
+                  }
+                }}
+                className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
@@ -217,11 +246,34 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
                 id="column-description"
                 value={localColumnDescription}
                 onChange={(e) => setLocalColumnDescription(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === ' ') {
+                    e.stopPropagation()
+                  }
+                }}
                 className="textarea min-h-[60px] text-xs resize-y w-full p-2 border border-gray-200 rounded"
                 placeholder="Enter a description or prompt for this column..."
-                onClick={(e) => e.stopPropagation()}
               />
             </div>
+            <div className="flex items-center">
+              <Database className="h-3.5 w-3.5 mr-2 text-gray-500" />
+              <label htmlFor="column-source" className="text-xs text-gray-500">Source:</label>
+            </div>
+            <input
+              id="column-source"
+              type="text"
+              value={localColumnSource || ''}
+              onChange={(e) => setLocalColumnSource(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === ' ') {
+                  e.stopPropagation()
+                }
+              }}
+              className="w-full px-2 py-1 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter source..."
+            />
             <button
               className="w-full px-2 py-1 text-xs text-white bg-blue-500 rounded hover:bg-blue-600"
               onClick={() => {
@@ -231,6 +283,7 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
                   name: localColumnName,
                   description: localColumnDescription,
                   type: localColumnType,
+                  source: localColumnSource,
                 })
                 onClose()
               }}
@@ -238,12 +291,6 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
               Save Changes
             </button>
           </div>
-        </div>
-
-        {/* Source */}
-        <div className="flex items-center w-full px-3 py-2 text-xs font-normal text-left border-b border-gray-100">
-          <Database className="h-3.5 w-3.5 mr-2 text-gray-500" />
-          <span>Source: {column.source || "Unknown"}</span>
         </div>
 
         {/* Options with colors (if available) */}
