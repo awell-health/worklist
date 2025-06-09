@@ -1,10 +1,7 @@
 "use client"
-import { WorklistPatient, WorklistTask } from '@/hooks/use-medplum-store'
-import { useState } from 'react'
-
-type PatientDetailsProps = {
-  patient: WorklistPatient
-}
+import { WorklistPatient, WorklistTask } from '@/hooks/use-medplum-store';
+import { useState } from 'react';
+import { ExtensionDetails } from './ExtensionDetails';
 
 const getFieldValue = (field: any): string => {
   if (!field) return '';
@@ -47,6 +44,11 @@ const formatTelecom = (telecom: any): string => {
   return String(telecom);
 }
 
+
+type PatientDetailsProps = {
+  patient: WorklistPatient
+}
+
 export function PatientDetails({ patient }: PatientDetailsProps) {
   const [activeTab, setActiveTab] = useState<"context" | "tasks">("context");
 
@@ -84,22 +86,22 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gray-50 p-3 rounded">
                   <p className="text-xs font-medium text-gray-500">Name</p>
-                  <p className="text-sm">
+                  <p className="text-sm" title="FHIR Path: name">
                     {getFieldValue(patient.name)}
                   </p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded">
                   <p className="text-xs font-medium text-gray-500">Gender</p>
-                  <p className="text-sm">{getFieldValue(patient.gender)}</p>
+                  <p className="text-sm" title="FHIR Path: gender">{getFieldValue(patient.gender)}</p>
                 </div>
                 <div className="bg-gray-50 p-3 rounded">
                   <p className="text-xs font-medium text-gray-500">Birth Date</p>
-                  <p className="text-sm">{getFieldValue(patient.birthDate)}</p>
+                  <p className="text-sm" title="FHIR Path: birthDate">{getFieldValue(patient.birthDate)}</p>
                 </div>
                 {patient.telecom && (
                   <div className="bg-gray-50 p-3 rounded">
                     <p className="text-xs font-medium text-gray-500">Contact</p>
-                    <p className="text-sm">{formatTelecom(patient.telecom)}</p>
+                    <p className="text-sm" title="FHIR Path: telecom">{formatTelecom(patient.telecom)}</p>
                   </div>
                 )}
               </div>
@@ -107,11 +109,14 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
               {patient.address && (
                 <div className="bg-gray-50 p-3 rounded">
                   <p className="text-xs font-medium text-gray-500 mb-2">Address</p>
-                  <p className="text-sm">
+                  <p className="text-sm" title="FHIR Path: address">
                     {formatAddress(patient.address)}
                   </p>
                 </div>
               )}
+
+              {/* Extensions */}
+              {patient.extension && <ExtensionDetails extensions={patient.extension} />}
             </div>
           </div>
         )}
@@ -139,6 +144,7 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
                         {getFieldValue(task.priority) || 'routine'}
                       </span>
                     </div>
+                    {task.extension && <ExtensionDetails extensions={task.extension} title="Task Details" />}
                   </div>
                 ))
               ) : (
