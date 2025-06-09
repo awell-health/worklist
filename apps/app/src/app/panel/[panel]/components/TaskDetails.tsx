@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { useMedplumStore, WorklistTask } from '@/hooks/use-medplum-store'
+import { useEffect, useState } from "react"
+import { ExtensionDetails } from "./ExtensionDetails"
 
 type TaskContentProps = {
   taskData: WorklistTask
@@ -156,6 +157,9 @@ export function TaskDetails({ taskData }: TaskContentProps) {
                       </div>
                     </div>
                   )}
+
+                  {taskData.extension && <ExtensionDetails extensions={taskData.extension} />}
+
                 </div>
               </>
           </div>
