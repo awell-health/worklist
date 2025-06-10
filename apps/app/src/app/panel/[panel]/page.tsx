@@ -5,11 +5,13 @@ import WorklistNavigation from "@/app/panel/[panel]/components/WorklistNavigatio
 import WorklistTable from "@/app/panel/[panel]/components/WorklistTable";
 import WorklistToolbar from "@/app/panel/[panel]/components/WorklistToolbar";
 import { useColumnCreator } from "@/hooks/use-column-creator";
-import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
+import { type WorklistPatient, type WorklistTask, useMedplumStore } from "@/hooks/use-medplum-store";
 import { usePanelStore } from "@/hooks/use-panel-store";
 import { useSearch } from "@/hooks/use-search";
-import { ColumnDefinition, Filter, PanelDefinition, ViewDefinition, WorklistDefinition } from "@/types/worklist";
+import { arrayMove } from "@/lib/utils";
+import type { ColumnDefinition, Filter, PanelDefinition, ViewDefinition, WorklistDefinition } from "@/types/worklist";
 import { DEFAULT_WORKLIST } from "@/utils/constants";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AddIngestionModal } from "./components/AddIngestionModal";
@@ -33,21 +35,23 @@ export default function WorklistPage() {
   const [tableFilters, setTableFilters] = useState<TableFilter[]>([]);
 
   const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
-  const {  getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
+  const { getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
 
   const router = useRouter();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setIsLoading(isPanelLoading || isMedplumLoading || !panelDefinition);
   }, [isPanelLoading, isMedplumLoading, panelId, panelDefinition]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    if(isPanelLoading) {
+    if (isPanelLoading) {
       return;
     }
 
     const panel = getPanel(panelId);
-    if(!panel) {
+    if (!panel) {
       if (panelId === 'default') {
         const newPanel = createPanel(DEFAULT_WORKLIST);
         router.push(`/panel/${newPanel.id}`);
@@ -57,6 +61,7 @@ export default function WorklistPage() {
     }
   }, [panelId, router, isPanelLoading]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (!panelDefinition) {
       return;
@@ -67,7 +72,7 @@ export default function WorklistPage() {
   }, [panelDefinition, currentView, tasks, patients, isLoading]);
 
   const onColumnChange = (column: WorklistDefinition | ViewDefinition) => {
-    if(!panelDefinition) {
+    if (!panelDefinition) {
       return;
     }
     const newPanel = {
@@ -158,55 +163,83 @@ export default function WorklistPage() {
     setTableFilters(newTableFilters);
   }
 
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !panelDefinition) {
+      return;
+    }
+
+    // Find the active column's index and the over column's index
+    const oldIndex = columns.findIndex(col => col.id === active.id);
+    const newIndex = columns.findIndex(col => col.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) {
+      return;
+    }
+
+    // Reorder the columns
+    const reorderedColumns = arrayMove(columns, oldIndex, newIndex);
+
+    // Update the panel definition based on current view
+    const newPanel = {
+      ...panelDefinition,
+      taskViewColumns: currentView === 'task' ? reorderedColumns : panelDefinition.taskViewColumns,
+      patientViewColumns: currentView === 'patient' ? reorderedColumns : panelDefinition.patientViewColumns,
+    };
+
+    updatePanel(panelDefinition.id, newPanel);
+    setPanelDefinition(newPanel);
+  }
+
 
   return (
     <>
       {isLoading ? (
         <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
         </div>
       ) : (
         <>
           <WorklistNavigation panelDefinition={panelDefinition!} onNewView={onNewView} onPanelTitleChange={onPanelTitleChange} />
-          <WorklistToolbar 
-            searchTerm={searchTerm} 
-            onSearch={setSearchTerm} 
+          <WorklistToolbar
+            searchTerm={searchTerm}
+            onSearch={setSearchTerm}
             searchMode={searchMode}
             onSearchModeChange={setSearchMode}
-            currentView={currentView} 
-            setCurrentView={setCurrentView} 
+            currentView={currentView}
+            setCurrentView={setCurrentView}
           />
           <WorklistTable isLoading={isLoading}
             selectedRows={[]}
-            toggleSelectAll={() => {}}
+            toggleSelectAll={() => { }}
             worklistColumns={columns}
             onAddColumn={onAddColumn}
-            isBlank={false} 
+            isBlank={false}
             tableData={filteredData}
-            handlePDFClick={() => {}}
-            handleTaskClick={() => {}}
-            handleRowHover={() => {}}
-            toggleSelectRow={() => {}}
+            handlePDFClick={() => { }}
+            handleTaskClick={() => { }}
+            handleRowHover={() => { }}
+            toggleSelectRow={() => { }}
             handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
             setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
             currentView={currentView}
-            handleDragEnd={() => {}}
+            handleDragEnd={handleDragEnd}
             onColumnUpdate={onColumnUpdate}
             filters={tableFilters}
-            onFiltersChange={onFiltersChange} 
+            onFiltersChange={onFiltersChange}
           />
           {isAddingIngestionSource && (
-            <AddIngestionModal 
-              isOpen={isAddingIngestionSource} 
-              onClose={() => setIsAddingIngestionSource(false)} 
-              onSelectSource={() => {}} 
+            <AddIngestionModal
+              isOpen={isAddingIngestionSource}
+              onClose={() => setIsAddingIngestionSource(false)}
+              onSelectSource={() => { }}
               ingestionBots={[]}
             />
           )}
-          <WorklistFooter 
-            columnsCounter={columns.length} 
-            rowsCounter={tableData.length} 
-            navigateToHome={() => {}} 
+          <WorklistFooter
+            columnsCounter={columns.length}
+            rowsCounter={tableData.length}
+            navigateToHome={() => { }}
             isAISidebarOpen={false}
           />
         </>
