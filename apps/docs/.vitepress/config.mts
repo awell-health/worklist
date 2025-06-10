@@ -31,7 +31,10 @@ export default defineConfig({
               text: 'Environment Setup',
               link: '/getting-started/environment-setup',
             },
-            { text: 'Your First Panel', link: '/getting-started/first-panel' },
+            {
+              text: 'Your First Panel',
+              link: '/getting-started/first-panel',
+            },
             {
               text: 'Adding Data Sources',
               link: '/getting-started/adding-data-sources',
@@ -40,7 +43,10 @@ export default defineConfig({
               text: 'Creating Columns',
               link: '/getting-started/creating-columns',
             },
-            { text: 'Building Views', link: '/getting-started/building-views' },
+            {
+              text: 'Building Views',
+              link: '/getting-started/building-views',
+            },
             { text: 'Next Steps', link: '/getting-started/next-steps' },
           ],
         },
@@ -54,12 +60,18 @@ export default defineConfig({
               text: 'How to create a panel',
               link: '/guides/panels/create-panel',
             },
-            { text: 'How to add columns', link: '/guides/panels/add-columns' },
+            {
+              text: 'How to add columns',
+              link: '/guides/panels/add-columns',
+            },
             {
               text: 'How to configure filters',
               link: '/guides/panels/configure-filters',
             },
-            { text: 'How to share views', link: '/guides/panels/share-views' },
+            {
+              text: 'How to share views',
+              link: '/guides/panels/share-views',
+            },
             {
               text: 'How to set up alerts',
               link: '/guides/panels/setup-alerts',
@@ -111,10 +123,17 @@ export default defineConfig({
         {
           text: 'Administration',
           items: [
-            { text: 'How to manage users', link: '/guides/admin/manage-users' },
+            {
+              text: 'How to manage users',
+              link: '/guides/admin/manage-users',
+            },
             {
               text: 'How to configure permissions',
               link: '/guides/admin/configure-permissions',
+            },
+            {
+              text: 'How to set up authentication',
+              link: '/guides/admin/setup-authentication',
             },
             {
               text: 'How to set up multi-tenancy',
@@ -223,7 +242,10 @@ export default defineConfig({
         {
           text: 'Backend API',
           items: [
-            { text: 'Panel Endpoints', link: '/reference/backend-api/panels/' },
+            {
+              text: 'Panel Endpoints',
+              link: '/reference/backend-api/panels/',
+            },
             { text: 'View Endpoints', link: '/reference/backend-api/views/' },
             {
               text: 'Column Endpoints',
@@ -263,7 +285,10 @@ export default defineConfig({
               text: 'Environment Variables',
               link: '/reference/configuration/environment-vars',
             },
-            { text: 'Data Types', link: '/reference/configuration/data-types' },
+            {
+              text: 'Data Types',
+              link: '/reference/configuration/data-types',
+            },
           ],
         },
         {
@@ -292,6 +317,10 @@ export default defineConfig({
             {
               text: 'Multi-tenancy explained',
               link: '/explanation/architecture/multi-tenancy',
+            },
+            {
+              text: 'Authentication strategy',
+              link: '/explanation/architecture/authentication',
             },
             {
               text: 'Security model rationale',
@@ -404,7 +433,10 @@ export default defineConfig({
               text: 'Create Panel',
               link: '/examples/basic-usage/create-panel',
             },
-            { text: 'Add Columns', link: '/examples/basic-usage/add-columns' },
+            {
+              text: 'Add Columns',
+              link: '/examples/basic-usage/add-columns',
+            },
             { text: 'Build View', link: '/examples/basic-usage/build-view' },
           ],
         },

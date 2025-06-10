@@ -1,4 +1,8 @@
-import type { NextConfig } from "next";
+import { createJiti } from 'jiti'
+import type { NextConfig } from 'next'
+
+const jiti = createJiti(new URL(import.meta.url).pathname)
+await jiti.import('./app/env.ts', { default: true })
 
 const nextConfig: NextConfig = {
   images: {
@@ -6,14 +10,15 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'avatars.githubusercontent.com',
-        search: ''
+        search: '',
       },
       {
         protocol: 'https',
         hostname: '*.public.blob.vercel-storage.com',
-        search: ''
-      }
-    ]
-  }};
+        search: '',
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig

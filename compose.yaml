@@ -8,19 +8,19 @@ services:
       - POSTGRES_PASSWORD=medplum
     command:
       # We use command line args instead of a postgres.conf to avoid additional setup out of the box
-      - 'postgres'
-      - '-c'
-      - 'listen_addresses=*'
-      - '-c'
-      - 'statement_timeout=60000'
-      - '-c'
-      - 'default_transaction_isolation=REPEATABLE READ'
+      - "postgres"
+      - "-c"
+      - "listen_addresses=*"
+      - "-c"
+      - "statement_timeout=60000"
+      - "-c"
+      - "default_transaction_isolation=REPEATABLE READ"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - ./dev/datastore/postgres/data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U medplum']
+      test: ["CMD-SHELL", "pg_isready -U medplum"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,11 +33,11 @@ services:
     restart: always
     command: redis-server --requirepass medplum --dir /data
     ports:
-      - '6379:6379'
+      - "6379:6379"
     volumes:
       - ./dev/datastore/redis/data:/data
     healthcheck:
-      test: ['CMD', 'redis-cli', '-a', 'medplum', 'ping']
+      test: ["CMD", "redis-cli", "-a", "medplum", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -54,7 +54,7 @@ services:
       wl-redis:
         condition: service_healthy
     ports:
-      - '8103:8103'
+      - "8103:8103"
     volumes:
       # Conditionally define a volume for a `medplum.config.json` if one is specified by the MEDPLUM_CONFIG_PATH env var
       - ${MEDPLUM_CONFIG_PATH:-./dev/config/medplum.config.json}:/usr/src/medplum/packages/server/medplum.config.json
@@ -70,43 +70,43 @@ services:
       "
     environment:
       MEDPLUM_PORT: 8103
-      MEDPLUM_BASE_URL: 'http://localhost:8103/'
-      MEDPLUM_APP_BASE_URL: 'http://localhost:3000/'
-      MEDPLUM_STORAGE_BASE_URL: 'http://localhost:8103/storage/'
-      MEDPLUM_DATABASE_HOST: 'wl-postgres'
+      MEDPLUM_BASE_URL: "http://localhost:8103/"
+      MEDPLUM_APP_BASE_URL: "http://localhost:3000/"
+      MEDPLUM_STORAGE_BASE_URL: "http://localhost:8103/storage/"
+      MEDPLUM_DATABASE_HOST: "wl-postgres"
       MEDPLUM_DATABASE_PORT: 5432
-      MEDPLUM_DATABASE_DBNAME: 'medplum'
-      MEDPLUM_DATABASE_USERNAME: 'medplum'
-      MEDPLUM_DATABASE_PASSWORD: 'medplum'
-      MEDPLUM_REDIS_HOST: 'wl-redis'
+      MEDPLUM_DATABASE_DBNAME: "medplum"
+      MEDPLUM_DATABASE_USERNAME: "medplum"
+      MEDPLUM_DATABASE_PASSWORD: "medplum"
+      MEDPLUM_REDIS_HOST: "wl-redis"
       MEDPLUM_REDIS_PORT: 6379
-      MEDPLUM_REDIS_PASSWORD: 'medplum'
-      MEDPLUM_SUPER_ADMIN: 'true'
-      MEDPLUM_BINARY_STORAGE: 'file:./binary/'
-      MEDPLUM_RECAPTCHA_SITE_KEY: '6LfHdsYdAAAAAC0uLnnRrDrhcXnziiUwKd8VtLNq'
-      MEDPLUM_RECAPTCHA_SECRET_KEY: '6LfHdsYdAAAAAH9dN154jbJ3zpQife3xaiTvPChL'
-      MEDPLUM_ADMIN_CLIENT_ID: '2a4b77f2-4d4e-43c6-9b01-330eb5ca772f'
-      MEDPLUM_MAX_JSON_SIZE: '1mb'
-      MEDPLUM_MAX_BATCH_SIZE: '50mb'
-      MEDPLUM_VM_CONTEXT_BOTS_ENABLED: 'true'
-      MEDPLUM_DEFAULT_BOT_RUNTIME_VERSION: 'vmcontext'
-      MEDPLUM_ALLOWED_ORIGINS: '*'
-      MEDPLUM_INTROSPECTION_ENABLED: 'true'
+      MEDPLUM_REDIS_PASSWORD: "medplum"
+      MEDPLUM_SUPER_ADMIN: "true"
+      MEDPLUM_BINARY_STORAGE: "file:./binary/"
+      MEDPLUM_RECAPTCHA_SITE_KEY: "6LfHdsYdAAAAAC0uLnnRrDrhcXnziiUwKd8VtLNq"
+      MEDPLUM_RECAPTCHA_SECRET_KEY: "6LfHdsYdAAAAAH9dN154jbJ3zpQife3xaiTvPChL"
+      MEDPLUM_ADMIN_CLIENT_ID: "2a4b77f2-4d4e-43c6-9b01-330eb5ca772f"
+      MEDPLUM_MAX_JSON_SIZE: "1mb"
+      MEDPLUM_MAX_BATCH_SIZE: "50mb"
+      MEDPLUM_VM_CONTEXT_BOTS_ENABLED: "true"
+      MEDPLUM_DEFAULT_BOT_RUNTIME_VERSION: "vmcontext"
+      MEDPLUM_ALLOWED_ORIGINS: "*"
+      MEDPLUM_INTROSPECTION_ENABLED: "true"
       MEDPLUM_SHUTDOWN_TIMEOUT_MILLISECONDS: 30000
-      MEDPLUM_INITIAL_ADMIN_EMAIL: 'admin@medplum.com'
-      MEDPLUM_INITIAL_ADMIN_PASSWORD: 'admin123'
-      MEDPLUM_INITIAL_ADMIN_FIRST_NAME: 'Admin'
-      MEDPLUM_INITIAL_ADMIN_LAST_NAME: 'User'
-      MEDPLUM_INITIAL_ADMIN_PROJECT_NAME: 'Default Project'
-      DEFAULT_PROJECT_FEATURES: 'bots, cron'
+      MEDPLUM_INITIAL_ADMIN_EMAIL: "admin@medplum.com"
+      MEDPLUM_INITIAL_ADMIN_PASSWORD: "admin123"
+      MEDPLUM_INITIAL_ADMIN_FIRST_NAME: "Admin"
+      MEDPLUM_INITIAL_ADMIN_LAST_NAME: "User"
+      MEDPLUM_INITIAL_ADMIN_PROJECT_NAME: "Default Project"
+      DEFAULT_PROJECT_FEATURES: "bots, cron"
 
     healthcheck:
       test:
         # We use Node's fetch for healthcheck because this image doesn't have a curl or wget installed
         [
-          'CMD',
-          'node',
-          '-e',
+          "CMD",
+          "node",
+          "-e",
           'fetch("http://localhost:8103/healthcheck").then(r => r.json()).then(console.log).catch(() => { process.exit(1); })',
         ]
       interval: 30s
@@ -123,11 +123,12 @@ services:
       wl-medplum-server:
         condition: service_healthy
     environment:
-      - MEDPLUM_BASE_URL=http://localhost:8103
+      # - MEDPLUM_BASE_URL=http://localhost:8103
+      - MEDPLUM_BASE_URL=https://medplum-server.development.awellhealth.com
     ports:
-      - '3003:3000'
+      - "3003:3000"
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3000']
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 10s
       timeout: 5s
       retries: 5
