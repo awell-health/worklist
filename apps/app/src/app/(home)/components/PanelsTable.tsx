@@ -107,7 +107,7 @@ const PanelRow: React.FC<{ panel: PanelDefinition,  onDeletePanel: (panelId: str
                 {view.title}
               </div>
             </TableCell>
-            <TableCell className="text-xs py-2">{view.taskViewColumns.length + view.patientViewColumns.length}</TableCell>
+            <TableCell className="text-xs py-2">{view.columns ? view.columns.length : view.taskViewColumns.length + view.patientViewColumns.length}</TableCell>
             <TableCell className="text-xs py-2">
               {view.createdAt}
             </TableCell>

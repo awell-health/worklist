@@ -38,4 +38,12 @@ export type WorklistDefinition = {
 }
 
 export type PanelDefinition = WorklistDefinition
-export type ViewDefinition = WorklistDefinition
+export type ViewDefinition =  {
+  id: string
+  title: string
+  filters: Filter[]
+  columns: ColumnDefinition[]
+  createdAt: string
+  views?: ViewDefinition[]
+  viewType: "task" | "patient"
+}

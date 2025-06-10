@@ -2,15 +2,15 @@ import { ChatMessage, columnAiAssistantMessageHandler } from "@/app/actions/ai-c
 import AIConversationDrawer from "@/components/AIConversationDrawer";
 import { useDrawer } from "@/contexts/DrawerContext";
 import { WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
-import { WorklistDefinition } from "@/types/worklist";
+import { ViewDefinition, WorklistDefinition } from "@/types/worklist";
 import { createElement, useCallback } from 'react';
 
 interface UseColumnCreatorProps {
   currentView: 'patient' | 'task';
   patients: WorklistPatient[];
   tasks: WorklistTask[];
-  worklistDefinition: WorklistDefinition | undefined;
-  onDefinitionChange: (definition: WorklistDefinition) => void;
+  worklistDefinition: WorklistDefinition | ViewDefinition | undefined;
+  onDefinitionChange: (definition: WorklistDefinition | ViewDefinition) => void;
 }
 
 export const useColumnCreator = ({

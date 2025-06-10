@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
+import { Code, Plus, Search } from "lucide-react";
 import WorklistViewDropDown from "./WorklistViewDropDown";
-import { Plus, Search, Code } from "lucide-react";
 
 interface WorklistToolbarProps {
     searchTerm: string;
@@ -10,7 +9,7 @@ interface WorklistToolbarProps {
     onSearchModeChange: (mode: 'text' | 'fhirpath') => void;
     onNewWorklist?: () => void;
     onEnrichData?: () => void;
-    currentView: 'patient' | 'task';
+    currentView: 'patient' | 'task' | undefined;
     setCurrentView?: (view: 'patient' | 'task') => void;
 }
 
@@ -26,10 +25,12 @@ export default function WorklistToolbar({
     return (
         <div className="border-b border-gray-200">
             <div className="flex items-center justify-between p-2">
-                <div className="flex items-center space-x-3">
-                    {/* View dropdown */}
-                    <WorklistViewDropDown currentView={currentView} onViewChange={setCurrentView || (() => { })} />
-                </div>
+                {currentView && (
+                    <div className="flex items-center space-x-3">
+                        {/* View dropdown */}
+                        <WorklistViewDropDown currentView={currentView} onViewChange={setCurrentView || (() => { })} />
+                    </div>
+                )}
 
                 {/* Search bar */}
                 <div className="flex-1 mx-4">

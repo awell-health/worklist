@@ -20,7 +20,6 @@ export default function WorklistPage() {
   const params = useParams();
   const viewId = params.view as string;
   const panelId = params.panel as string;
-  const [currentView, setCurrentView] = useState<'patient' | 'task'>('patient');
   const [isLoading, setIsLoading] = useState(true);
   const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const { getView, updateView, addView, isLoading: isPanelLoading, getPanel, panels } = usePanelStore();
@@ -40,8 +39,8 @@ export default function WorklistPage() {
     if (!viewDefinition) {
       return;
     }
-    setColumns(currentView === 'patient' ? viewDefinition.patientViewColumns : viewDefinition.taskViewColumns);
-    setTableData(currentView === 'patient' ? patients : tasks);
+    setColumns(viewDefinition.columns);
+    setTableData(viewDefinition.viewType === 'patient' ? patients : tasks);
     // Convert view filters to table filters
     const newTableFilters = viewDefinition.filters.map(filter => ({
       key: filter.fhirPathFilter[0],
@@ -49,7 +48,7 @@ export default function WorklistPage() {
     }));
     setTableFilters(newTableFilters);
     updateView(panelId, viewId, viewDefinition);
-  }, [viewDefinition, currentView, tasks, patients]);
+  }, [viewDefinition, tasks, patients]);
 
   useEffect(() => {
     if(isPanelLoading) {
@@ -90,16 +89,7 @@ export default function WorklistPage() {
     }
     const newView = {
       ...viewDefinition,
-      taskViewColumns: viewDefinition.taskViewColumns.map(column => {
-        if (column.id === updates.id) {
-          return {
-            ...column,
-            ...updates,
-          }
-        }
-        return column;
-      }),
-      patientViewColumns: viewDefinition.patientViewColumns.map(column => {
+      columns: viewDefinition.columns.map(column => {
         if (column.id === updates.id) {
           return {
             ...column,
@@ -130,7 +120,7 @@ export default function WorklistPage() {
     setTableFilters(newTableFilters);
   }
 
-  const onColumnChange = (column: WorklistDefinition) => {
+  const onColumnChange = (column: ViewDefinition | WorklistDefinition) => {
     if(!viewDefinition) {
       return;
     }
@@ -143,7 +133,7 @@ export default function WorklistPage() {
   }
 
   const { onAddColumn } = useColumnCreator({
-    currentView,
+    currentView: viewDefinition?.viewType ?? 'patient',
     patients,
     tasks,
     worklistDefinition: viewDefinition,
@@ -157,10 +147,10 @@ export default function WorklistPage() {
     }
     const newView = addView(panelId, {
       title: "New View",
-      filters: panel.filters,
-      taskViewColumns: panel.taskViewColumns,
-      patientViewColumns: panel.patientViewColumns,
+      filters: viewDefinition?.filters ?? panel.filters,
+      columns: viewDefinition?.columns ?? panel.taskViewColumns,
       createdAt: new Date().toISOString(),
+      viewType: viewDefinition?.viewType ?? 'task',
     });
     router.push(`/panel/${panelId}/view/${newView.id}`);
   }
@@ -190,8 +180,8 @@ export default function WorklistPage() {
         onSearch={setSearchTerm} 
         searchMode={searchMode}
         onSearchModeChange={setSearchMode}
-        currentView={currentView} 
-        setCurrentView={setCurrentView} 
+        currentView={undefined}
+        setCurrentView={() => {}} 
       />
       <WorklistTable isLoading={isLoading}
           selectedRows={[]}
@@ -206,7 +196,7 @@ export default function WorklistPage() {
           toggleSelectRow={() => {}}
           handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
           setIsAddingIngestionSource={() => {}}
-          currentView={currentView}
+          currentView={viewDefinition?.viewType ?? 'patient'}
           handleDragEnd={() => {}} 
           onColumnUpdate={onColumnUpdate}
           filters={tableFilters}

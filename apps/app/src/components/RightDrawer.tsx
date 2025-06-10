@@ -16,10 +16,11 @@ export default function RightDrawer({
   children,
 }: RightDrawerProps) {
   return (
+
     <>
       {/* Drawer */}
       <div
-        className={`h-full w-1/3 bg-white shadow-lg transition-all duration-300 ${
+        className={`h-full ${open ? 'w-1/3' : 'w-0'} bg-white shadow-lg transition-all duration-300 ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ willChange: 'transform' }}
