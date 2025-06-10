@@ -43,6 +43,8 @@ export type ViewDefinition =  {
   title: string
   filters: Filter[]
   columns: ColumnDefinition[]
+  taskViewColumns: ColumnDefinition[]
+  patientViewColumns: ColumnDefinition[]
   createdAt: string
   views?: ViewDefinition[]
   viewType: "task" | "patient"
