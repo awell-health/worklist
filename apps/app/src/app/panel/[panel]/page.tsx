@@ -66,7 +66,7 @@ export default function WorklistPage() {
     updatePanel(panelDefinition.id, panelDefinition);
   }, [panelDefinition, currentView, tasks, patients, isLoading]);
 
-  const onColumnChange = (column: WorklistDefinition) => {
+  const onColumnChange = (column: WorklistDefinition | ViewDefinition) => {
     if(!panelDefinition) {
       return;
     }
@@ -93,9 +93,9 @@ export default function WorklistPage() {
     const newView = addView(panelDefinition.id, {
       title: "New View",
       filters: panelDefinition.filters,
-      taskViewColumns: panelDefinition.taskViewColumns,
-      patientViewColumns: panelDefinition.patientViewColumns,
+      columns: currentView === 'patient' ? panelDefinition.patientViewColumns : panelDefinition.taskViewColumns,
       createdAt: new Date().toISOString(),
+      viewType: currentView,
     });
     router.push(`/panel/${panelDefinition.id}/view/${newView.id}`);
   }

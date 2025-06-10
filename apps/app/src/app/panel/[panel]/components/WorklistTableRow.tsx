@@ -42,17 +42,14 @@ export default function WorklistTableRow({
     const { openDrawer } = useDrawer()
 
     const handleRowClick = () => {
-        console.log(row)
-        if (row.resourceType === "Task") {
-            console.log('patientRow', row)
+        if (currentView === "task") {
             openDrawer(
                 <TaskDetails 
                     taskData={row as WorklistTask} 
                 />,
                 row.description || "Task Details"
             )
-        } else if (row.resourceType === "Patient") {
-            console.log('patientRow', row)
+        } else if (currentView === "patient") {
             openDrawer(
                 <PatientDetails 
                     patient={row as WorklistPatient} 

@@ -11,13 +11,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         <main className={`flex flex-col flex-1 transition-all duration-300 ${isOpen ? 'w-2/3' : 'w-full'}`}>
           {children}
         </main>
-        <RightDrawer 
-          open={isOpen} 
-          onClose={closeDrawer}
-          title={title}
-        >
-          {content}
-        </RightDrawer>
+          <RightDrawer 
+            open={isOpen} 
+            onClose={closeDrawer}
+            title={title}
+          >
+            {content}
+          </RightDrawer>
       </div>
     </div>
   );
