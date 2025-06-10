@@ -8,7 +8,7 @@ import { useColumnCreator } from "@/hooks/use-column-creator";
 import { useMedplumStore, WorklistPatient, WorklistTask } from "@/hooks/use-medplum-store";
 import { usePanelStore } from "@/hooks/use-panel-store";
 import { useSearch } from "@/hooks/use-search";
-import { ColumnDefinition, Filter, PanelDefinition, WorklistDefinition } from "@/types/worklist";
+import { ColumnDefinition, Filter, PanelDefinition, ViewDefinition, WorklistDefinition } from "@/types/worklist";
 import { DEFAULT_WORKLIST } from "@/utils/constants";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
