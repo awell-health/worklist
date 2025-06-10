@@ -2,12 +2,13 @@
 
 import { isMatchingFhirPathCondition } from "@/lib/fhir-path";
 import type { ColumnDefinition } from "@/types/worklist";
-import { closestCenter, DndContext, type DragEndEvent, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import { Loader2, Plus } from "lucide-react";
 import type React from "react";
 import { useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../../components/ui/table";
+import { ColumnsDropdown } from "./ColumnsDropdown";
 import { SortableColumnHeader } from "./WorklistSortableColumnHeader";
 import WorklistTableRow from "./WorklistTableRow";
 
@@ -44,30 +45,36 @@ interface SortConfig {
   direction: 'asc' | 'desc';
 }
 
-export default function WorklistTable({ 
-  isLoading, 
+export default function WorklistTable({
+  isLoading,
   tableContainerRef,
-  selectedRows, 
-  toggleSelectAll, 
-  worklistColumns, 
+  selectedRows,
+  toggleSelectAll,
+  worklistColumns,
   onAddColumn,
-  isBlank, 
-  tableData, 
-  handlePDFClick, 
-  handleTaskClick, 
-  handleRowHover, 
-  toggleSelectRow, 
-  setIsAddingIngestionSource, 
+  isBlank,
+  tableData,
+  handlePDFClick,
+  handleTaskClick,
+  handleRowHover,
+  toggleSelectRow,
+  setIsAddingIngestionSource,
   handleAssigneeClick,
   onColumnUpdate,
-  currentView, 
+  currentView,
   handleDragEnd,
   filters,
   onFiltersChange }: WorklistTableProps) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [activeColumn, setActiveColumn] = useState<ColumnDefinition | null>(null);
 
   console.log("data", tableData);
-  
+
+  // Filter visible columns
+  const visibleColumns = useMemo(() => {
+    return worklistColumns.filter(col => col.properties?.display?.visible !== false);
+  }, [worklistColumns]);
+
   const filteredAndSortedData = useMemo(() => {
     // First apply filters
     let filteredData = tableData;
@@ -81,35 +88,35 @@ export default function WorklistTable({
         });
       });
     }
-    
+
     // Then apply sorting
     if (!sortConfig) return filteredData;
-    
+
     return [...filteredData].sort((a, b) => {
       const aValue = a[sortConfig.key];
       const bValue = b[sortConfig.key];
-      
+
       if (aValue === null || aValue === undefined) return 1;
       if (bValue === null || bValue === undefined) return -1;
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortConfig.direction === 'asc' 
+        return sortConfig.direction === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      
+
       if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortConfig.direction === 'asc' 
+        return sortConfig.direction === 'asc'
           ? aValue - bValue
           : bValue - aValue;
       }
-      
+
       if (aValue instanceof Date && bValue instanceof Date) {
         return sortConfig.direction === 'asc'
           ? aValue.getTime() - bValue.getTime()
           : bValue.getTime() - aValue.getTime();
       }
-      
+
       return sortConfig.direction === 'asc'
         ? String(aValue).localeCompare(String(bValue))
         : String(bValue).localeCompare(String(aValue));
@@ -136,6 +143,26 @@ export default function WorklistTable({
     onFiltersChange(newFilters);
   };
 
+  const handleColumnVisibilityChange = (columnId: string, visible: boolean) => {
+    onColumnUpdate({
+      id: columnId,
+      properties: {
+        display: { visible }
+      }
+    });
+  };
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const column = visibleColumns.find(col => col.id === active.id);
+    setActiveColumn(column || null);
+  };
+
+  const handleDragEndWithStart = (event: DragEndEvent) => {
+    setActiveColumn(null);
+    handleDragEnd?.(event);
+  };
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -144,6 +171,36 @@ export default function WorklistTable({
     }),
     useSensor(KeyboardSensor),
   )
+
+  // Get type icon for drag overlay
+  const getTypeIcon = (column: ColumnDefinition) => {
+    switch (column.type) {
+      case "date":
+        return (
+          <svg className="h-3.5 w-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        )
+      case "number":
+        return (
+          <svg className="h-3.5 w-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+          </svg>
+        )
+      case "boolean":
+        return (
+          <svg className="h-3.5 w-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        )
+      default:
+        return (
+          <svg className="h-3.5 w-3.5 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+          </svg>
+        )
+    }
+  }
 
   return (
     <div className="flex-grow flex flex-col">
@@ -158,7 +215,8 @@ export default function WorklistTable({
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEndWithStart}
           modifiers={[restrictToHorizontalAxis]}
         >
 
@@ -176,10 +234,10 @@ export default function WorklistTable({
                       />
                     </div>
                   </TableHead>
-                  {worklistColumns.map((column, index) => (
-                    <SortableColumnHeader 
-                      key={column.id} 
-                      column={column} 
+                  {visibleColumns.map((column, index) => (
+                    <SortableColumnHeader
+                      key={column.id}
+                      column={column}
                       index={index}
                       sortConfig={sortConfig}
                       onSort={() => handleSort(column.key)}
@@ -189,20 +247,25 @@ export default function WorklistTable({
                     />
                   ))}
                   <TableHead className="text-xs font-normal text-gray-700 p-2">
-                    <div className="flex items-center">
-                      {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
+                    <div className="flex items-center gap-2">
                       <button
+                        type="button"
                         className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
                         onClick={() => onAddColumn()}
                       >
                         <Plus className="mr-1 h-3 w-3" /> Add column
                       </button>
 
+                      <ColumnsDropdown
+                        columns={worklistColumns}
+                        onColumnVisibilityChange={handleColumnVisibilityChange}
+                      />
+
                       {isBlank && (
                         <>
                           <div className="mx-3 text-xs font-normal text-neutral-500">or</div>
-                          {/* biome-ignore lint/a11y/useButtonType: <explanation> */}
                           <button
+                            type="button"
                             className="btn text-xs font-normal h-8 px-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-center"
                           >
                             Generate worklist
@@ -223,7 +286,7 @@ export default function WorklistTable({
                       row={row}
                       rowIndex={rowIndex}
                       handleAssigneeClick={() => handleAssigneeClick(row["id"])}
-                      columns={worklistColumns}
+                      columns={visibleColumns}
                       selectedRows={selectedRows}
                       toggleSelectRow={toggleSelectRow}
                       handlePDFClick={handlePDFClick}
@@ -245,7 +308,7 @@ export default function WorklistTable({
                         />
                       </div>
                     </TableCell>
-                    {worklistColumns.map((column, index) => (
+                    {visibleColumns.map((column, index) => (
                       <TableCell
                         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                         key={index}
@@ -268,7 +331,7 @@ export default function WorklistTable({
                       />
                     </div>
                   </TableCell>
-                  {worklistColumns.map((column, index) => (
+                  {visibleColumns.map((column, index) => (
                     <TableCell
                       // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={index}
@@ -276,6 +339,7 @@ export default function WorklistTable({
                     >
                       {index === 0 ? (
                         <button
+                          type="button"
                           className="btn btn-ghost btn-sm text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
                           onClick={() => setIsAddingIngestionSource(true)}
                         >
@@ -289,6 +353,16 @@ export default function WorklistTable({
               </TableBody>
             </Table>
           </div>
+
+          {/* Drag Overlay - Shows the column being dragged */}
+          <DragOverlay>
+            {activeColumn ? (
+              <div className="bg-white border border-blue-300 rounded shadow-lg px-3 py-2 text-xs font-normal text-gray-700 flex items-center opacity-90">
+                {getTypeIcon(activeColumn)}
+                <span>{activeColumn.name}</span>
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
       )}
     </div>

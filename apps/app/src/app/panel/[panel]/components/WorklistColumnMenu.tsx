@@ -71,7 +71,7 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
 
     switch (column.type) {
       case "number":
-        return isSorted 
+        return isSorted
           ? (isAscending ? "Sort large → small" : "Sort small → large")
           : "Sort small → large"
       case "date":
@@ -179,6 +179,27 @@ export function ColumnMenu({ column, isOpen, onClose, position, onSort, sortConf
               Apply
             </button>
           </div>
+        </div>
+
+        {/* Hide Column Option */}
+        <div className="px-3 py-2 border-b border-gray-100">
+          <button
+            className="flex items-center w-full px-0 py-1 text-xs font-normal text-left hover:bg-gray-50 rounded"
+            onClick={() => {
+              onColumnUpdate?.({
+                id: column.id,
+                properties: {
+                  display: { visible: false }
+                }
+              })
+              onClose()
+            }}
+          >
+            <svg className="h-3.5 w-3.5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L8.464 8.464M14.12 14.12l1.415 1.415M14.12 14.12L9.878 9.878m4.242 4.242L8.464 15.536" />
+            </svg>
+            Hide Column
+          </button>
         </div>
 
         {/* Column Properties */}

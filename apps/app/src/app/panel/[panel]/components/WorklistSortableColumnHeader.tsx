@@ -28,17 +28,18 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
   const headerRef = useRef<HTMLTableCellElement>(null)
   const filterInputRef = useRef<HTMLInputElement>(null)
 
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging, isOver } = useSortable({
     id: column.id || `column-${index}`,
   })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    zIndex: isDragging ? 1 : 0,
-    opacity: isDragging ? 0.8 : 1,
-    cursor: "grab",
-    width: column.name === "Patient Name" ? "140px" : "auto", // Snug width for Patient Name
+    zIndex: isDragging ? 1000 : 0,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+    width: column.name === "Patient Name" ? "140px" : "auto",
+    position: 'relative' as const,
   }
 
   // Get the appropriate icon based on column type
@@ -89,9 +90,9 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
   const sampleOptions =
     column.type === "boolean"
       ? [
-          { value: "True", color: "#10B981" }, // green-500
-          { value: "False", color: "#EF4444" }, // red-500
-        ]
+        { value: "True", color: "#10B981" }, // green-500
+        { value: "False", color: "#EF4444" }, // red-500
+      ]
       : undefined
 
   // Enhanced column with sample source and options
@@ -110,15 +111,28 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
         }
       }}
       style={style}
-      className={cn("text-xs font-normal text-gray-700 p-2 border-r border-gray-200 relative")}
+      className={cn(
+        "text-xs font-normal text-gray-700 p-2 border-r border-gray-200 relative select-none",
+        isDragging && "bg-blue-50 border-blue-200 shadow-lg",
+        isOver && !isDragging && "bg-blue-25 border-blue-100",
+        "transition-colors duration-150"
+      )}
       {...attributes}
       {...listeners}
     >
+      {/* Drop indicator line */}
+      {isOver && !isDragging && (
+        <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-500 z-50" />
+      )}
+
       <div className="flex flex-col">
         <div className="flex items-center justify-between whitespace-nowrap">
-          <div 
-            className="flex items-center cursor-pointer hover:text-gray-900"
-            onClick={onSort}
+          <div
+            className={cn(
+              "flex items-center cursor-pointer hover:text-gray-900",
+              isDragging && "pointer-events-none"
+            )}
+            onClick={isDragging ? undefined : onSort}
           >
             {getTypeIcon()}
             <div className="flex flex-col">
@@ -126,39 +140,50 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
             </div>
             <span className="ml-1 text-gray-500">{getSortIndicator()}</span>
           </div>
-          <div className={cn("flex items-center", filterValue && "text-blue-500")}>
-            {/* Filter button */}           
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                onClick={toggleMenu}
-              >
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-              </svg>
+          <div className={cn(
+            "flex items-center",
+            filterValue && "text-blue-500",
+            isDragging && "pointer-events-none"
+          )}>
+            {/* Filter button */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              onClick={isDragging ? undefined : toggleMenu}
+            >
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+            </svg>
             {/* Menu button */}
             <button
+              type="button"
               className="h-5 w-5 p-0 text-gray-500 hover:bg-gray-100 rounded-full"
-              onClick={toggleMenu}
+              onClick={isDragging ? undefined : toggleMenu}
+              disabled={isDragging}
             >
               <MoreVertical className="h-3 w-3" />
             </button>
           </div>
         </div>
-        
+
         {/* Filter input */}
       </div>
+
+      {/* Drag handle indicator */}
+      {isDragging && (
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-50 opacity-75 pointer-events-none" />
+      )}
 
       {/* Column menu */}
       <ColumnMenu
         column={enhancedColumn}
-        isOpen={isMenuOpen}
+        isOpen={isMenuOpen && !isDragging}
         onClose={() => setIsMenuOpen(false)}
         position={menuPosition}
         onSort={onSort}
