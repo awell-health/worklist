@@ -1,6 +1,6 @@
 "use server"
 
-import { WorklistDefinition } from "@/types/worklist"
+import { ViewDefinition, WorklistDefinition } from "@/types/worklist"
 import { OpenAI } from "openai"
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions"
 
@@ -15,7 +15,7 @@ export type ChatMessage = {
  * TODO start using proper FHIR to extract the data structure
  * https://awellhealth.slack.com/archives/C06JLPNJZMG/p1748532575499539?thread_ts=1748525675.878809&cid=C06JLPNJZMG
  */
- export const columnAiAssistantMessageHandler = async (messages: ChatMessage[], data: any[], currentDefinition?: WorklistDefinition): Promise<{ response: string, needsDefinitionUpdate: boolean, definition?: WorklistDefinition }> => {
+ export const columnAiAssistantMessageHandler = async (messages: ChatMessage[], data: any[], currentDefinition?: WorklistDefinition | ViewDefinition): Promise<{ response: string, needsDefinitionUpdate: boolean, definition?: WorklistDefinition | ViewDefinition }> => {
     const prompt = `You are a helpful assistant that helps users add columns to their view.
             
             Current worklist definition:
