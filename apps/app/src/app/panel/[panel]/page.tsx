@@ -69,6 +69,10 @@ export default function WorklistPage() {
     setColumns(currentView === 'patient' ? panelDefinition.patientViewColumns : panelDefinition.taskViewColumns);
     setTableData(currentView === 'patient' ? patients : tasks);
     updatePanel(panelDefinition.id, panelDefinition);
+    setTableFilters(panelDefinition.filters.map(filter => ({
+      key: filter.fhirPathFilter[0],
+      value: filter.fhirPathFilter[1],
+    })));
   }, [panelDefinition, currentView, tasks, patients, isLoading]);
 
   const onColumnChange = (column: WorklistDefinition | ViewDefinition) => {
