@@ -60,6 +60,11 @@ export default function WorklistPage() {
       return;
     }
     setViewDefinition(view);
+
+    setTableFilters(view.filters.map(filter => ({
+      key: filter.fhirPathFilter[0],
+      value: filter.fhirPathFilter[1],
+    })));
   }, [panelId, viewId, isPanelLoading]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
