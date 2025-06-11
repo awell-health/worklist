@@ -16,13 +16,18 @@ export function TaskDetails({ taskData }: TaskContentProps) {
 
   useEffect(() => {
     setTask(taskData)
-    setConnectors([{
-      connectorName: "Awell",
-      url: "https://care.development.awellhealth.com/pathway/vV7xHQ5qakpI/activity-feed?activityId=BDtAEU7AXaPxWkXewRvnM",
-    }, {
-      connectorName: "Connector 2",
-      url: "https://example.com/connector2",
-    }])
+    
+    // Extract connectors from task input
+    const extractedConnectors = taskData.input
+      ?.filter((input: any) => 
+        input.type?.coding?.[0]?.system === 'http://awellhealth.com/fhir/connector-type'
+      )
+      .map((input: any) => ({
+        connectorName: input.type.coding[0].display,
+        url: input.valueUrl
+      })) || []
+
+    setConnectors(extractedConnectors)
   }, [taskData])
 
   const { addNotesToTask } = useMedplumStore()
