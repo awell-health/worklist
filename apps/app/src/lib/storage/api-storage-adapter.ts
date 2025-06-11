@@ -1,11 +1,11 @@
 import type { PanelDefinition, ViewDefinition } from '@/types/worklist'
 import type { ColumnsResponse } from '@panels/types/columns'
 import type { ViewResponse } from '@panels/types/views'
+import { v4 as uuidv4 } from 'uuid'
 import {
   adaptBackendPanelsToFrontend,
   adaptBackendToFrontend,
   adaptFrontendToBackend,
-  adaptFrontendViewToBackend,
   getApiConfig,
   validateApiConfig,
 } from './type-adapters'
@@ -280,29 +280,32 @@ export class APIStorageAdapter implements StorageAdapter {
     view: Omit<ViewDefinition, 'id'>,
   ): Promise<ViewDefinition> {
     try {
-      const { viewsAPI } = await import('@/api/viewsAPI')
+      // For now, store views in localStorage since backend doesn't support metadata properly
+      // TODO: Update when backend supports filters and viewType in metadata
+      const newView: ViewDefinition = {
+        ...view,
+        id: uuidv4(),
+        createdAt: new Date().toISOString(),
+      }
 
-      // Convert frontend view to backend format using sophisticated adapter
-      const backendViewInfo = adaptFrontendViewToBackend(
-        view,
-        Number.parseInt(panelId, 10),
-        this.config,
+      // Store in localStorage
+      const stored = localStorage.getItem('panels')
+      const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
+
+      const updatedPanels = panels.map((panel) =>
+        panel.id === panelId
+          ? {
+              ...panel,
+              views: [...(panel.views || []), newView],
+            }
+          : panel,
       )
 
-      // Create view via API
-      const createdView = await viewsAPI.create(backendViewInfo)
+      localStorage.setItem('panels', JSON.stringify(updatedPanels))
 
-      // Convert back to frontend format
-      return {
-        id: createdView.id.toString(),
-        title: createdView.name,
-        createdAt: new Date().toISOString(),
-        filters: view.filters, // Preserve original filters
-        columns: view.columns, // Preserve original columns
-        viewType: view.viewType,
-      }
+      return newView
     } catch (error) {
-      console.error(`Failed to add view to panel ${panelId} via API:`, error)
+      console.error(`Failed to add view to panel ${panelId}:`, error)
       throw new Error(
         `Failed to add view: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -315,32 +318,26 @@ export class APIStorageAdapter implements StorageAdapter {
     updates: Partial<ViewDefinition>,
   ): Promise<void> {
     try {
-      const { viewsAPI } = await import('@/api/viewsAPI')
+      // For now, store views in localStorage since backend doesn't support metadata properly
+      // TODO: Update when backend supports filters and viewType in metadata
+      const stored = localStorage.getItem('panels')
+      const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
-      // Get current view to merge updates
-      const currentView = await this.getView(panelId, viewId)
-      if (!currentView) {
-        throw new Error(`View ${viewId} not found in panel ${panelId}`)
-      }
-
-      // Merge updates with current view
-      const updatedView = { ...currentView, ...updates }
-
-      // Convert to backend format using sophisticated adapter
-      const backendViewInfo = adaptFrontendViewToBackend(
-        updatedView,
-        Number.parseInt(panelId, 10),
-        this.config,
+      const updatedPanels = panels.map((panel) =>
+        panel.id === panelId
+          ? {
+              ...panel,
+              views: (panel.views || []).map((view) =>
+                view.id === viewId ? { ...view, ...updates } : view,
+              ),
+            }
+          : panel,
       )
 
-      // Update via API
-      await viewsAPI.update({
-        ...backendViewInfo,
-        id: viewId, // Keep as string for API compatibility
-      })
+      localStorage.setItem('panels', JSON.stringify(updatedPanels))
     } catch (error) {
       console.error(
-        `Failed to update view ${viewId} in panel ${panelId} via API:`,
+        `Failed to update view ${viewId} in panel ${panelId}:`,
         error,
       )
       throw new Error(
@@ -351,17 +348,24 @@ export class APIStorageAdapter implements StorageAdapter {
 
   async deleteView(panelId: string, viewId: string): Promise<void> {
     try {
-      const { viewsAPI } = await import('@/api/viewsAPI')
+      // For now, store views in localStorage since backend doesn't support metadata properly
+      // TODO: Update when backend supports filters and viewType in metadata
+      const stored = localStorage.getItem('panels')
+      const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
-      // Delete via API
-      await viewsAPI.delete({
-        id: viewId, // Keep as string for API compatibility
-        tenantId: this.config.tenantId,
-        userId: this.config.userId,
-      })
+      const updatedPanels = panels.map((panel) =>
+        panel.id === panelId
+          ? {
+              ...panel,
+              views: (panel.views || []).filter((view) => view.id !== viewId),
+            }
+          : panel,
+      )
+
+      localStorage.setItem('panels', JSON.stringify(updatedPanels))
     } catch (error) {
       console.error(
-        `Failed to delete view ${viewId} in panel ${panelId} via API:`,
+        `Failed to delete view ${viewId} in panel ${panelId}:`,
         error,
       )
       throw new Error(
@@ -375,31 +379,19 @@ export class APIStorageAdapter implements StorageAdapter {
     viewId: string,
   ): Promise<ViewDefinition | null> {
     try {
-      const { viewsAPI } = await import('@/api/viewsAPI')
+      // For now, get views from localStorage since backend doesn't support metadata properly
+      // TODO: Update when backend supports filters and viewType in metadata
+      const stored = localStorage.getItem('panels')
+      const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
-      // Get view via API
-      const backendView = await viewsAPI.get({ id: viewId })
-
-      // Convert to frontend format
-      return {
-        id: backendView.id.toString(),
-        title: backendView.name,
-        createdAt: new Date().toISOString(), // Placeholder
-        filters: [], // Placeholder - would need to be enriched
-        columns: [], // Placeholder - would need to be enriched
-        viewType: 'patient', // Default - would need to be determined
-      }
+      const panel = panels.find((p) => p.id === panelId)
+      return panel?.views?.find((view) => view.id === viewId) || null
     } catch (error) {
-      if (error instanceof Error && error.message.includes('404')) {
-        return null
-      }
       console.error(
-        `Failed to fetch view ${viewId} from panel ${panelId} via API:`,
+        `Failed to fetch view ${viewId} from panel ${panelId}:`,
         error,
       )
-      throw new Error(
-        `Failed to load view: ${error instanceof Error ? error.message : 'Unknown error'}`,
-      )
+      return null
     }
   }
 

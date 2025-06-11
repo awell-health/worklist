@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import type { ColumnDefinition } from "@/types/worklist"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Calendar, Hash, MoreVertical, Text, ToggleLeft } from "lucide-react"
+import { Calendar, GripVertical, Hash, MoreVertical, Text, ToggleLeft } from "lucide-react"
 import { useRef, useState } from "react"
 import { ColumnMenu } from "./WorklistColumnMenu"
 
@@ -37,7 +37,6 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
     transition,
     zIndex: isDragging ? 1000 : 0,
     opacity: isDragging ? 0.5 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
     width: column.name === "Patient Name" ? "140px" : "auto",
     position: 'relative' as const,
   }
@@ -118,7 +117,6 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
         "transition-colors duration-150"
       )}
       {...attributes}
-      {...listeners}
     >
       {/* Drop indicator line */}
       {isOver && !isDragging && (
@@ -127,45 +125,80 @@ export function SortableColumnHeader({ column, index, sortConfig, onSort, filter
 
       <div className="flex flex-col">
         <div className="flex items-center justify-between whitespace-nowrap">
-          <div
+          {/* Drag handle - only this area can be used to drag */}
+          <button
+            type="button"
             className={cn(
-              "flex items-center cursor-pointer hover:text-gray-900",
+              "flex items-center cursor-grab hover:bg-gray-100 rounded px-1 -ml-1 mr-1 border-0 bg-transparent",
+              isDragging && "cursor-grabbing bg-gray-100"
+            )}
+            {...listeners}
+            aria-label="Drag to reorder column"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                // Keyboard users can use tab to navigate and arrow keys for reordering
+              }
+            }}
+          >
+            <GripVertical className="h-3 w-3 text-gray-400" />
+          </button>
+
+          {/* Column content - clickable for sorting */}
+          <button
+            type="button"
+            className={cn(
+              "flex items-center cursor-pointer hover:text-gray-900 flex-1 border-0 bg-transparent text-left",
               isDragging && "pointer-events-none"
             )}
             onClick={isDragging ? undefined : onSort}
+            disabled={isDragging}
+            aria-label={`Sort by ${column.name}`}
           >
             {getTypeIcon()}
             <div className="flex flex-col">
               <span>{column.name}</span>
             </div>
             <span className="ml-1 text-gray-500">{getSortIndicator()}</span>
-          </div>
+          </button>
+
+          {/* Menu controls - separate from drag handle */}
           <div className={cn(
             "flex items-center",
-            filterValue && "text-blue-500",
             isDragging && "pointer-events-none"
           )}>
             {/* Filter button */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <button
+              type="button"
+              className={cn(
+                "h-5 w-5 p-0 hover:bg-gray-100 rounded-full flex items-center justify-center",
+                filterValue ? "text-blue-500 bg-blue-20" : "text-gray-500"
+              )}
               onClick={isDragging ? undefined : toggleMenu}
+              disabled={isDragging}
+              aria-label="Filter column"
             >
-              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill={filterValue ? "currentColor" : "none"}
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+              </svg>
+            </button>
             {/* Menu button */}
             <button
               type="button"
               className="h-5 w-5 p-0 text-gray-500 hover:bg-gray-100 rounded-full"
               onClick={isDragging ? undefined : toggleMenu}
               disabled={isDragging}
+              aria-label="Column options"
             >
               <MoreVertical className="h-3 w-3" />
             </button>

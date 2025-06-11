@@ -258,7 +258,7 @@ describe('LocalStorageAdapter', () => {
     })
 
     test('should handle invalid JSON in localStorage', async () => {
-      localStorage.setItem('panel-definitions', 'invalid json')
+      localStorage.setItem('panels', 'invalid json')
 
       const panels = await adapter.getPanels()
       expect(panels).toEqual([])
@@ -279,7 +279,7 @@ describe('LocalStorageAdapter', () => {
       const view = await adapter.addView(panel.id, mockView)
 
       // Verify the data structure in localStorage matches expectations
-      const storedData = localStorage.getItem('panel-definitions')
+      const storedData = localStorage.getItem('panels')
       expect(storedData).toBeDefined()
 
       const parsedData = JSON.parse(storedData as string)

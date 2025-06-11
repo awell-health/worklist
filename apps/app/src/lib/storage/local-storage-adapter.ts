@@ -7,7 +7,7 @@ import type { StorageAdapter } from './types'
  * This maintains the existing behavior and data structure from usePanelStore
  */
 export class LocalStorageAdapter implements StorageAdapter {
-  private readonly STORAGE_KEY = 'panel-definitions'
+  private readonly STORAGE_KEY = 'panels'
   private loading = false
 
   /**
