@@ -41,8 +41,8 @@ export default function WorklistPage() {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    setIsLoading(isPanelLoading || isMedplumLoading || !panelDefinition);
-  }, [isPanelLoading, isMedplumLoading, panelId, panelDefinition]);
+    setIsLoading(isPanelLoading || !panelDefinition);
+  }, [isPanelLoading, panelId, panelDefinition]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -209,7 +209,7 @@ export default function WorklistPage() {
             currentView={currentView}
             setCurrentView={setCurrentView}
           />
-          <WorklistTable isLoading={isLoading}
+          <WorklistTable isLoading={isMedplumLoading}
             selectedRows={[]}
             toggleSelectAll={() => { }}
             worklistColumns={columns}
