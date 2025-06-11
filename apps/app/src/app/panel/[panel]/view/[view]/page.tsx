@@ -19,7 +19,7 @@ interface TableFilter {
 }
 
 export default function WorklistPage() {
-  const { patients, tasks, addTaskOwner, isLoading } = useMedplumStore();
+  const { patients, tasks,  toggleTaskOwner, isLoading } = useMedplumStore();
   const { getPanel, getView, updateView, addView, isLoading: isPanelLoading, panels } = usePanelStore();
   const params = useParams();
   const panelId = params.panel as string;
@@ -211,7 +211,7 @@ export default function WorklistPage() {
             handleTaskClick={() => { }}
             handleRowHover={() => { }}
             toggleSelectRow={() => { }}
-            handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+            handleAssigneeClick={(taskId: string) =>  toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
             setIsAddingIngestionSource={() => { }}
             currentView={viewDefinition?.viewType ?? 'patient'}
             handleDragEnd={handleDragEnd}

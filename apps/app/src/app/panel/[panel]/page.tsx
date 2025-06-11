@@ -34,7 +34,7 @@ export default function WorklistPage() {
   const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
   const [tableFilters, setTableFilters] = useState<TableFilter[]>([]);
 
-  const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
+  const { patients, tasks, toggleTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const { getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
 
   const router = useRouter();
@@ -220,7 +220,7 @@ export default function WorklistPage() {
             handleTaskClick={() => { }}
             handleRowHover={() => { }}
             toggleSelectRow={() => { }}
-            handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+            handleAssigneeClick={(taskId: string) => toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
             setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
             currentView={currentView}
             handleDragEnd={handleDragEnd}

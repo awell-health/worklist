@@ -121,7 +121,16 @@ export default function WorklistTableRow({
         ) : column.type === "assignee" ? (
             <div className="flex items-center">
                 {columnValue ? (
-                    <span className="text-xs text-gray-700">{columnValue}</span>
+                    <button
+                        type="button"
+                        className="text-xs hover:bg-blue-50"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleAssigneeClick();
+                        }}
+                    >
+                        {columnValue}
+                    </button>
                 ) : (
                     <button
                         type="button"

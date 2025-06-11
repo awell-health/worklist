@@ -100,7 +100,7 @@ export function useMedplumStore(): {
   error: Error | null
   accessToken: string | null
   addNotesToTask: (taskId: string, notes: string) => Promise<Task>
-  addTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>
+  toggleTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>
 } {
   const [patients, setPatients] = useState<Patient[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
@@ -188,8 +188,8 @@ export function useMedplumStore(): {
     return task
   }
 
-  async function addTaskOwner(taskId: string, authenticatedUserId: string) {
-    const task = await medplumStore.addTaskOwner(taskId, authenticatedUserId)
+  async function toggleTaskOwner(taskId: string, authenticatedUserId: string) {
+    const task = await medplumStore.toggleTaskOwner(taskId, authenticatedUserId)
     setTasks((currentTasks) => updateResource(currentTasks, task))
     return task
   }
@@ -204,6 +204,6 @@ export function useMedplumStore(): {
     accessToken,
     error,
     addNotesToTask,
-    addTaskOwner,
+    toggleTaskOwner,
   }
 }
