@@ -21,8 +21,6 @@ import type {
   PanelsResponse,
 } from '@panels/types/panels'
 
-import 'server-only'
-
 export const panelsAPI = {
   get: async (
     panel: IdParam,
