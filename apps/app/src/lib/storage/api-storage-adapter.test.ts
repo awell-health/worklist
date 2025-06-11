@@ -1,6 +1,6 @@
 import type { PanelDefinition, ViewDefinition } from '@/types/worklist'
 import { type Mock, beforeEach, describe, expect, test, vi } from 'vitest'
-import { APIStorageAdapter } from '../api-storage-adapter'
+import { APIStorageAdapter } from './api-storage-adapter'
 
 // Mock the API modules
 vi.mock('@/api/panelsAPI', () => ({
@@ -174,6 +174,10 @@ describe('APIStorageAdapter', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks()
+    vi.stubEnv('NEXT_PUBLIC_STORAGE_MODE', 'api')
+    vi.stubEnv('NEXT_PUBLIC_API_BASE_URL', 'http://localhost:3001')
+    vi.stubEnv('NEXT_PUBLIC_TENANT_ID', 'test-tenant')
+    vi.stubEnv('NEXT_PUBLIC_USER_ID', 'test-user')
 
     // Get the mocked APIs with type assertions to bypass complex typing
     const { panelsAPI } = await import('@/api/panelsAPI')

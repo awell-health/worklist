@@ -4,8 +4,8 @@ import {
   getStorageConfig,
   getStorageMode,
   resetStorageAdapter,
-} from '../storage-factory'
-import { STORAGE_MODES } from '../types'
+} from './storage-factory'
+import { STORAGE_MODES } from './types'
 
 // Mock the adapters
 vi.mock('../local-storage-adapter', () => ({
@@ -91,12 +91,10 @@ describe('Storage Factory', () => {
     })
 
     test('should create APIStorageAdapter when configured for API mode with valid config', async () => {
-      mockEnv({
-        NEXT_PUBLIC_STORAGE_MODE: 'api',
-        NEXT_PUBLIC_API_BASE_URL: 'http://localhost:3001',
-        NEXT_PUBLIC_TENANT_ID: 'test-tenant',
-        NEXT_PUBLIC_USER_ID: 'test-user',
-      })
+      vi.stubEnv('NEXT_PUBLIC_STORAGE_MODE', 'api')
+      vi.stubEnv('NEXT_PUBLIC_API_BASE_URL', 'http://localhost:3001')
+      vi.stubEnv('NEXT_PUBLIC_TENANT_ID', 'test-tenant')
+      vi.stubEnv('NEXT_PUBLIC_USER_ID', 'test-user')
 
       const adapter = await getStorageAdapter()
 

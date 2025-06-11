@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import { LocalStorageAdapter } from '../local-storage-adapter'
-import { createStorageAdapter, resetStorageAdapter } from '../storage-factory'
+import { LocalStorageAdapter } from './local-storage-adapter'
+import { createStorageAdapter, resetStorageAdapter } from './storage-factory'
 
 // Mock localStorage
 const localStorageMock = (() => {

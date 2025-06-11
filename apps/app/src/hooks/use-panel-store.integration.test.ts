@@ -27,7 +27,7 @@ describe('usePanelStore Integration Test', () => {
 
   test('should initialize and work with default localStorage behavior', async () => {
     // Import the hook after mocking localStorage
-    const { usePanelStore } = await import('../use-panel-store')
+    const { usePanelStore } = await import('./use-panel-store')
 
     // This is a simple smoke test - we can't easily test React hooks without React Testing Library
     // But we can verify the import works and the module loads correctly
@@ -35,7 +35,7 @@ describe('usePanelStore Integration Test', () => {
   })
 
   test('should export the correct interface', async () => {
-    const { usePanelStore } = await import('../use-panel-store')
+    const { usePanelStore } = await import('./use-panel-store')
 
     // Verify the hook is a function (this ensures the imports work correctly)
     expect(typeof usePanelStore).toBe('function')
@@ -43,7 +43,7 @@ describe('usePanelStore Integration Test', () => {
 
   test('should have properly integrated storage imports', async () => {
     // This verifies our new imports don't break the module
-    const moduleExports = await import('../use-panel-store')
+    const moduleExports = await import('./use-panel-store')
 
     expect(moduleExports).toBeDefined()
     expect(typeof moduleExports.usePanelStore).toBe('function')
