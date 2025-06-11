@@ -34,15 +34,15 @@ export default function WorklistPage() {
   const { searchTerm, setSearchTerm, searchMode, setSearchMode, filteredData } = useSearch(tableData);
   const [tableFilters, setTableFilters] = useState<TableFilter[]>([]);
 
-  const { patients, tasks, addTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
+  const { patients, tasks, toggleTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const { getPanel, createPanel, updatePanel, addView, isLoading: isPanelLoading } = usePanelStore();
 
   const router = useRouter();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    setIsLoading(isPanelLoading || isMedplumLoading || !panelDefinition);
-  }, [isPanelLoading, isMedplumLoading, panelId, panelDefinition]);
+    setIsLoading(isPanelLoading || !panelDefinition);
+  }, [isPanelLoading, panelId, panelDefinition]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -69,6 +69,10 @@ export default function WorklistPage() {
     setColumns(currentView === 'patient' ? panelDefinition.patientViewColumns : panelDefinition.taskViewColumns);
     setTableData(currentView === 'patient' ? patients : tasks);
     updatePanel(panelDefinition.id, panelDefinition);
+    setTableFilters(panelDefinition.filters.map(filter => ({
+      key: filter.fhirPathFilter[0],
+      value: filter.fhirPathFilter[1],
+    })));
   }, [panelDefinition, currentView, tasks, patients, isLoading]);
 
   const onColumnChange = (column: WorklistDefinition | ViewDefinition) => {
@@ -209,7 +213,7 @@ export default function WorklistPage() {
             currentView={currentView}
             setCurrentView={setCurrentView}
           />
-          <WorklistTable isLoading={isLoading}
+          <WorklistTable isLoading={isMedplumLoading}
             selectedRows={[]}
             toggleSelectAll={() => { }}
             worklistColumns={columns}
@@ -220,7 +224,7 @@ export default function WorklistPage() {
             handleTaskClick={() => { }}
             handleRowHover={() => { }}
             toggleSelectRow={() => { }}
-            handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+            handleAssigneeClick={(taskId: string) => toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
             setIsAddingIngestionSource={() => setIsAddingIngestionSource(true)}
             currentView={currentView}
             handleDragEnd={handleDragEnd}

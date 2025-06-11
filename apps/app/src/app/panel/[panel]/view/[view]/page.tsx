@@ -19,12 +19,13 @@ interface TableFilter {
 }
 
 export default function WorklistPage() {
-  const { patients, tasks, addTaskOwner, isLoading } = useMedplumStore();
+  const { patients, tasks,  toggleTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const { getPanel, getView, updateView, addView, isLoading: isPanelLoading, panels } = usePanelStore();
   const params = useParams();
   const panelId = params.panel as string;
   const viewId = params.view as string;
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [panelDefinition, setPanelDefinition] = useState<PanelDefinition | null>(null);
   const [viewDefinition, setViewDefinition] = useState<ViewDefinition | null>(null);
@@ -36,6 +37,10 @@ export default function WorklistPage() {
 
   const columns = viewDefinition?.columns ?? [];
   const tableData = filteredData ?? [];
+
+  useEffect(() => {
+    setIsLoading(isPanelLoading || !viewDefinition || !panelDefinition);
+  }, [isPanelLoading, panelId, viewId, viewDefinition, panelDefinition]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
@@ -55,6 +60,11 @@ export default function WorklistPage() {
       return;
     }
     setViewDefinition(view);
+
+    setTableFilters(view.filters.map(filter => ({
+      key: filter.fhirPathFilter[0],
+      value: filter.fhirPathFilter[1],
+    })));
   }, [panelId, viewId, isPanelLoading]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
@@ -183,50 +193,51 @@ export default function WorklistPage() {
   }
 
   return (
-    <>
-      {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
-        </div>
-      ) : (
         <>
-          {/* biome-ignore lint/style/noNonNullAssertion: <explanation> */}
-          <WorklistNavigation panelDefinition={panelDefinition!} selectedViewId={viewId} onNewView={onNewView} onViewTitleChange={onViewTitleChange} />
-          <WorklistToolbar
-            searchTerm={searchTerm}
-            onSearch={setSearchTerm}
-            searchMode={searchMode}
-            onSearchModeChange={setSearchMode}
-            currentView={undefined}
-            setCurrentView={() => { }}
-          />
-          <WorklistTable isLoading={isLoading}
-            selectedRows={[]}
-            toggleSelectAll={() => { }}
-            worklistColumns={columns}
-            onAddColumn={onAddColumn}
-            isBlank={false}
-            tableData={filteredData}
-            handlePDFClick={() => { }}
-            handleTaskClick={() => { }}
-            handleRowHover={() => { }}
-            toggleSelectRow={() => { }}
-            handleAssigneeClick={(taskId: string) => addTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
-            setIsAddingIngestionSource={() => { }}
-            currentView={viewDefinition?.viewType ?? 'patient'}
-            handleDragEnd={handleDragEnd}
-            onColumnUpdate={onColumnUpdate}
-            filters={tableFilters}
-            onFiltersChange={onFiltersChange}
-          />
-          <WorklistFooter
-            columnsCounter={columns.length}
-            rowsCounter={tableData.length}
-            navigateToHome={() => { }}
-            isAISidebarOpen={false}
-          />
-        </>
-      )}
-    </>
+          { panelDefinition && (
+            <WorklistNavigation panelDefinition={panelDefinition} selectedViewId={viewId} onNewView={onNewView} onViewTitleChange={onViewTitleChange} />
+          )}
+          {isLoading ? (
+          <div className="flex items-center justify-center h-screen">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
+            </div>
+          ) : (
+            <>
+              <WorklistToolbar
+                searchTerm={searchTerm}
+                onSearch={setSearchTerm}
+                searchMode={searchMode}
+                onSearchModeChange={setSearchMode}
+                currentView={undefined}
+                setCurrentView={() => { }}
+              />
+              <WorklistTable isLoading={isMedplumLoading}
+                selectedRows={[]}
+                toggleSelectAll={() => { }}
+                worklistColumns={columns}
+                onAddColumn={onAddColumn}
+                isBlank={false}
+                tableData={filteredData}
+                handlePDFClick={() => { }}
+                handleTaskClick={() => { }}
+                handleRowHover={() => { }}
+                toggleSelectRow={() => { }}
+                handleAssigneeClick={(taskId: string) =>  toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+                setIsAddingIngestionSource={() => { }}
+                currentView={viewDefinition?.viewType ?? 'patient'}
+                handleDragEnd={handleDragEnd}
+                onColumnUpdate={onColumnUpdate}
+                filters={tableFilters}
+                onFiltersChange={onFiltersChange}
+              />
+              <WorklistFooter
+                columnsCounter={columns.length}
+                rowsCounter={tableData.length}
+                navigateToHome={() => { }}
+                isAISidebarOpen={false}
+              />
+            </>
+        )}
+      </>
   );
 }

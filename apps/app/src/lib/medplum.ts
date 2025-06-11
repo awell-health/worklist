@@ -179,8 +179,10 @@ export class MedplumStore {
   async getPatients(): Promise<Patient[]> {
     try {
       await this.initialize()
-      // Search for patients in Medplum
-      const bundle = await this.client.search('Patient')
+      // Search for patients in Medplum with a limit of 1000
+      const bundle = await this.client.search('Patient', {
+        _count: 1000,
+      })
 
       // Return the actual FHIR Patient resources
       return (bundle.entry || []).map((entry) => entry.resource as Patient)
@@ -193,8 +195,10 @@ export class MedplumStore {
   async getTasks(): Promise<Task[]> {
     try {
       await this.initialize()
-      // Search for tasks in Medplum
-      const bundle = await this.client.search('Task')
+      // Search for tasks in Medplum with a limit of 1000
+      const bundle = await this.client.search('Task', {
+        _count: 1000,
+      })
 
       // Return the actual FHIR Task resources
       return (bundle.entry || []).map((entry) => entry.resource as Task)
@@ -256,7 +260,7 @@ export class MedplumStore {
     }
   }
 
-  async addTaskOwner(taskId: string, userId: string): Promise<Task> {
+  async toggleTaskOwner(taskId: string, userId: string): Promise<Task> {
     await this.initialize()
     try {
       const task = (await this.client.readResource('Task', taskId)) as Task
@@ -264,6 +268,17 @@ export class MedplumStore {
         'Practitioner',
         userId,
       )) as Practitioner
+
+      if (task.owner?.reference === `Practitioner/${userId}`) {
+
+        // Remove the owner from the task
+        const updatedTask = {
+          ...task,
+          owner: undefined,
+        } as Task
+
+        return await this.client.updateResource(updatedTask)
+      }
 
       // Update the task owner
       const updatedTask = {

@@ -68,8 +68,6 @@ export default function WorklistTable({
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [activeColumn, setActiveColumn] = useState<ColumnDefinition | null>(null);
 
-  console.log("data", tableData);
-
   // Filter visible columns
   const visibleColumns = useMemo(() => {
     return worklistColumns.filter(col => col.properties?.display?.visible !== false);
@@ -79,7 +77,6 @@ export default function WorklistTable({
     // First apply filters
     let filteredData = tableData;
     if (filters && filters.length > 0) {
-      console.log("filters", filters);
       filteredData = tableData.filter(row => {
         return filters.every(filter => {
           // TODO this is very basic, we need to support more complex FHIRPath expressions
@@ -204,121 +201,99 @@ export default function WorklistTable({
 
   return (
     <div className="flex-grow flex flex-col">
-      {isLoading ? (
-        <div className="h-full flex items-center justify-center">
-          <div className="flex flex-col items-center">
-            <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
-            <p className="text-sm text-gray-500 font-normal">Building your worklist...</p>
-          </div>
-        </div>
-      ) : (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEndWithStart}
-          modifiers={[restrictToHorizontalAxis]}
-        >
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEndWithStart}
+        modifiers={[restrictToHorizontalAxis]}
+      >
+        <div className="flex-grow overflow-auto" ref={tableContainerRef}>
+          <Table className="w-full border-collapse">
+            <TableHeader className="bg-white sticky top-0 z-10">
+              <TableRow className="border-b border-gray-200">
+                <TableHead className="w-10 p-0 pl-3">
+                  <div className="h-10 flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300"
+                      checked={selectedRows.length > 0 && selectedRows.length === tableData.length}
+                      onChange={toggleSelectAll}
+                    />
+                  </div>
+                </TableHead>
+                {visibleColumns.map((column, index) => (
+                  <SortableColumnHeader
+                    key={column.id}
+                    column={column}
+                    index={index}
+                    sortConfig={sortConfig}
+                    onSort={() => handleSort(column.key)}
+                    filterValue={filters ? filters.find(f => f.key === column.key)?.value || '' : ''}
+                    onFilter={(value) => handleFilter(column.key, value)}
+                    onColumnUpdate={onColumnUpdate}
+                  />
+                ))}
+                <TableHead className="text-xs font-normal text-gray-700 p-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
+                      onClick={() => onAddColumn()}
+                    >
+                      <Plus className="mr-1 h-3 w-3" /> Add column
+                    </button>
 
-          <div className="flex-grow overflow-auto" ref={tableContainerRef}>
-            <Table className="w-full border-collapse">
-              <TableHeader className="bg-white sticky top-0 z-10">
+                    <ColumnsDropdown
+                      columns={worklistColumns}
+                      onColumnVisibilityChange={handleColumnVisibilityChange}
+                    />
+
+                    {isBlank && (
+                      <>
+                        <div className="mx-3 text-xs font-normal text-neutral-500">or</div>
+                        <button
+                          type="button"
+                          className="btn text-xs font-normal h-8 px-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-center"
+                        >
+                          Generate worklist
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead className="p-0 w-full" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading && filteredAndSortedData.length === 0 ? (
                 <TableRow className="border-b border-gray-200">
-                  <TableHead className="w-10 p-0 pl-3">
-                    <div className="h-10 flex items-center justify-center">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300"
-                        checked={selectedRows.length > 0 && selectedRows.length === tableData.length}
-                        onChange={toggleSelectAll}
-                      />
-                    </div>
-                  </TableHead>
-                  {visibleColumns.map((column, index) => (
-                    <SortableColumnHeader
-                      key={column.id}
-                      column={column}
-                      index={index}
-                      sortConfig={sortConfig}
-                      onSort={() => handleSort(column.key)}
-                      filterValue={filters ? filters.find(f => f.key === column.key)?.value || '' : ''}
-                      onFilter={(value) => handleFilter(column.key, value)}
-                      onColumnUpdate={onColumnUpdate}
-                    />
-                  ))}
-                  <TableHead className="text-xs font-normal text-gray-700 p-2">
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        className="btn text-xs font-normal h-8 px-2 flex items-center text-gray-700"
-                        onClick={() => onAddColumn()}
-                      >
-                        <Plus className="mr-1 h-3 w-3" /> Add column
-                      </button>
-
-                      <ColumnsDropdown
-                        columns={worklistColumns}
-                        onColumnVisibilityChange={handleColumnVisibilityChange}
-                      />
-
-                      {isBlank && (
-                        <>
-                          <div className="mx-3 text-xs font-normal text-neutral-500">or</div>
-                          <button
-                            type="button"
-                            className="btn text-xs font-normal h-8 px-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 border border-yellow-200 flex items-center"
-                          >
-                            Generate worklist
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </TableHead>
-                  <TableHead className="p-0 w-full" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredAndSortedData.length > 0 ? (
-                  filteredAndSortedData.map((row, rowIndex) => (
-                    <WorklistTableRow
-                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                      key={rowIndex}
-                      row={row}
-                      rowIndex={rowIndex}
-                      handleAssigneeClick={() => handleAssigneeClick(row["id"])}
-                      columns={visibleColumns}
-                      selectedRows={selectedRows}
-                      toggleSelectRow={toggleSelectRow}
-                      handlePDFClick={handlePDFClick}
-                      handleTaskClick={handleTaskClick}
-                      currentView={currentView}
-                      onRowHover={handleRowHover}
-                    />
-                  ))
-                ) : (
-                  <TableRow className="border-b border-gray-200 hover:bg-gray-50">
-                    <TableCell className="w-10 p-0 pl-3">
-                      <div className="h-10 flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          className="h-4 w-4 rounded border-gray-300"
-                          checked={false}
-                          onChange={() => { }}
-                          disabled
-                        />
+                  <TableCell colSpan={visibleColumns.length + 3} className="h-32">
+                    <div className="h-full flex items-center justify-center">
+                      <div className="flex flex-col items-center">
+                        <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
+                        <p className="text-sm text-gray-500 font-normal">Building your worklist...</p>
                       </div>
-                    </TableCell>
-                    {visibleColumns.map((column, index) => (
-                      <TableCell
-                        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                        key={index}
-                        className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
-                      />
-                    ))}
-                    <TableCell className="p-2" colSpan={2} />
-                  </TableRow>
-                )}
-                {/* Always add the "Add data" row at the bottom */}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : filteredAndSortedData.length > 0 ? (
+                filteredAndSortedData.map((row, rowIndex) => (
+                  <WorklistTableRow
+                    key={rowIndex}
+                    row={row}
+                    rowIndex={rowIndex}
+                    handleAssigneeClick={() => handleAssigneeClick(row["id"])}
+                    columns={visibleColumns}
+                    selectedRows={selectedRows}
+                    toggleSelectRow={toggleSelectRow}
+                    handlePDFClick={handlePDFClick}
+                    handleTaskClick={handleTaskClick}
+                    currentView={currentView}
+                    onRowHover={handleRowHover}
+                  />
+                ))
+              ) : (
                 <TableRow className="border-b border-gray-200 hover:bg-gray-50">
                   <TableCell className="w-10 p-0 pl-3">
                     <div className="h-10 flex items-center justify-center">
@@ -333,38 +308,58 @@ export default function WorklistTable({
                   </TableCell>
                   {visibleColumns.map((column, index) => (
                     <TableCell
-                      // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                       key={index}
                       className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
-                    >
-                      {index === 0 ? (
-                        <button
-                          type="button"
-                          className="btn btn-ghost btn-sm text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
-                          onClick={() => setIsAddingIngestionSource(true)}
-                        >
-                          + Add data
-                        </button>
-                      ) : null}
-                    </TableCell>
+                    />
                   ))}
                   <TableCell className="p-2" colSpan={2} />
                 </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+              )}
+              {/* Always add the "Add data" row at the bottom */}
+              <TableRow className="border-b border-gray-200 hover:bg-gray-50">
+                <TableCell className="w-10 p-0 pl-3">
+                  <div className="h-10 flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-gray-300"
+                      checked={false}
+                      onChange={() => { }}
+                      disabled
+                    />
+                  </div>
+                </TableCell>
+                {visibleColumns.map((column, index) => (
+                  <TableCell
+                    key={index}
+                    className="py-1 px-2 border-r border-gray-200 overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px]"
+                  >
+                    {index === 0 ? (
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm text-xs font-normal h-6 px-2 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+                        onClick={() => setIsAddingIngestionSource(true)}
+                      >
+                        + Add data
+                      </button>
+                    ) : null}
+                  </TableCell>
+                ))}
+                <TableCell className="p-2" colSpan={2} />
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
 
-          {/* Drag Overlay - Shows the column being dragged */}
-          <DragOverlay>
-            {activeColumn ? (
-              <div className="bg-white border border-blue-300 rounded shadow-lg px-3 py-2 text-xs font-normal text-gray-700 flex items-center opacity-90">
-                {getTypeIcon(activeColumn)}
-                <span>{activeColumn.name}</span>
-              </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-      )}
+        {/* Drag Overlay - Shows the column being dragged */}
+        <DragOverlay>
+          {activeColumn ? (
+            <div className="bg-white border border-blue-300 rounded shadow-lg px-3 py-2 text-xs font-normal text-gray-700 flex items-center opacity-90">
+              {getTypeIcon(activeColumn)}
+              <span>{activeColumn.name}</span>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   )
 }

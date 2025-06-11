@@ -100,7 +100,7 @@ export function useMedplumStore(): {
   error: Error | null
   accessToken: string | null
   addNotesToTask: (taskId: string, notes: string) => Promise<Task>
-  addTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>
+  toggleTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>
 } {
   const [patients, setPatients] = useState<Patient[]>([])
   const [tasks, setTasks] = useState<Task[]>([])
@@ -142,28 +142,36 @@ export function useMedplumStore(): {
     const loadData = async () => {
       try {
         setIsLoading(true)
-        const [
-          loadedPatients,
-          loadedTasks,
-          loadedIngestionBots,
-          loadedEnrichmentBots,
-          loadedConnectorBots,
-          loadedAccessToken,
-        ] = await Promise.all([
-          medplumStore.getPatients(),
-          medplumStore.getTasks(),
-          medplumStore.getIngestionBots(),
-          medplumStore.getEnrichmentBots(),
-          medplumStore.getConnectorBots(),
-          medplumStore.getAccessToken(),
-        ])
-        setPatients(loadedPatients)
-        setTasks(loadedTasks)
-        setIngestionBots(loadedIngestionBots)
-        setEnrichmentBots(loadedEnrichmentBots)
-        setConnectorBots(loadedConnectorBots)
-        setAccessToken(loadedAccessToken || null)
+        
+        // Load all data in parallel and handle each response independently
+        const loadPatients = medplumStore.getPatients().then(loadedPatients => {
+          setPatients(loadedPatients)
+        })
 
+        const loadTasks = medplumStore.getTasks().then(loadedTasks => {
+          setTasks(loadedTasks)
+        })
+
+        const loadIngestionBots = medplumStore.getIngestionBots().then(loadedBots => {
+          setIngestionBots(loadedBots)
+        })
+
+        const loadEnrichmentBots = medplumStore.getEnrichmentBots().then(loadedBots => {
+          setEnrichmentBots(loadedBots)
+        })
+
+        // Wait for all requests to complete before setting up subscriptions
+        await Promise.all([
+          loadPatients,
+          loadTasks
+        ])
+
+        await Promise.all([
+          loadIngestionBots,
+          loadEnrichmentBots
+        ])
+
+        // Set up subscriptions after initial data is loaded
         medplumStore.subscribeToTasks((updatedTask) => {
           setTasks((currentTasks) => updateResource(currentTasks, updatedTask))
         })
@@ -188,8 +196,8 @@ export function useMedplumStore(): {
     return task
   }
 
-  async function addTaskOwner(taskId: string, authenticatedUserId: string) {
-    const task = await medplumStore.addTaskOwner(taskId, authenticatedUserId)
+  async function toggleTaskOwner(taskId: string, authenticatedUserId: string) {
+    const task = await medplumStore.toggleTaskOwner(taskId, authenticatedUserId)
     setTasks((currentTasks) => updateResource(currentTasks, task))
     return task
   }
@@ -204,6 +212,6 @@ export function useMedplumStore(): {
     accessToken,
     error,
     addNotesToTask,
-    addTaskOwner,
+    toggleTaskOwner,
   }
 }

@@ -106,12 +106,13 @@ export default function WorklistTableRow({
                 ) : column.type === "array" ? (
                     <div className="flex flex-wrap gap-1">
                         {Array.isArray(columnValue) ? (
-                            columnValue.map((item: any, index: number) => (
+                            columnValue.map((item: unknown, index: number) => (
                                 <span
-                                    key={index}
+                                    // biome-ignore lint/suspicious/noArrayIndexKey: No unique identifier available for array items
+                                    key={`${rowIndex}-${colIndex}-${index}`}
                                     className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
                                 >
-                                    {typeof item === 'object' ? Object.values(item).join(', ') : String(item)}
+                                    {typeof item === 'object' ? Object.values(item as Record<string, unknown>).join(', ') : String(item)}
                                 </span>
                             ))
                         ) : (
