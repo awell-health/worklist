@@ -256,7 +256,7 @@ export class MedplumStore {
     }
   }
 
-  async addTaskOwner(taskId: string, userId: string): Promise<Task> {
+  async toggleTaskOwner(taskId: string, userId: string): Promise<Task> {
     await this.initialize()
     try {
       const task = (await this.client.readResource('Task', taskId)) as Task
@@ -264,6 +264,17 @@ export class MedplumStore {
         'Practitioner',
         userId,
       )) as Practitioner
+
+      if (task.owner?.reference === `Practitioner/${userId}`) {
+
+        // Remove the owner from the task
+        const updatedTask = {
+          ...task,
+          owner: undefined,
+        } as Task
+
+        return await this.client.updateResource(updatedTask)
+      }
 
       // Update the task owner
       const updatedTask = {
