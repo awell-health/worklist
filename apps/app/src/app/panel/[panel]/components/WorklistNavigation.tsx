@@ -29,13 +29,13 @@ export default function WorklistNavigation({
 
     const handleViewClick = (view: ViewDefinition) => {
         if (view.id && !editingViewId) {
-            router.push(`/panel/${panelDefinition.id}/view/${view.id}`);
+            router.replace(`/panel/${panelDefinition.id}/view/${view.id}`);
         }
     };
 
     const handlePanelClick = () => {
         if (panelDefinition.id && !editingPanel) {
-            router.push(`/panel/${panelDefinition.id}`);
+            router.replace(`/panel/${panelDefinition.id}`);
         }
     };
 

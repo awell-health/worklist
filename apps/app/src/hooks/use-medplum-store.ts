@@ -142,28 +142,36 @@ export function useMedplumStore(): {
     const loadData = async () => {
       try {
         setIsLoading(true)
-        const [
-          loadedPatients,
-          loadedTasks,
-          loadedIngestionBots,
-          loadedEnrichmentBots,
-          loadedConnectorBots,
-          loadedAccessToken,
-        ] = await Promise.all([
-          medplumStore.getPatients(),
-          medplumStore.getTasks(),
-          medplumStore.getIngestionBots(),
-          medplumStore.getEnrichmentBots(),
-          medplumStore.getConnectorBots(),
-          medplumStore.getAccessToken(),
-        ])
-        setPatients(loadedPatients)
-        setTasks(loadedTasks)
-        setIngestionBots(loadedIngestionBots)
-        setEnrichmentBots(loadedEnrichmentBots)
-        setConnectorBots(loadedConnectorBots)
-        setAccessToken(loadedAccessToken || null)
+        
+        // Load all data in parallel and handle each response independently
+        const loadPatients = medplumStore.getPatients().then(loadedPatients => {
+          setPatients(loadedPatients)
+        })
 
+        const loadTasks = medplumStore.getTasks().then(loadedTasks => {
+          setTasks(loadedTasks)
+        })
+
+        const loadIngestionBots = medplumStore.getIngestionBots().then(loadedBots => {
+          setIngestionBots(loadedBots)
+        })
+
+        const loadEnrichmentBots = medplumStore.getEnrichmentBots().then(loadedBots => {
+          setEnrichmentBots(loadedBots)
+        })
+
+        // Wait for all requests to complete before setting up subscriptions
+        await Promise.all([
+          loadPatients,
+          loadTasks
+        ])
+
+        await Promise.all([
+          loadIngestionBots,
+          loadEnrichmentBots
+        ])
+
+        // Set up subscriptions after initial data is loaded
         medplumStore.subscribeToTasks((updatedTask) => {
           setTasks((currentTasks) => updateResource(currentTasks, updatedTask))
         })
