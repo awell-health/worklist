@@ -19,7 +19,7 @@ interface TableFilter {
 }
 
 export default function WorklistPage() {
-  const { patients, tasks,  toggleTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
+  const { patients, tasks, toggleTaskOwner, isLoading: isMedplumLoading } = useMedplumStore();
   const { getPanel, getView, updateView, addView, isLoading: isPanelLoading, panels } = usePanelStore();
   const params = useParams();
   const panelId = params.panel as string;
@@ -38,6 +38,7 @@ export default function WorklistPage() {
   const columns = viewDefinition?.columns ?? [];
   const tableData = filteredData ?? [];
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     setIsLoading(isPanelLoading || !viewDefinition || !panelDefinition);
   }, [isPanelLoading, panelId, viewId, viewDefinition, panelDefinition]);
@@ -81,11 +82,11 @@ export default function WorklistPage() {
     setPanelDefinition(panel);
   }, [panels]);
 
-  const onColumnUpdate = (updates: Partial<ColumnDefinition>) => {
-
+  const onColumnUpdate = async (updates: Partial<ColumnDefinition>) => {
     if (!viewDefinition) {
       return;
     }
+
     const newView = {
       ...viewDefinition,
       columns: viewDefinition.columns.map(column => {
@@ -98,14 +99,20 @@ export default function WorklistPage() {
         return column;
       }),
     }
-    updateView(panelId, viewId, newView);
-    setViewDefinition(newView);
+
+    try {
+      await updateView(panelId, viewId, newView);
+      setViewDefinition(newView);
+    } catch (error) {
+      console.error('Failed to update column:', error);
+    }
   }
 
-  const onFiltersChange = (newTableFilters: TableFilter[]) => {
+  const onFiltersChange = async (newTableFilters: TableFilter[]) => {
     if (!viewDefinition) {
       return;
     }
+
     // Convert table filters to view filters
     const newFilters: Filter[] = newTableFilters.map(filter => ({
       fhirPathFilter: [filter.key, filter.value]
@@ -114,12 +121,17 @@ export default function WorklistPage() {
       ...viewDefinition,
       filters: newFilters,
     }
-    updateView(panelId, viewId, newView);
-    setViewDefinition(newView);
-    setTableFilters(newTableFilters);
+
+    try {
+      await updateView(panelId, viewId, newView);
+      setViewDefinition(newView);
+      setTableFilters(newTableFilters);
+    } catch (error) {
+      console.error('Failed to update filters:', error);
+    }
   }
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id || !viewDefinition) {
       return;
@@ -142,20 +154,30 @@ export default function WorklistPage() {
       columns: reorderedColumns,
     };
 
-    updateView(panelId, viewId, newView);
-    setViewDefinition(newView);
+    try {
+      await updateView(panelId, viewId, newView);
+      setViewDefinition(newView);
+    } catch (error) {
+      console.error('Failed to reorder columns:', error);
+    }
   }
 
-  const onColumnChange = (column: ViewDefinition | WorklistDefinition) => {
+  const onColumnChange = async (column: ViewDefinition | WorklistDefinition) => {
     if (!viewDefinition) {
       return;
     }
+
     const newView = {
       ...viewDefinition,
       ...column,
     }
-    updateView(panelId, viewId, newView);
-    setViewDefinition(newView);
+
+    try {
+      await updateView(panelId, viewId, newView);
+      setViewDefinition(newView);
+    } catch (error) {
+      console.error('Failed to update view:', error);
+    }
   }
 
   const { onAddColumn } = useColumnCreator({
@@ -166,78 +188,91 @@ export default function WorklistPage() {
     onDefinitionChange: onColumnChange,
   });
 
-  const onNewView = () => {
+  const onNewView = async () => {
     const panel = getPanel(panelId);
     if (!panel) {
       return;
     }
-    const newView = addView(panelId, {
-      title: "New View",
-      filters: viewDefinition?.filters ?? panel.filters,
-      columns: viewDefinition?.columns ?? panel.taskViewColumns,
-      createdAt: new Date().toISOString(),
-      viewType: viewDefinition?.viewType ?? 'task',
-    });
-    router.push(`/panel/${panelId}/view/${newView.id}`);
+
+    try {
+      const newView = await addView(panelId, {
+        title: "New View",
+        filters: viewDefinition?.filters ?? panel.filters,
+        columns: viewDefinition?.columns ?? panel.taskViewColumns,
+        createdAt: new Date().toISOString(),
+        viewType: viewDefinition?.viewType ?? 'task',
+      });
+      router.push(`/panel/${panelId}/view/${newView.id}`);
+    } catch (error) {
+      console.error('Failed to create new view:', error);
+      // Optionally show user-friendly error message
+    }
   }
 
-  const onViewTitleChange = (newTitle: string) => {
+  const onViewTitleChange = async (newTitle: string) => {
     if (!viewDefinition) {
       return;
     }
-    const newView = {
-      ...viewDefinition,
-      title: newTitle,
+
+    try {
+      await updateView(panelId, viewId, { title: newTitle });
+      const updatedView = {
+        ...viewDefinition,
+        title: newTitle,
+      };
+      setViewDefinition(updatedView);
+    } catch (error) {
+      console.error('Failed to update view title:', error);
+      // Optionally show user-friendly error message
     }
-    updateView(panelId, viewId, newView);
-  }
+  };
 
   return (
+    <>
+      {panelDefinition && (
+        <WorklistNavigation panelDefinition={panelDefinition} selectedViewId={viewId} onNewView={onNewView} onViewTitleChange={onViewTitleChange} />
+      )}
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
+        </div>
+      ) : (
         <>
-          { panelDefinition && (
-            <WorklistNavigation panelDefinition={panelDefinition} selectedViewId={viewId} onNewView={onNewView} onViewTitleChange={onViewTitleChange} />
-          )}
-          {isLoading ? (
-          <div className="flex items-center justify-center h-screen">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900" />
-            </div>
-          ) : (
-            <>
-              <WorklistToolbar
-                searchTerm={searchTerm}
-                onSearch={setSearchTerm}
-                searchMode={searchMode}
-                onSearchModeChange={setSearchMode}
-                currentView={undefined}
-                setCurrentView={() => { }}
-              />
-              <WorklistTable isLoading={isMedplumLoading}
-                selectedRows={[]}
-                toggleSelectAll={() => { }}
-                worklistColumns={columns}
-                onAddColumn={onAddColumn}
-                isBlank={false}
-                tableData={filteredData}
-                handlePDFClick={() => { }}
-                handleTaskClick={() => { }}
-                handleRowHover={() => { }}
-                toggleSelectRow={() => { }}
-                handleAssigneeClick={(taskId: string) =>  toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
-                setIsAddingIngestionSource={() => { }}
-                currentView={viewDefinition?.viewType ?? 'patient'}
-                handleDragEnd={handleDragEnd}
-                onColumnUpdate={onColumnUpdate}
-                filters={tableFilters}
-                onFiltersChange={onFiltersChange}
-              />
-              <WorklistFooter
-                columnsCounter={columns.length}
-                rowsCounter={tableData.length}
-                navigateToHome={() => { }}
-                isAISidebarOpen={false}
-              />
-            </>
-        )}
-      </>
+          <WorklistToolbar
+            searchTerm={searchTerm}
+            onSearch={setSearchTerm}
+            searchMode={searchMode}
+            onSearchModeChange={setSearchMode}
+            currentView={undefined}
+            setCurrentView={() => { }}
+          />
+          <WorklistTable isLoading={isMedplumLoading}
+            selectedRows={[]}
+            toggleSelectAll={() => { }}
+            worklistColumns={columns}
+            onAddColumn={onAddColumn}
+            isBlank={false}
+            tableData={filteredData}
+            handlePDFClick={() => { }}
+            handleTaskClick={() => { }}
+            handleRowHover={() => { }}
+            toggleSelectRow={() => { }}
+            handleAssigneeClick={(taskId: string) => toggleTaskOwner(taskId, process.env.NEXT_PUBLIC_AUTH_USER_ID ?? '')}
+            setIsAddingIngestionSource={() => { }}
+            currentView={viewDefinition?.viewType ?? 'patient'}
+            handleDragEnd={handleDragEnd}
+            onColumnUpdate={onColumnUpdate}
+            filters={tableFilters}
+            onFiltersChange={onFiltersChange}
+          />
+          <WorklistFooter
+            columnsCounter={columns.length}
+            rowsCounter={tableData.length}
+            navigateToHome={() => router.push('/')}
+            isAISidebarOpen={false}
+          />
+        </>
+      )}
+    </>
   );
 }

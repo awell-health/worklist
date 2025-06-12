@@ -1,5 +1,6 @@
+import { PanelStoreProvider } from '@/hooks/use-panel-store';
 import { Inter } from "next/font/google";
-import './globals.css'
+import './globals.css';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <PanelStoreProvider>
+          {children}
+        </PanelStoreProvider>
+      </body>
     </html>
   )
 }

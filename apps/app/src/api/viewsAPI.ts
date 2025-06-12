@@ -8,7 +8,6 @@ import type {
   ViewSortsResponse,
   ViewsResponse,
 } from '@panels/types/views'
-import 'server-only'
 
 export const viewsAPI = {
   all: async (
