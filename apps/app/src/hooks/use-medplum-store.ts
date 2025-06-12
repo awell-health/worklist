@@ -1,6 +1,6 @@
-import { medplumStore } from '@/lib/medplum'
-import type { Bot, Patient, Task } from '@medplum/fhirtypes'
-import { useEffect, useMemo, useState } from 'react'
+import { useMedplum } from '@/contexts/medplum-context'
+import type { Patient, Task } from '@medplum/fhirtypes'
+import { useMemo } from 'react'
 
 // REFACTOR NEEDED:
 // This was a quick hack to get something working, it needs a lot of work to create a proper data store for frontend
@@ -90,28 +90,21 @@ const mapTasksToWorklistTasks = (
   })
 }
 
-export function useMedplumStore(): {
-  patients: WorklistPatient[]
-  tasks: WorklistTask[]
-  ingestionBots: Bot[]
-  enrichmentBots: Bot[]
-  connectorBots: Bot[]
-  isLoading: boolean
-  error: Error | null
-  accessToken: string | null
-  addNotesToTask: (taskId: string, notes: string) => Promise<Task>
-  toggleTaskOwner: (taskId: string, authenticatedUserId: string) => Promise<Task>
-} {
-  const [patients, setPatients] = useState<Patient[]>([])
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [ingestionBots, setIngestionBots] = useState<Bot[]>([])
-  const [enrichmentBots, setEnrichmentBots] = useState<Bot[]>([])
-  const [connectorBots, setConnectorBots] = useState<Bot[]>([])
-  const [accessToken, setAccessToken] = useState<string | null>(null)
-  const [error, setError] = useState<Error | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+export function useMedplumStore() {
+  const {
+    patients,
+    tasks,
+    ingestionBots,
+    enrichmentBots,
+    connectorBots,
+    isLoading,
+    error,
+    accessToken,
+    addNotesToTask,
+    toggleTaskOwner,
+  } = useMedplum()
 
-  // TODO: Mapping should disappear, we should use FHIR resources directly
+  // Map the raw FHIR resources to our worklist format
   const mappedPatients = useMemo(
     () => mapPatientsToWorklistPatients(patients, tasks),
     [patients, tasks],
@@ -121,72 +114,6 @@ export function useMedplumStore(): {
     () => mapTasksToWorklistTasks(patients, tasks),
     [patients, tasks],
   )
-
-  const updateResource = <T extends { id?: string }>(
-    currentResources: T[],
-    updatedResource: T,
-  ): T[] => {
-    const resourceIndex = currentResources.findIndex(
-      (r) => r.id === updatedResource.id,
-    )
-    if (resourceIndex === -1) {
-      return [...currentResources, updatedResource]
-    }
-    const newResources = [...currentResources]
-    newResources[resourceIndex] = updatedResource
-    return newResources
-  }
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    const loadData = async () => {
-      try {        
-        // Load all data in parallel and handle each response independently
-        setIsLoading(true)
-        // Wait for all requests to complete before setting up subscriptions
-        const [loadedPatients, loadedTasks] = await Promise.all([
-          medplumStore.getPatients(),
-          medplumStore.getTasks()
-        ])
-
-        setPatients(loadedPatients)
-        setTasks(loadedTasks)   
-       
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to load data'))
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    const setupSubscriptions = async () => {
-      await Promise.all([
-        medplumStore.subscribeToPatients((updatedPatient) => {
-          setPatients((currentPatients) =>
-            updateResource(currentPatients, updatedPatient),
-          )
-        }),
-        medplumStore.subscribeToTasks((updatedTask) => {
-          setTasks((currentTasks) => updateResource(currentTasks, updatedTask))
-        })
-      ])  
-    }
-
-    loadData()
-    setupSubscriptions()
-  }, [])
-
-  async function addNotesToTask(taskId: string, note: string) {
-    const task = await medplumStore.addNoteToTask(taskId, note)
-    setTasks((currentTasks) => updateResource(currentTasks, task))
-    return task
-  }
-
-  async function toggleTaskOwner(taskId: string, authenticatedUserId: string) {
-    const task = await medplumStore.toggleTaskOwner(taskId, authenticatedUserId)
-    setTasks((currentTasks) => updateResource(currentTasks, task))
-    return task
-  }
 
   return {
     patients: mappedPatients,
