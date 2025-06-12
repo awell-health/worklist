@@ -211,8 +211,10 @@ export default function WorklistPage() {
 
   const onViewTitleChange = async (newTitle: string) => {
     if (!viewDefinition) {
+      console.log("viewDefinition not found");
       return;
     }
+    console.log("newTitle", newTitle);
 
     try {
       await updateView(panelId, viewId, { title: newTitle });

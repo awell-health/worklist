@@ -18,6 +18,9 @@ class PanelStore {
     this.initializeStorage()
   }
 
+  private readonly STORAGE_KEY = 'panel-definitions'
+
+
   private async initializeStorage() {
     try {
       this.storage = await getStorageAdapter()
@@ -94,7 +97,7 @@ class PanelStore {
     }
 
     try {
-      const stored = localStorage.getItem('panels')
+      const stored = localStorage.getItem(this.STORAGE_KEY)
       this.panels = stored ? JSON.parse(stored) : []
     } catch (error) {
       console.error('Failed to load panels from localStorage:', error)
@@ -107,7 +110,7 @@ class PanelStore {
     if (typeof window === 'undefined') return
 
     try {
-      localStorage.setItem('panels', JSON.stringify(this.panels))
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.panels))
     } catch (error) {
       console.error('Failed to save panels to localStorage:', error)
     }
