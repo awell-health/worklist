@@ -107,9 +107,9 @@ export function useMedplumStore(): {
   const [ingestionBots, setIngestionBots] = useState<Bot[]>([])
   const [enrichmentBots, setEnrichmentBots] = useState<Bot[]>([])
   const [connectorBots, setConnectorBots] = useState<Bot[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<Error | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [error, setError] = useState<Error | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   // TODO: Mapping should disappear, we should use FHIR resources directly
   const mappedPatients = useMemo(
@@ -140,46 +140,18 @@ export function useMedplumStore(): {
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     const loadData = async () => {
-      try {
-        setIsLoading(true)
-        
+      try {        
         // Load all data in parallel and handle each response independently
-        const loadPatients = medplumStore.getPatients().then(loadedPatients => {
-          setPatients(loadedPatients)
-        })
-
-        const loadTasks = medplumStore.getTasks().then(loadedTasks => {
-          setTasks(loadedTasks)
-        })
-
-        const loadIngestionBots = medplumStore.getIngestionBots().then(loadedBots => {
-          setIngestionBots(loadedBots)
-        })
-
-        const loadEnrichmentBots = medplumStore.getEnrichmentBots().then(loadedBots => {
-          setEnrichmentBots(loadedBots)
-        })
-
+        setIsLoading(true)
         // Wait for all requests to complete before setting up subscriptions
-        await Promise.all([
-          loadPatients,
-          loadTasks
+        const [loadedPatients, loadedTasks] = await Promise.all([
+          medplumStore.getPatients(),
+          medplumStore.getTasks()
         ])
 
-        await Promise.all([
-          loadIngestionBots,
-          loadEnrichmentBots
-        ])
-
-        // Set up subscriptions after initial data is loaded
-        medplumStore.subscribeToTasks((updatedTask) => {
-          setTasks((currentTasks) => updateResource(currentTasks, updatedTask))
-        })
-        medplumStore.subscribeToPatients((updatedPatient) => {
-          setPatients((currentPatients) =>
-            updateResource(currentPatients, updatedPatient),
-          )
-        })
+        setPatients(loadedPatients)
+        setTasks(loadedTasks)   
+       
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to load data'))
       } finally {
@@ -187,7 +159,21 @@ export function useMedplumStore(): {
       }
     }
 
+    const setupSubscriptions = async () => {
+      await Promise.all([
+        medplumStore.subscribeToPatients((updatedPatient) => {
+          setPatients((currentPatients) =>
+            updateResource(currentPatients, updatedPatient),
+          )
+        }),
+        medplumStore.subscribeToTasks((updatedTask) => {
+          setTasks((currentTasks) => updateResource(currentTasks, updatedTask))
+        })
+      ])  
+    }
+
     loadData()
+    setupSubscriptions()
   }, [])
 
   async function addNotesToTask(taskId: string, note: string) {
