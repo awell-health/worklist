@@ -67,15 +67,34 @@ export default function WorklistNavigation({
   };
 
   const handlePanelTitleSubmit = () => {
-    if (onPanelTitleChange && panelTitle !== panelDefinition.title) {
-      onPanelTitleChange(panelTitle);
+    const trimmedTitle = panelTitle.trim();
+
+    if (!trimmedTitle) {
+      // Don't save empty titles, reset to original
+      setPanelTitle(panelDefinition.title);
+      setEditingPanel(false);
+      return;
+    }
+
+    if (onPanelTitleChange && trimmedTitle !== panelDefinition.title) {
+      onPanelTitleChange(trimmedTitle);
     }
     setEditingPanel(false);
   };
 
   const handleViewTitleSubmit = (viewId: string) => {
-    if (onViewTitleChange && viewTitles[viewId] !== panelDefinition.views?.find(v => v.id === viewId)?.title) {
-      onViewTitleChange(viewTitles[viewId]);
+    const trimmedTitle = viewTitles[viewId]?.trim() || '';
+    const originalTitle = panelDefinition.views?.find(v => v.id === viewId)?.title || '';
+
+    if (!trimmedTitle) {
+      // Don't save empty titles, reset to original
+      setViewTitles(prev => ({ ...prev, [viewId]: originalTitle }));
+      setEditingViewId(null);
+      return;
+    }
+
+    if (onViewTitleChange && trimmedTitle !== originalTitle) {
+      onViewTitleChange(trimmedTitle);
     }
     setEditingViewId(null);
   };
@@ -163,32 +182,43 @@ export default function WorklistNavigation({
             tabIndex={0}
           >
             <div className={`
-                h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r border-gray-200
-                ${!selectedViewId ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
+                h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r
+                ${editingPanel
+                ? 'bg-slate-50 border-blue-200' // Highlight when editing
+                : !selectedViewId
+                  ? 'bg-white border-gray-200'
+                  : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+              }
               `}>
               <LayoutGrid className={`h-3 w-3 mr-2 ${!selectedViewId ? 'text-yellow-800' : 'text-gray-500'}`} />
               {editingPanel ? (
-                <input
-                  type="text"
-                  value={panelTitle}
-                  onChange={(e) => setPanelTitle(e.target.value)}
-                  onBlur={handlePanelTitleSubmit}
-                  onKeyDown={(e) => {
-                    e.stopPropagation(); // Prevent parent from handling
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      handlePanelTitleSubmit();
-                    }
-                    if (e.key === 'Escape') {
-                      e.preventDefault();
-                      setEditingPanel(false);
-                      setPanelTitle(panelDefinition.title); // Reset to original value
-                    }
-                  }}
-                  className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 w-full"
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                />
+                <div className="flex items-center w-full">
+                  <input
+                    type="text"
+                    value={panelTitle}
+                    placeholder="Enter panel name..."
+                    onChange={(e) => setPanelTitle(e.target.value)}
+                    onBlur={handlePanelTitleSubmit}
+                    onKeyDown={(e) => {
+                      e.stopPropagation(); // Prevent parent from handling
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handlePanelTitleSubmit();
+                      }
+                      if (e.key === 'Escape') {
+                        e.preventDefault();
+                        setEditingPanel(false);
+                        setPanelTitle(panelDefinition.title); // Reset to original value
+                      }
+                    }}
+                    className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 flex-1"
+                    // eslint-disable-next-line jsx-a11y/no-autofocus
+                    autoFocus
+                  />
+                  {panelTitle.trim() !== panelDefinition.title && (
+                    <span className="text-xs text-orange-500 ml-1" title="Unsaved changes">•</span>
+                  )}
+                </div>
               ) : (
                 <>
                   <span
@@ -223,34 +253,45 @@ export default function WorklistNavigation({
               tabIndex={0}
             >
               <div className={`
-                  h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r border-gray-200
-                  ${view.id === selectedViewId ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
+                  h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r
+                  ${editingViewId === view.id
+                  ? 'bg-slate-50 border-blue-200' // Highlight when editing
+                  : view.id === selectedViewId
+                    ? 'bg-white border-gray-200'
+                    : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+                }
                 `}>
                 {editingViewId === view.id ? (
-                  <input
-                    type="text"
-                    value={viewTitles[view.id] || ''}
-                    onChange={(e) => setViewTitles(prev => ({ ...prev, [view.id]: e.target.value }))}
-                    onBlur={() => handleViewTitleSubmit(view.id)}
-                    onKeyDown={(e) => {
-                      e.stopPropagation(); // Prevent parent from handling
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleViewTitleSubmit(view.id);
-                      }
-                      if (e.key === 'Escape') {
-                        e.preventDefault();
-                        setEditingViewId(null);
-                        setViewTitles(prev => ({
-                          ...prev,
-                          [view.id]: view.title || '' // Reset to original
-                        }));
-                      }
-                    }}
-                    className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 w-full"
-                    // eslint-disable-next-line jsx-a11y/no-autofocus
-                    autoFocus
-                  />
+                  <div className="flex items-center w-full">
+                    <input
+                      type="text"
+                      value={viewTitles[view.id] || ''}
+                      placeholder="Enter view name..."
+                      onChange={(e) => setViewTitles(prev => ({ ...prev, [view.id]: e.target.value }))}
+                      onBlur={() => handleViewTitleSubmit(view.id)}
+                      onKeyDown={(e) => {
+                        e.stopPropagation(); // Prevent parent from handling
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleViewTitleSubmit(view.id);
+                        }
+                        if (e.key === 'Escape') {
+                          e.preventDefault();
+                          setEditingViewId(null);
+                          setViewTitles(prev => ({
+                            ...prev,
+                            [view.id]: view.title || '' // Reset to original
+                          }));
+                        }
+                      }}
+                      className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 flex-1"
+                      // eslint-disable-next-line jsx-a11y/no-autofocus
+                      autoFocus
+                    />
+                    {(viewTitles[view.id] || '').trim() !== (view.title || '') && (
+                      <span className="text-xs text-orange-500 ml-1" title="Unsaved changes">•</span>
+                    )}
+                  </div>
                 ) : (
                   <>
                     <span
