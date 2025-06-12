@@ -289,7 +289,7 @@ export class APIStorageAdapter implements StorageAdapter {
       }
 
       // Store in localStorage
-      const stored = localStorage.getItem('panels')
+      const stored = localStorage.getItem('panel-definitions')
       const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
       const updatedPanels = panels.map((panel) =>
@@ -301,7 +301,7 @@ export class APIStorageAdapter implements StorageAdapter {
           : panel,
       )
 
-      localStorage.setItem('panels', JSON.stringify(updatedPanels))
+      localStorage.setItem('panel-definitions', JSON.stringify(updatedPanels))
 
       return newView
     } catch (error) {
@@ -320,7 +320,7 @@ export class APIStorageAdapter implements StorageAdapter {
     try {
       // For now, store views in localStorage since backend doesn't support metadata properly
       // TODO: Update when backend supports filters and viewType in metadata
-      const stored = localStorage.getItem('panels')
+      const stored = localStorage.getItem('panel-definitions')
       const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
       const updatedPanels = panels.map((panel) =>
@@ -334,7 +334,7 @@ export class APIStorageAdapter implements StorageAdapter {
           : panel,
       )
 
-      localStorage.setItem('panels', JSON.stringify(updatedPanels))
+      localStorage.setItem('panel-definitions', JSON.stringify(updatedPanels))
     } catch (error) {
       console.error(
         `Failed to update view ${viewId} in panel ${panelId}:`,
@@ -350,7 +350,7 @@ export class APIStorageAdapter implements StorageAdapter {
     try {
       // For now, store views in localStorage since backend doesn't support metadata properly
       // TODO: Update when backend supports filters and viewType in metadata
-      const stored = localStorage.getItem('panels')
+      const stored = localStorage.getItem('panel-definitions')
       const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
       const updatedPanels = panels.map((panel) =>
@@ -362,7 +362,7 @@ export class APIStorageAdapter implements StorageAdapter {
           : panel,
       )
 
-      localStorage.setItem('panels', JSON.stringify(updatedPanels))
+      localStorage.setItem('panel-definitions', JSON.stringify(updatedPanels))
     } catch (error) {
       console.error(
         `Failed to delete view ${viewId} in panel ${panelId}:`,
@@ -381,7 +381,7 @@ export class APIStorageAdapter implements StorageAdapter {
     try {
       // For now, get views from localStorage since backend doesn't support metadata properly
       // TODO: Update when backend supports filters and viewType in metadata
-      const stored = localStorage.getItem('panels')
+      const stored = localStorage.getItem('panel-definitions')
       const panels: PanelDefinition[] = stored ? JSON.parse(stored) : []
 
       const panel = panels.find((p) => p.id === panelId)

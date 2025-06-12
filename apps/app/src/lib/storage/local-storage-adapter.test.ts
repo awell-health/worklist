@@ -2,6 +2,8 @@ import type { PanelDefinition, ViewDefinition } from '@/types/worklist'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { LocalStorageAdapter } from './local-storage-adapter'
 
+
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {}
@@ -258,7 +260,7 @@ describe('LocalStorageAdapter', () => {
     })
 
     test('should handle invalid JSON in localStorage', async () => {
-      localStorage.setItem('panels', 'invalid json')
+      localStorage.setItem('panel-definitions', 'invalid json')
 
       const panels = await adapter.getPanels()
       expect(panels).toEqual([])
@@ -279,7 +281,7 @@ describe('LocalStorageAdapter', () => {
       const view = await adapter.addView(panel.id, mockView)
 
       // Verify the data structure in localStorage matches expectations
-      const storedData = localStorage.getItem('panels')
+      const storedData = localStorage.getItem('panel-definitions')
       expect(storedData).toBeDefined()
 
       const parsedData = JSON.parse(storedData as string)
