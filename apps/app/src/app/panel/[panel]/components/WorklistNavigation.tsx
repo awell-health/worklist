@@ -146,6 +146,9 @@ export default function WorklistNavigation({
               }
             }}
             onKeyDown={(e) => {
+              // Don't handle keyboard events if we're editing the panel title
+              if (editingPanel) return;
+
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -170,7 +173,18 @@ export default function WorklistNavigation({
                   value={panelTitle}
                   onChange={(e) => setPanelTitle(e.target.value)}
                   onBlur={handlePanelTitleSubmit}
-                  onKeyDown={(e) => e.key === 'Enter' && handlePanelTitleSubmit()}
+                  onKeyDown={(e) => {
+                    e.stopPropagation(); // Prevent parent from handling
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handlePanelTitleSubmit();
+                    }
+                    if (e.key === 'Escape') {
+                      e.preventDefault();
+                      setEditingPanel(false);
+                      setPanelTitle(panelDefinition.title); // Reset to original value
+                    }
+                  }}
                   className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 w-full"
                   // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
@@ -195,6 +209,9 @@ export default function WorklistNavigation({
               className="relative ml-2 mb-[-1px] cursor-pointer group"
               onClick={() => handleViewClick(view)}
               onKeyDown={(e) => {
+                // Don't handle keyboard events if we're editing this view
+                if (editingViewId === view.id) return;
+
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   handleViewClick(view);
@@ -215,7 +232,21 @@ export default function WorklistNavigation({
                     value={viewTitles[view.id] || ''}
                     onChange={(e) => setViewTitles(prev => ({ ...prev, [view.id]: e.target.value }))}
                     onBlur={() => handleViewTitleSubmit(view.id)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleViewTitleSubmit(view.id)}
+                    onKeyDown={(e) => {
+                      e.stopPropagation(); // Prevent parent from handling
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleViewTitleSubmit(view.id);
+                      }
+                      if (e.key === 'Escape') {
+                        e.preventDefault();
+                        setEditingViewId(null);
+                        setViewTitles(prev => ({
+                          ...prev,
+                          [view.id]: view.title || '' // Reset to original
+                        }));
+                      }
+                    }}
                     className="text-xs bg-transparent border-none focus:outline-none focus:ring-0 p-0 w-full"
                     // eslint-disable-next-line jsx-a11y/no-autofocus
                     autoFocus
