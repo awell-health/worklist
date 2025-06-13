@@ -1,7 +1,9 @@
 "use client"
-import { WorklistPatient, WorklistTask } from '@/hooks/use-medplum-store';
+import type { WorklistPatient, WorklistTask } from '@/hooks/use-medplum-store';
+import { isFeatureEnabled } from '@/utils/featureFlags';
 import { useState } from 'react';
 import { ExtensionDetails } from './ExtensionDetails';
+import { SearchableExtensionDetails } from './SearchableExtensionDetails';
 
 const getFieldValue = (field: any): string => {
   if (!field) return '';
@@ -58,21 +60,19 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
         <nav className="flex space-x-8 px-4" aria-label="Tabs">
           <button
             onClick={() => setActiveTab("context")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "context"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "context"
+              ? "border-blue-500 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
           >
             Context
           </button>
           <button
             onClick={() => setActiveTab("tasks")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-              activeTab === "tasks"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            }`}
+            className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === "tasks"
+              ? "border-blue-500 text-blue-600"
+              : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
           >
             Tasks
           </button>
@@ -116,7 +116,13 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
               )}
 
               {/* Extensions */}
-              {patient.extension && <ExtensionDetails extensions={patient.extension} />}
+              {patient.extension && (
+                isFeatureEnabled('ENABLE_EXTENSION_SEARCH') ? (
+                  <SearchableExtensionDetails extensions={patient.extension} />
+                ) : (
+                  <ExtensionDetails extensions={patient.extension} />
+                )
+              )}
             </div>
           </div>
         )}
@@ -136,15 +142,20 @@ export function PatientDetails({ patient }: PatientDetailsProps) {
                           Status: {getFieldValue(task.status)}
                         </p>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded ${
-                        getFieldValue(task.priority) === 'stat' ? 'bg-red-100 text-red-800' :
+                      <span className={`px-2 py-1 text-xs rounded ${getFieldValue(task.priority) === 'stat' ? 'bg-red-100 text-red-800' :
                         getFieldValue(task.priority) === 'urgent' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
+                          'bg-green-100 text-green-800'
+                        }`}>
                         {getFieldValue(task.priority) || 'routine'}
                       </span>
                     </div>
-                    {task.extension && <ExtensionDetails extensions={task.extension} title="Task Details" />}
+                    {task.extension && (
+                      isFeatureEnabled('ENABLE_EXTENSION_SEARCH') ? (
+                        <SearchableExtensionDetails extensions={task.extension} title="Task Details" />
+                      ) : (
+                        <ExtensionDetails extensions={task.extension} title="Task Details" />
+                      )
+                    )}
                   </div>
                 ))
               ) : (
