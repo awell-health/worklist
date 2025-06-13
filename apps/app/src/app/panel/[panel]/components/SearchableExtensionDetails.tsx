@@ -1,7 +1,7 @@
 "use client"
 
 import type { Extension } from "@medplum/fhirtypes"
-import { ChevronDown, Search } from 'lucide-react'
+import { ChevronDown, ChevronRight, Search } from 'lucide-react'
 import type React from 'react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -112,7 +112,26 @@ export function SearchableExtensionDetails({
     const [searchTerm, setSearchTerm] = useState('')
     const [searchMode, setSearchMode] = useState<SearchMode>('both')
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set())
     const dropdownRef = useRef<HTMLDivElement>(null)
+
+    // Initialize all sections as expanded
+    useEffect(() => {
+        const initialExpanded = new Set(extensions.map((_, index) => `section-${index}`))
+        setExpandedSections(initialExpanded)
+    }, [extensions])
+
+    const toggleSection = (sectionId: string) => {
+        setExpandedSections(prev => {
+            const newSet = new Set(prev)
+            if (newSet.has(sectionId)) {
+                newSet.delete(sectionId)
+            } else {
+                newSet.add(sectionId)
+            }
+            return newSet
+        })
+    }
 
     if (!extensions || extensions.length === 0) return null;
 
@@ -276,16 +295,34 @@ export function SearchableExtensionDetails({
             )}
 
             <div className="space-y-2">
-                {filteredExtensions.map((ext, index) => (
-                    <div key={`${index}-${ext.url}`} className="bg-gray-50 p-3 rounded">
-                        <div className="text-xs font-medium text-gray-500" title={`FHIR Path: extension[${index}]`}>
-                            {ext.url.split('/').pop() || ext.url}
+                {filteredExtensions.map((ext, index) => {
+                    const sectionId = `section-${index}`
+                    const isExpanded = expandedSections.has(sectionId)
+
+                    return (
+                        <div key={`${index}-${ext.url}`} className="bg-gray-50 p-3 rounded">
+                            <button
+                                type="button"
+                                onClick={() => toggleSection(sectionId)}
+                                className="w-full flex items-center gap-2 text-left"
+                            >
+                                {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                                ) : (
+                                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                                )}
+                                <div className="text-xs font-medium text-gray-500" title={`FHIR Path: extension[${index}]`}>
+                                    {ext.url.split('/').pop() || ext.url}
+                                </div>
+                            </button>
+                            {isExpanded && (
+                                <div className="mt-2">
+                                    {renderExtensionValue(ext, index)}
+                                </div>
+                            )}
                         </div>
-                        <div className="text-sm">
-                            {renderExtensionValue(ext, index)}
-                        </div>
-                    </div>
-                ))}
+                    )
+                })}
             </div>
         </div>
     )
