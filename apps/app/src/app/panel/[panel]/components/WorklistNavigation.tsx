@@ -207,15 +207,40 @@ export default function WorklistNavigation({
                           setEditingPanel(false);
                         }
                       }}
-                      className="bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-sm"
+                      className="bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-xs"
                       autoFocus
                     />
+                    {panelTitle.trim() !== panelDefinition.title && (
+                      <span className="text-xs text-orange-500 ml-1" title="Unsaved changes">•</span>
+                    )}
                     {getSaveStatusIcon(panelDefinition.id)}
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <span className="text-xs font-normal text-gray-600">{panelDefinition.title}</span>
+                    <span
+                      className="text-xs font-normal text-gray-600 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!selectedViewId) {
+                          setEditingPanel(true);
+                        } else {
+                          handlePanelClick();
+                        }
+                      }}
+                    >
+                      {panelDefinition.title}
+                    </span>
                     {getSaveStatusIcon(panelDefinition.id)}
+                    <button
+                      type="button"
+                      className="ml-2 text-gray-400 hover:text-gray-600"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteViewClick(panelDefinition.id, panelDefinition.title);
+                      }}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   </div>
                 )}
               </div>
@@ -232,9 +257,11 @@ export default function WorklistNavigation({
               >
                 <div className={`
                     h-9 px-4 relative z-10 flex items-center rounded-t-md border-l border-t border-r whitespace-nowrap
-                    ${view.id === selectedViewId
-                    ? 'bg-white border-gray-200'
-                    : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+                    ${editingViewId === view.id
+                    ? 'bg-slate-50 border-blue-200' // Highlight when editing
+                    : view.id === selectedViewId
+                      ? 'bg-white border-gray-200'
+                      : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
                   }
                   `}>
                   {editingViewId === view.id ? (
@@ -253,27 +280,40 @@ export default function WorklistNavigation({
                             setEditingViewId(null);
                           }
                         }}
-                        className="bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-sm"
+                        className="bg-transparent border-none focus:outline-none focus:ring-0 p-0 text-xs"
                         autoFocus
                       />
+                      {(viewTitles[view.id] || '').trim() !== (view.title || '') && (
+                        <span className="text-xs text-orange-500 ml-1" title="Unsaved changes">•</span>
+                      )}
                       {getSaveStatusIcon(view.id)}
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      <span className="text-xs font-normal text-gray-600">{view.title}</span>
+                      <span
+                        className="text-xs font-normal text-gray-600 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (view.id === selectedViewId) {
+                            setEditingViewId(view.id);
+                          } else {
+                            handleViewClick(view);
+                          }
+                        }}
+                      >
+                        {view.title}
+                      </span>
                       {getSaveStatusIcon(view.id)}
-                      {hoveredViewId === view.id && (
-                        <button
-                          type="button"
-                          className="ml-2 text-gray-400 hover:text-gray-600"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteViewClick(view.id, view.title || '');
-                          }}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        className="ml-2 text-gray-400 hover:text-gray-600"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteViewClick(view.id, view.title || '');
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </div>
                   )}
                 </div>
@@ -283,11 +323,11 @@ export default function WorklistNavigation({
             {/* Add View Button */}
             <button
               type="button"
-              className="ml-2 mb-[-1px] h-9 px-3 flex items-center text-sm text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-t-md border-l border-t border-r border-gray-200"
+              className="ml-2 mb-[-1px] h-9 px-3 flex items-center text-sm text-gray-500 hover:text-gray-700 bg-gray-50 hover:bg-gray-100 rounded-t-md border-l border-t border-r border-gray-200 whitespace-nowrap"
               onClick={onNewView}
             >
-              <Plus className="h-3 w-3 mr-1" />
-              Add View
+              <Plus className="h-3 w-3 mr-1 flex-shrink-0" />
+              <span className="text-xs">Add View</span>
             </button>
           </div>
         </div>
@@ -300,6 +340,7 @@ export default function WorklistNavigation({
         onConfirm={handleDeleteViewConfirm}
         title="Delete View"
         message={`Are you sure you want to delete the view "${viewToDelete?.title}"? This action cannot be undone.`}
+        itemName={viewToDelete?.title || ''}
         isDeleting={!!deletingViewId}
       />
     </>
